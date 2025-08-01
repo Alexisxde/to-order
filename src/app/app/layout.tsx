@@ -1,27 +1,33 @@
+import Footer from "@/components/footer"
 import Header from "@/components/header"
 import Sidebar from "@/components/sidebar"
+import { ProjectProvider } from "@/providers/project-provider"
+import { SidebarProvider } from "@/providers/sidebar-provider"
 import { createClientForServer } from "@/supabase/server"
 import type { Metadata } from "next"
 import { redirect } from "next/navigation"
 
-export const metadata: Metadata = { title: "Reparapp - App" }
+export const metadata: Metadata = { title: "ToOrder - App" }
 
 export default async function AppLayout({
 	children
-}: {
-	children: React.ReactNode
-}) {
+}: Readonly<{ children: React.ReactNode }>) {
 	const supabase = await createClientForServer()
 	const { data } = await supabase.auth.getUser()
 	if (!data.user) return redirect("/")
 
 	return (
-		<div className="flex h-dvh">
-			<Sidebar />
-			<div className="flex flex-1 flex-col">
-				<Header user={data.user.user_metadata} />
-				<main className="flex-1 p-4">{children}</main>
-			</div>
-		</div>
+		<SidebarProvider>
+			<ProjectProvider>
+				<section className="flex">
+					<Sidebar />
+					<section className="flex w-full flex-col">
+						<Header user={data.user.user_metadata} />
+						<main className="max-w-8xl mx-auto w-full flex-1">{children}</main>
+						<Footer />
+					</section>
+				</section>
+			</ProjectProvider>
+		</SidebarProvider>
 	)
 }

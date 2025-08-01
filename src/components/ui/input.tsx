@@ -20,7 +20,7 @@ export const Input = ({
 				ref={ref}
 				id={Id}
 				className={cn(
-					"peer border-muted hover:border-muted focus:border-muted block w-full rounded-lg border py-2 pr-4 pl-3 transition-colors duration-200 ease-in-out focus:outline-none",
+					"border-muted ring-muted/25 hover:border-muted/80 peer focus:border-muted block w-full rounded-lg border bg-transparent py-2 pr-4 pl-3 ring transition-colors duration-200 ease-in-out focus:outline-none",
 					className
 				)}
 				placeholder=" "
@@ -29,7 +29,7 @@ export const Input = ({
 			{!labelDisabled && (
 				<label
 					htmlFor={Id}
-					className="bg-foreground peer-focus:bg-foreground pointer-events-none absolute -top-2.5 left-2.5 p-1 text-sm text-[10px] text-neutral-400 transition-all duration-200 ease-in-out peer-placeholder-shown:top-2 peer-placeholder-shown:text-sm peer-placeholder-shown:text-neutral-400 peer-focus:-top-3 peer-focus:p-1 peer-focus:text-[10px] peer-focus:text-neutral-400">
+					className="peer-focus:bg-background pointer-events-none absolute -top-2.5 left-2.5 p-1 text-sm text-[10px] text-neutral-400 transition-all duration-200 ease-in-out peer-placeholder-shown:top-2 peer-placeholder-shown:text-sm peer-placeholder-shown:text-neutral-400 peer-focus:-top-3 peer-focus:p-1 peer-focus:text-[10px] peer-focus:text-neutral-400">
 					{children}
 				</label>
 			)}
@@ -59,7 +59,7 @@ export const Textarea = ({
 			/>
 			<label
 				htmlFor={Id}
-				className="bg-foreground peer-focus:bg-foreground pointer-events-none absolute -top-2.5 left-2.5 p-1 text-sm text-[10px] text-neutral-400 transition-all duration-200 ease-in-out peer-placeholder-shown:top-2 peer-placeholder-shown:text-sm peer-placeholder-shown:text-neutral-400 peer-focus:-top-3 peer-focus:p-1 peer-focus:text-[10px] peer-focus:text-neutral-400">
+				className="peer-focus:bg-background pointer-events-none absolute -top-2.5 left-2.5 p-1 text-sm text-[10px] text-neutral-400 transition-all duration-200 ease-in-out peer-placeholder-shown:top-2 peer-placeholder-shown:text-sm peer-placeholder-shown:text-neutral-400 peer-focus:-top-3 peer-focus:p-1 peer-focus:text-[10px] peer-focus:text-neutral-400">
 				{children}
 			</label>
 		</div>

@@ -99,6 +99,18 @@
 	--color-success-foreground: var(--success-foreground);
 	--color-destructive: var(--destructive);
 	--color-destructive-foreground: var(--destructive-foreground);
+
+	--animate-fade-in: fade-in 500ms forwards;
+	@keyframes fade-in {
+		0% {
+			transform: translateY(8px);
+			opacity: 0;
+		}
+		100% {
+			transform: translateY(0);
+			opacity: 1;
+		}
+	}
 }
 
 body {

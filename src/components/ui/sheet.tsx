@@ -1,5 +1,5 @@
 "use client"
-import Button from "@/components/ui/button"
+import Button, { ButtonProps } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { X } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
@@ -58,9 +58,14 @@ export type SheetTriggerProps = {
 	children: React.ReactNode
 	className?: string
 	triggerRef?: RefObject<HTMLButtonElement>
-}
+} & ButtonProps
 
-function SheetTrigger({ children, className, triggerRef }: SheetTriggerProps) {
+function SheetTrigger({
+	children,
+	className,
+	triggerRef,
+	...props
+}: SheetTriggerProps) {
 	const { toggleSheet, isOpen } = useSheet()
 
 	const handleClick = useCallback(() => {
@@ -71,7 +76,8 @@ function SheetTrigger({ children, className, triggerRef }: SheetTriggerProps) {
 		<Button
 			ref={triggerRef}
 			className={cn("", className)}
-			onClick={handleClick}>
+			onClick={handleClick}
+			{...props}>
 			{children}
 		</Button>
 	)

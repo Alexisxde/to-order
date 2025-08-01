@@ -9,18 +9,18 @@ export const buttonVariants = cva(
 		variants: {
 			variant: {
 				default:
-					"text-inverse bg-primary shadow-[inset_0_-4px_8px_rgba(76,76,76,0.8)] drop-shadow-xs drop-shadow-primary/25 ring ring-primary/25 hover:bg-primary/80",
+					"text-inverse bg-primary ring ring-primary/25 hover:bg-primary/80",
 				secondary:
-					"bg-secondary border border-secondary-foreground shadow-[inset_0_-4px_8px_rgba(21,21,21,0.8)] drop-shadow-xs drop-shadow-secondary/25 ring ring-secondary/25 hover:bg-secondary/80",
+					"bg-secondary border border-secondary-foreground ring ring-secondary/25 hover:bg-secondary/80",
 				outline:
-					"bg-transparent border border-muted shadow-[inset_0_-4px_8px_rgba(27,27,27,0.8)] drop-shadow-xs drop-shadow-muted/25 ring ring-muted/25 hover:bg-muted/80",
+					"bg-transparent border border-muted ring ring-muted/25 hover:bg-muted/80",
 				ghost:
-					"bg-transparent hover:shadow-[inset_0_-4px_8px_rgba(27,27,27,0.8)] hover:ring hover:ring-muted/25 hover:bg-muted/80",
+					"bg-transparent hover:ring hover:ring-muted/25 hover:bg-muted/80",
 				link: "bg-transparent underline-offset-4 hover:underline",
 				success:
-					"bg-success border border-success-foreground shadow-[inset_0_-4px_8px_rgba(3,75,55,0.8)] drop-shadow-xs drop-shadow-success/25 ring ring-success/25 hover:bg-success/80",
+					"bg-success border border-success-foreground ring ring-success/25 hover:bg-success/80",
 				destructive:
-					"bg-destructive border border-destructive-foreground shadow-[inset_0_-4px_8px_rgba(147,0,6,0.8)] drop-shadow-xs drop-shadow-destructive/25 ring ring-destructive/25 hover:bg-destructive/80"
+					"bg-destructive border border-destructive-foreground ring ring-destructive/25 hover:bg-destructive/80"
 			},
 			size: {
 				default: "h-9 px-4 py-2 has-[>svg]:px-3",

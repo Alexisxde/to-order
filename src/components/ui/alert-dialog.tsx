@@ -1,8 +1,8 @@
 "use client"
-import Button from "@/components/ui/button"
+import Button, { ButtonProps } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { AnimatePresence, motion } from "motion/react"
-import {
+import React, {
 	createContext,
 	RefObject,
 	useCallback,
@@ -58,12 +58,13 @@ export type AlertDialogTriggerProps = {
 	children: React.ReactNode
 	className?: string
 	triggerRef?: RefObject<HTMLButtonElement>
-}
+} & ButtonProps
 
 export function AlertDialogTrigger({
 	children,
 	className,
-	triggerRef
+	triggerRef,
+	...props
 }: AlertDialogTriggerProps) {
 	const { toggleAlertDialog, isOpen } = useAlertDialog()
 
@@ -75,7 +76,8 @@ export function AlertDialogTrigger({
 		<Button
 			ref={triggerRef}
 			className={cn("", className)}
-			onClick={handleClick}>
+			onClick={handleClick}
+			{...props}>
 			{children}
 		</Button>
 	)
@@ -120,7 +122,37 @@ export function AlertDialogDescription({
 	return <p className={cn("text-primary/80 text-sm", className)}>{children}</p>
 }
 
-export type AlertDialogContentProps = {
+export type AlertDialogOverlayProps = {
+	children: React.ReactNode
+	className?: string
+}
+
+export function AlertDialogOverlay({
+	children,
+	className
+}: AlertDialogOverlayProps) {
+	const { isOpen } = useAlertDialog()
+
+	return createPortal(
+		<AnimatePresence mode="wait">
+			{isOpen ? (
+				<motion.div
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					exit={{ opacity: 0 }}
+					className={cn(
+						"bg-background/25 fixed inset-0 z-50 flex items-center justify-center backdrop-blur-xs",
+						className
+					)}>
+					{children}
+				</motion.div>
+			) : null}
+		</AnimatePresence>,
+		document.body
+	)
+}
+
+export type AlertDialogContent = {
 	children: React.ReactNode
 	className?: string
 }
@@ -128,8 +160,8 @@ export type AlertDialogContentProps = {
 export function AlertDialogContent({
 	children,
 	className
-}: AlertDialogContentProps) {
-	const { isOpen, toggleAlertDialog } = useAlertDialog()
+}: AlertDialogOverlayProps) {
+	const { toggleAlertDialog } = useAlertDialog()
 	const containerRef = useRef<HTMLDivElement>(null)
 
 	useEffect(() => {
@@ -146,30 +178,19 @@ export function AlertDialogContent({
 		}
 	}, [toggleAlertDialog])
 
-	return createPortal(
-		<AnimatePresence mode="wait">
-			{isOpen ? (
-				<motion.div
-					initial={{ opacity: 0 }}
-					animate={{ opacity: 1 }}
-					exit={{ opacity: 0 }}
-					className="bg-background/25 fixed inset-0 z-50 flex items-center justify-center backdrop-blur-xs">
-					<motion.div
-						ref={containerRef}
-						initial={{ scale: 0 }}
-						animate={{ scale: 1 }}
-						exit={{ scale: 0 }}
-						transition={{ duration: 0.15 }}
-						className={cn(
-							"bg-background border-muted w-full max-w-lg min-w-xs rounded-md border p-4",
-							className
-						)}>
-						{children}
-					</motion.div>
-				</motion.div>
-			) : null}
-		</AnimatePresence>,
-		document.body
+	return (
+		<motion.div
+			ref={containerRef}
+			initial={{ scale: 0 }}
+			animate={{ scale: 1 }}
+			exit={{ scale: 0 }}
+			transition={{ duration: 0.15 }}
+			className={cn(
+				"bg-background border-muted w-full max-w-lg min-w-xs rounded-md border p-4",
+				className
+			)}>
+			{children}
+		</motion.div>
 	)
 }
 
@@ -192,12 +213,12 @@ export function AlertDialogFooter({
 export type AlertDialogCancelProps = {
 	children: React.ReactNode
 	className?: string
-	onClick?: () => void
-}
+} & ButtonProps
 
 export function AlertDialogCancel({
 	children,
-	className
+	className,
+	...props
 }: AlertDialogCancelProps) {
 	const { toggleAlertDialog } = useAlertDialog()
 
@@ -205,7 +226,8 @@ export function AlertDialogCancel({
 		<Button
 			variant="destructive"
 			className={cn("", className)}
-			onClick={toggleAlertDialog}>
+			onClick={toggleAlertDialog}
+			{...props}>
 			{children}
 		</Button>
 	)
@@ -214,16 +236,15 @@ export function AlertDialogCancel({
 export type AlertDialogActionProps = {
 	children: React.ReactNode
 	className?: string
-	onClick?: () => void
-}
+} & ButtonProps
 
 export function AlertDialogAction({
 	children,
 	className,
-	onClick
+	...props
 }: AlertDialogActionProps) {
 	return (
-		<Button variant="outline" className={cn("", className)} onClick={onClick}>
+		<Button variant="outline" className={cn("", className)} {...props}>
 			{children}
 		</Button>
 	)
