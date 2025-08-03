@@ -5,21 +5,15 @@ import { X } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
 import {
 	createContext,
-	RefObject,
 	useCallback,
 	useContext,
 	useEffect,
 	useMemo,
-	useRef,
-	useState
+	useRef
 } from "react"
 import { createPortal } from "react-dom"
 
-export type SheetContextType = {
-	isOpen: boolean
-	toggleSheet: () => void
-	triggerRef: RefObject<HTMLButtonElement | null>
-}
+export type SheetContextType = { isOpen: boolean; toggleSheet: () => void }
 
 const SheetContext = createContext<SheetContextType | null>(null)
 
@@ -29,17 +23,19 @@ export const useSheet = () => {
 	return context
 }
 
-export type SheetProviderProps = { children: React.ReactNode }
+export type SheetProviderProps = {
+	children: React.ReactNode
+	isOpen: boolean
+	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+}
 
-export const SheetProvider = ({ children }: SheetProviderProps) => {
-	const [isOpen, setIsOpen] = useState(false)
-	const triggerRef = useRef<HTMLButtonElement>(null!)
+export const SheetProvider = ({
+	children,
+	isOpen,
+	setIsOpen
+}: SheetProviderProps) => {
 	const toggleSheet = () => setIsOpen(prev => !prev)
-
-	const contextValue = useMemo(
-		() => ({ isOpen, toggleSheet, triggerRef }),
-		[isOpen]
-	)
+	const contextValue = useMemo(() => ({ isOpen, toggleSheet }), [isOpen])
 
 	return (
 		<SheetContext.Provider value={contextValue}>
@@ -48,24 +44,26 @@ export const SheetProvider = ({ children }: SheetProviderProps) => {
 	)
 }
 
-export type SheetProps = { children: React.ReactNode }
+export type SheetProps = {
+	children: React.ReactNode
+	isOpen: boolean
+	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+}
 
-function Sheet({ children }: SheetProps) {
-	return <SheetProvider>{children}</SheetProvider>
+function Sheet({ children, isOpen, setIsOpen }: SheetProps) {
+	return (
+		<SheetProvider isOpen={isOpen} setIsOpen={setIsOpen}>
+			{children}
+		</SheetProvider>
+	)
 }
 
 export type SheetTriggerProps = {
 	children: React.ReactNode
 	className?: string
-	triggerRef?: RefObject<HTMLButtonElement>
 } & ButtonProps
 
-function SheetTrigger({
-	children,
-	className,
-	triggerRef,
-	...props
-}: SheetTriggerProps) {
+function SheetTrigger({ children, className, ...props }: SheetTriggerProps) {
 	const { toggleSheet, isOpen } = useSheet()
 
 	const handleClick = useCallback(() => {
@@ -73,11 +71,7 @@ function SheetTrigger({
 	}, [isOpen, toggleSheet])
 
 	return (
-		<Button
-			ref={triggerRef}
-			className={cn("", className)}
-			onClick={handleClick}
-			{...props}>
+		<Button className={cn("", className)} onClick={handleClick} {...props}>
 			{children}
 		</Button>
 	)

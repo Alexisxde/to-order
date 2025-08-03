@@ -1,12 +1,12 @@
-import GetStartedButton from "@/components/button-get-started"
 import SignInButton from "@/components/button-sign-in"
 import { createClientForServer } from "@/supabase/server"
+import { ArrowRight } from "lucide-react"
+import Button from "./ui/button"
 
 export default async function Hero() {
 	const supabase = await createClientForServer()
-	const {
-		data: { user }
-	} = await supabase.auth.getUser()
+	const { data } = await supabase.auth.getUser()
+	const { user } = data
 
 	return (
 		<section className="relative mx-auto flex w-full max-w-3xl flex-col items-center p-10 pt-24">
@@ -19,7 +19,14 @@ export default async function Hero() {
 				control.
 			</p>
 			<div className="mt-4">
-				{user ? <GetStartedButton /> : <SignInButton />}
+				{user ? (
+					<Button href="/app">
+						Get Started
+						<ArrowRight />
+					</Button>
+				) : (
+					<SignInButton />
+				)}
 			</div>
 		</section>
 	)

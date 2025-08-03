@@ -1,30 +1,28 @@
 "use client"
 import { cn } from "@/lib/utils"
-import { VariantProps, cva } from "class-variance-authority"
-import React, { forwardRef } from "react"
+import { cva, VariantProps } from "class-variance-authority"
+import React, { forwardRef, MouseEvent, useEffect, useState } from "react"
 
 export const buttonVariants = cva(
-	"relative text-primary inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all duration-200 ease-in-out [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-6 shrink-0 [&_svg]:shrink-0 cursor-pointer focus:outline-none",
+	"inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all duration-200 ease-in-out [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-6 shrink-0 [&_svg]:shrink-0 cursor-pointer focus:outline-none overflow-hidden",
 	{
 		variants: {
 			variant: {
 				default:
-					"text-inverse bg-primary ring ring-primary/25 hover:bg-primary/80",
+					"bg-primary text-primary-foreground shadow-xs hover:bg-primary/80",
 				secondary:
-					"bg-secondary border border-secondary-foreground ring ring-secondary/25 hover:bg-secondary/80",
-				outline:
-					"bg-transparent border border-muted ring ring-muted/25 hover:bg-muted/80",
+					"text-secondary-foreground bg-secondary shadow-xs hover:bg-secondary/80",
 				ghost:
-					"bg-transparent hover:ring hover:ring-muted/25 hover:bg-muted/80",
+					"hover:bg-muted text-secondary-foreground dark:hover:bg-muted/50",
+				outline:
+					"border bg-background shadow-xs border border-border ring ring-muted/25 hover:bg-muted/80 hover:text-accent-foreground",
 				link: "bg-transparent underline-offset-4 hover:underline",
-				success:
-					"bg-success border border-success-foreground ring ring-success/25 hover:bg-success/80",
 				destructive:
-					"bg-destructive border border-destructive-foreground ring ring-destructive/25 hover:bg-destructive/80"
+					"bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60"
 			},
 			size: {
 				default: "h-9 px-4 py-2 has-[>svg]:px-3",
-				sm: "h-8 rounded-sm px-3 gap-1.5 has-[>svg]:px-2.5",
+				sm: "h-8 rounded-md px-3 gap-1.5 has-[>svg]:px-2.5",
 				lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
 				icon: "size-9"
 			},
@@ -48,41 +46,84 @@ export const buttonVariants = cva(
 	}
 )
 
-export interface ButtonProps
+interface RippleButtonProps
 	extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "disabled">,
 		VariantProps<typeof buttonVariants> {
-	href?: string
+	rippleColor?: string
+	duration?: string
 }
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+const Button = forwardRef<HTMLButtonElement, RippleButtonProps>(
 	(
-		{ className, children, onClick, variant, size, disabled, href, ...rest },
+		{
+			className,
+			children,
+			rippleColor = "#ffffff75",
+			duration = "600ms",
+			onClick,
+			variant,
+			size,
+			disabled,
+			...props
+		},
 		ref
 	) => {
+		const [buttonRipples, setButtonRipples] = useState<
+			Array<{ x: number; y: number; size: number; key: number }>
+		>([])
+
+		const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+			createRipple(event)
+			onClick?.(event)
+		}
+
+		const createRipple = (event: MouseEvent<HTMLButtonElement>) => {
+			const button = event.currentTarget
+			const rect = button.getBoundingClientRect()
+			const size = Math.max(rect.width, rect.height)
+			const x = event.clientX - rect.left - size / 2
+			const y = event.clientY - rect.top - size / 2
+
+			const newRipple = { x, y, size, key: Date.now() }
+			setButtonRipples(prevRipples => [...prevRipples, newRipple])
+		}
+
+		useEffect(() => {
+			if (buttonRipples.length > 0) {
+				const lastRipple = buttonRipples[buttonRipples.length - 1]
+				const timeout = setTimeout(() => {
+					setButtonRipples(prevRipples =>
+						prevRipples.filter(ripple => ripple.key !== lastRipple.key)
+					)
+				}, parseInt(duration))
+				return () => clearTimeout(timeout)
+			}
+		}, [buttonRipples, duration])
+
 		return (
-			<>
-				{href ? (
-					<a
-						href={href}
-						className={cn(
-							buttonVariants({ variant, size, disabled }),
-							className
-						)}>
-						{children}
-					</a>
-				) : (
-					<button
-						ref={ref}
-						className={cn(
-							buttonVariants({ variant, size, disabled }),
-							className
-						)}
-						onClick={onClick}
-						{...rest}>
-						{children}
-					</button>
-				)}
-			</>
+			<button
+				className={cn(buttonVariants({ variant, size, disabled }), className)}
+				onClick={handleClick}
+				ref={ref}
+				{...props}>
+				<div className="relative z-10">{children}</div>
+				<span className="pointer-events-none absolute inset-0">
+					{buttonRipples.map(ripple => (
+						<span
+							className="animate-rippling bg-background absolute rounded-full opacity-30"
+							key={ripple.key}
+							style={{
+								width: `${ripple.size}px`,
+								height: `${ripple.size}px`,
+								top: `${ripple.y}px`,
+								left: `${ripple.x}px`,
+								backgroundColor: rippleColor,
+								transform: `scale(0)`
+							}}
+						/>
+					))}
+				</span>
+			</button>
 		)
 	}
 )
