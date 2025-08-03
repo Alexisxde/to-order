@@ -46,14 +46,14 @@ export const buttonVariants = cva(
 	}
 )
 
-interface RippleButtonProps
+export interface ButtonProps
 	extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "disabled">,
 		VariantProps<typeof buttonVariants> {
 	rippleColor?: string
 	duration?: string
 }
 
-const Button = forwardRef<HTMLButtonElement, RippleButtonProps>(
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 	(
 		{
 			className,
