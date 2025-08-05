@@ -17,11 +17,7 @@ export default function Sidebar() {
 				<a
 					href="/"
 					className="bg-secondary-foreground dark:bg-primary-foreground mb-2 flex size-[44px] items-center justify-center rounded-md">
-					<img
-						src="/yalo-logo.svg.svg"
-						alt="Yalo Logo SVG"
-						className="size-6"
-					/>
+					<img src="/yalo-logo.svg" alt="Yalo Logo SVG" className="size-6" />
 				</a>
 				<div className="border-muted w-full rounded-full border-b" />
 				<nav className="flex w-full flex-col items-center gap-1">
