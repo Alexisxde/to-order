@@ -1,18 +1,16 @@
 "use client"
-import Button, { ButtonProps } from "@/components/ui/button"
+import useClickOutside from "@/hooks/useClickOutside"
 import { cn } from "@/lib/utils"
+import { X } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
-import React, {
-	createContext,
-	useCallback,
-	useContext,
-	useEffect,
-	useMemo,
-	useRef
-} from "react"
-import { createPortal } from "react-dom"
+import React, { createContext, useContext, useId, useMemo, useRef } from "react"
+import Button, { ButtonProps } from "./button"
 
-export type DialogContextType = { isOpen: boolean; toggleDialog: () => void }
+export type DialogContextType = {
+	idDialog?: string
+	isOpen: boolean
+	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+}
 
 const DialogContext = createContext<DialogContextType | null>(null)
 
@@ -34,11 +32,11 @@ export const DialogProvider = ({
 	isOpen,
 	setIsOpen
 }: DialogProviderProps) => {
-	const toggleDialog = () => {
-		document.body.classList.toggle("overflow-hidden")
-		setIsOpen(prev => !prev)
-	}
-	const contextValue = useMemo(() => ({ isOpen, toggleDialog }), [isOpen])
+	const idDialog = useId()
+	const contextValue = useMemo(
+		() => ({ idDialog, isOpen, setIsOpen }),
+		[isOpen]
+	)
 
 	return (
 		<DialogContext.Provider value={contextValue}>
@@ -59,87 +57,105 @@ export const Dialog = ({
 	)
 }
 
-export type DialogTriggerProps = {
-	children: React.ReactNode
-	className?: string
-} & ButtonProps
+export type DialogTriggerProps = ButtonProps
 
 export function DialogTrigger({
 	children,
 	className,
 	...props
 }: DialogTriggerProps) {
-	const { toggleDialog, isOpen } = useDialog()
-
-	const handleClick = useCallback(() => {
-		toggleDialog()
-	}, [isOpen, toggleDialog])
+	const { idDialog, setIsOpen } = useDialog()
 
 	return (
-		<Button className={cn("", className)} onClick={handleClick} {...props}>
-			{children}
-		</Button>
-	)
-}
-
-export type DialogOverlayProps = {
-	children: React.ReactNode
-	className?: string
-}
-
-export function DialogOverlay({ children, className }: DialogOverlayProps) {
-	const { isOpen } = useDialog()
-
-	return createPortal(
-		<AnimatePresence mode="wait">
-			{isOpen ? (
-				<motion.div
-					initial={{ opacity: 0 }}
-					animate={{ opacity: 1 }}
-					exit={{ opacity: 0 }}
-					className={cn(
-						"bg-background/25 fixed inset-0 z-50 flex items-center justify-center backdrop-blur-xs",
-						className
-					)}>
-					{children}
-				</motion.div>
-			) : null}
-		</AnimatePresence>,
-		document.body
+		<motion.div layoutId={`dialog-{${idDialog}`}>
+			<Button
+				className={cn("", className)}
+				onClick={() => setIsOpen(true)}
+				{...props}>
+				{children}
+			</Button>
+		</motion.div>
 	)
 }
 
 export type DialogContent = { children: React.ReactNode; className?: string }
 
 export function DialogContent({ children, className }: DialogContent) {
-	const { toggleDialog } = useDialog()
-	const diaRef = useRef<HTMLDivElement>(null)
+	const { idDialog, isOpen, setIsOpen } = useDialog()
+	const diaRef = useRef<HTMLDivElement>(null!)
 
-	useEffect(() => {
-		const handleClickOutside = (e: MouseEvent) => {
-			if (diaRef.current && !diaRef.current.contains(e.target as Node))
-				toggleDialog()
-		}
-		document.addEventListener("mousedown", handleClickOutside)
-		return () => {
-			document.removeEventListener("mousedown", handleClickOutside)
-		}
-	}, [toggleDialog])
+	useClickOutside(diaRef, () => {
+		if (!isOpen) setIsOpen(false)
+	})
 
 	return (
-		<DialogOverlay>
-			<motion.div
-				ref={diaRef}
-				initial={{ scale: 0.85, opacity: 0 }}
-				animate={{ scale: 1, opacity: 1 }}
-				exit={{ scale: 0.85, opacity: 0 }}
-				transition={{ duration: 0.15 }}
-				className={cn(
-					"bg-background border-muted w-full max-w-lg min-w-xs rounded-md border p-4",
-					className
-				)}>
-				{children}
-			</motion.div>
-		</DialogOverlay>
+		<div className="relative">
+			<AnimatePresence mode="wait">
+				{isOpen && (
+					<motion.div
+						layoutId={`dialog-{${idDialog}`}
+						ref={diaRef}
+						initial={{
+							opacity: 0,
+							filter: "blur(4px)",
+							transition: {
+								type: "spring",
+								stiffness: 150,
+								damping: 25,
+								when: "afterChildren",
+								staggerChildren: 0.1
+							}
+						}}
+						animate={{
+							opacity: 1,
+							filter: "blur(0px)",
+							transition: {
+								type: "spring",
+								stiffness: 150,
+								damping: 25,
+								when: "beforeChildren",
+								staggerChildren: 0.1
+							}
+						}}
+						className={cn(
+							"bg-muted absolute -top-4 -right-4 z-50 h-[200px] w-[400px] origin-top rounded-lg",
+							className
+						)}>
+						{children}
+					</motion.div>
+				)}
+			</AnimatePresence>
+		</div>
+	)
+}
+
+export interface DialogHeaderProps extends React.ComponentPropsWithRef<"div"> {}
+
+export function DialogHeader({ children, className }: DialogHeaderProps) {
+	return (
+		<div className={cn("flex items-center justify-between p-4", className)}>
+			{children}
+		</div>
+	)
+}
+
+export type DialogCloseProps = ButtonProps
+
+export function DialogClose({
+	children,
+	className,
+	...props
+}: DialogCloseProps) {
+	const { setIsOpen } = useDialog()
+
+	return (
+		<Button
+			variant={"ghost"}
+			size={"icon"}
+			className="rounded-full"
+			onClick={() => setIsOpen(false)}
+			{...props}>
+			{children ?? <X />}
+		</Button>
 	)
 }

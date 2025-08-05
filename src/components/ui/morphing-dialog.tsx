@@ -1,7 +1,8 @@
 "use client"
 
+import useClickOutside from "@/hooks/useClickOutside"
 import { cn } from "@/lib/utils"
-import { XIcon } from "lucide-react"
+import { X } from "lucide-react"
 import {
 	AnimatePresence,
 	motion,
@@ -19,6 +20,7 @@ import React, {
 	useState
 } from "react"
 import { createPortal } from "react-dom"
+import Button, { ButtonProps, buttonVariants } from "./button"
 
 export type MorphingDialogContextType = {
 	isOpen: boolean
@@ -70,7 +72,10 @@ export type MorphingDialogProps = {
 	transition?: Transition
 }
 
-function MorphingDialog({ children, transition }: MorphingDialogProps) {
+function MorphingDialog({
+	children,
+	transition = { type: "spring", stiffness: 200, damping: 24 }
+}: MorphingDialogProps) {
 	return (
 		<MorphingDialogProvider>
 			<MotionConfig transition={transition}>{children}</MotionConfig>
@@ -79,16 +84,17 @@ function MorphingDialog({ children, transition }: MorphingDialogProps) {
 }
 
 export type MorphingDialogTriggerProps = {
-	children: React.ReactNode
-	className?: string
 	style?: React.CSSProperties
 	triggerRef?: React.RefObject<HTMLButtonElement>
-}
+} & ButtonProps
 
 function MorphingDialogTrigger({
 	children,
 	className,
 	style,
+	variant = "outline",
+	size = "sm",
+	disabled = false,
 	triggerRef
 }: MorphingDialogTriggerProps) {
 	const { setIsOpen, isOpen, uniqueId } = useMorphingDialog()
@@ -109,9 +115,9 @@ function MorphingDialogTrigger({
 
 	return (
 		<motion.button
-			ref={triggerRef}
 			layoutId={`dialog-${uniqueId}`}
-			className={cn("relative cursor-pointer", className)}
+			ref={triggerRef}
+			className={cn(buttonVariants({ variant, size, disabled }), className)}
 			onClick={handleClick}
 			onKeyDown={handleKeyDown}
 			style={style}
@@ -190,25 +196,19 @@ function MorphingDialogContent({
 		}
 	}, [isOpen, triggerRef])
 
-	useEffect(() => {
-		const handleClickOutside = (event: MouseEvent) => {
-			if (
-				containerRef.current &&
-				!containerRef.current.contains(event.target as Node)
-			)
-				setIsOpen(false)
-		}
-		document.addEventListener("mousedown", handleClickOutside)
-		return () => {
-			document.removeEventListener("mousedown", handleClickOutside)
-		}
-	}, [setIsOpen])
+	useClickOutside(containerRef, () => {
+		if (isOpen) setIsOpen(false)
+	})
 
 	return (
 		<motion.div
 			ref={containerRef}
 			layoutId={`dialog-${uniqueId}`}
-			className={cn("overflow-hidden", className)}
+			animate={{ opacity: 1 }}
+			className={cn(
+				"bg-background border-border relative overflow-hidden rounded-lg border p-4",
+				className
+			)}
 			style={style}
 			role="dialog"
 			aria-modal="true"
@@ -242,7 +242,7 @@ function MorphingDialogContainer({ children }: MorphingDialogContainerProps) {
 				<>
 					<motion.div
 						key={`backdrop-${uniqueId}`}
-						className="fixed inset-0 h-full w-full bg-white/40 backdrop-blur-xs dark:bg-black/40"
+						className="fixed inset-0 z-50 h-full w-full bg-white/40 backdrop-blur-xs dark:bg-black/40"
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						exit={{ opacity: 0 }}
@@ -364,16 +364,12 @@ function MorphingDialogImage({
 	)
 }
 
-export type MorphingDialogCloseProps = {
-	children?: React.ReactNode
-	className?: string
-	variants?: { initial: Variant; animate: Variant; exit: Variant }
-}
+export type MorphingDialogCloseProps = {} & ButtonProps
 
 function MorphingDialogClose({
 	children,
 	className,
-	variants
+	...props
 }: MorphingDialogCloseProps) {
 	const { setIsOpen, uniqueId } = useMorphingDialog()
 
@@ -382,18 +378,15 @@ function MorphingDialogClose({
 	}, [setIsOpen])
 
 	return (
-		<motion.button
-			onClick={handleClose}
-			type="button"
-			aria-label="Close dialog"
+		<Button
 			key={`dialog-close-${uniqueId}`}
-			className={cn("absolute top-6 right-6", className)}
-			initial="initial"
-			animate="animate"
-			exit="exit"
-			variants={variants}>
-			{children || <XIcon size={24} />}
-		</motion.button>
+			variant={"ghost"}
+			size={"icon"}
+			onClick={handleClose}
+			className={cn("absolute top-6 right-6 rounded-full", className)}
+			{...props}>
+			{children ?? <X />}
+		</Button>
 	)
 }
 

@@ -1,5 +1,6 @@
 "use client"
 
+import useClickOutside from "@/hooks/useClickOutside"
 import { cn } from "@/lib/utils"
 import {
 	AnimatePresence,
@@ -62,6 +63,13 @@ function usePopoverLogic({
 	return { isOpen, open, close, uniqueId }
 }
 
+export function usePopover() {
+	const context = useContext(MorphingPopoverContext)
+	if (!context)
+		throw new Error("usePopover must be used within a PopoverProvider")
+	return context
+}
+
 export type MorphingPopoverProps = {
 	children: React.ReactNode
 	transition?: Transition
@@ -110,12 +118,7 @@ function MorphingPopoverTrigger({
 	asChild = false,
 	...props
 }: MorphingPopoverTriggerProps) {
-	const context = useContext(MorphingPopoverContext)
-	if (!context) {
-		throw new Error(
-			"MorphingPopoverTrigger must be used within MorphingPopover"
-		)
-	}
+	const { open, uniqueId, isOpen } = usePopover()
 
 	if (asChild && isValidElement(children)) {
 		const MotionComponent = motion.create(
@@ -126,28 +129,28 @@ function MorphingPopoverTrigger({
 		return (
 			<MotionComponent
 				{...childProps}
-				onClick={context.open}
-				layoutId={`popover-trigger-${context.uniqueId}`}
+				onClick={open}
+				layoutId={`popover-trigger-${uniqueId}`}
 				className={childProps.className}
-				key={context.uniqueId}
-				aria-expanded={context.isOpen}
-				aria-controls={`popover-content-${context.uniqueId}`}
+				key={uniqueId}
+				aria-expanded={isOpen}
+				aria-controls={`popover-content-${uniqueId}`}
 			/>
 		)
 	}
 
 	return (
 		<motion.div
-			key={context.uniqueId}
-			layoutId={`popover-trigger-${context.uniqueId}`}
-			onClick={context.open}>
+			key={uniqueId}
+			layoutId={`popover-trigger-${uniqueId}`}
+			onClick={open}>
 			<motion.button
 				{...props}
-				layoutId={`popover-label-${context.uniqueId}`}
-				key={context.uniqueId}
+				layoutId={`popover-label-${uniqueId}`}
+				key={uniqueId}
 				className={className}
-				aria-expanded={context.isOpen}
-				aria-controls={`popover-content-${context.uniqueId}`}>
+				aria-expanded={isOpen}
+				aria-controls={`popover-content-${uniqueId}`}>
 				{children}
 			</motion.button>
 		</motion.div>
@@ -164,46 +167,34 @@ function MorphingPopoverContent({
 	className,
 	...props
 }: MorphingPopoverContentProps) {
-	const context = useContext(MorphingPopoverContext)
-	if (!context)
-		throw new Error(
-			"MorphingPopoverContent must be used within MorphingPopover"
-		)
+	const { isOpen, close, variants, uniqueId } = usePopover()
+	const ref = useRef<HTMLDivElement>(null!)
 
-	const ref = useRef<HTMLDivElement>(null)
-
-	useEffect(() => {
-		const handleClickOutside = (event: MouseEvent) => {
-			if (ref.current && !ref.current.contains(event.target as Node))
-				context.close()
-		}
-		document.addEventListener("mousedown", handleClickOutside)
-		return () => {
-			document.removeEventListener("mousedown", handleClickOutside)
-		}
-	}, [context.close])
+	useClickOutside(ref, () => {
+		if (isOpen) close()
+	})
 
 	useEffect(() => {
-		if (!context.isOpen) return
+		if (!isOpen) return
 
 		const handleKeyDown = (event: KeyboardEvent) => {
-			if (event.key === "Escape") context.close()
+			if (event.key === "Escape") close()
 		}
 
 		document.addEventListener("keydown", handleKeyDown)
 		return () => document.removeEventListener("keydown", handleKeyDown)
-	}, [context.isOpen, context.close])
+	}, [isOpen, close])
 
 	return (
 		<AnimatePresence>
-			{context.isOpen && (
+			{isOpen && (
 				<>
 					<motion.div
 						{...props}
 						ref={ref}
-						layoutId={`popover-trigger-${context.uniqueId}`}
-						key={context.uniqueId}
-						id={`popover-content-${context.uniqueId}`}
+						layoutId={`popover-trigger-${uniqueId}`}
+						key={uniqueId}
+						id={`popover-content-${uniqueId}`}
 						role="dialog"
 						aria-modal="true"
 						className={cn(
@@ -213,7 +204,7 @@ function MorphingPopoverContent({
 						initial="initial"
 						animate="animate"
 						exit="exit"
-						variants={context.variants}>
+						variants={variants}>
 						{children}
 					</motion.div>
 				</>

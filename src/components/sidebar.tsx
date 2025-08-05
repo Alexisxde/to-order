@@ -3,12 +3,10 @@ import SignOutButton from "@/components/button-sign-out"
 import { cn } from "@/lib/utils"
 import { House, LogOut } from "lucide-react"
 import { motion } from "motion/react"
-import { useRouter } from "next/navigation"
 import { Fragment } from "react"
 import { buttonVariants } from "./ui/button"
 
 export default function Sidebar() {
-	const router = useRouter()
 	const navItems = [[{ name: "Inicio", href: "/app", icon: <House /> }]]
 
 	return (
@@ -18,10 +16,10 @@ export default function Sidebar() {
 			<div className="flex w-full flex-col gap-2">
 				<a
 					href="/"
-					className="bg-primary-foreground mb-2 flex size-[44px] items-center justify-center rounded-md">
+					className="bg-secondary-foreground dark:bg-primary-foreground mb-2 flex size-[44px] items-center justify-center rounded-md">
 					<img
-						src="/toorder-logo.svg"
-						alt="ToOrder Logo SVG"
+						src="/yalo-logo.svg.svg"
+						alt="Yalo Logo SVG"
 						className="size-6"
 					/>
 				</a>
@@ -30,9 +28,8 @@ export default function Sidebar() {
 					{navItems.map((item, index) => (
 						<Fragment key={index}>
 							{item.map((item, subIndex) => (
-								<div className="relative">
+								<div key={subIndex} className="relative">
 									<a
-										key={subIndex}
 										href={item.href}
 										className={cn(
 											buttonVariants({ variant: "ghost", size: "icon" }),

@@ -22,7 +22,7 @@ export default async function Hero() {
 				{user ? (
 					<Button href="/app">
 						Get Started
-						<ArrowRight />
+						<ArrowRight className="size-4" />
 					</Button>
 				) : (
 					<SignInButton />

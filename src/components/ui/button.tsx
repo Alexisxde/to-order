@@ -1,10 +1,11 @@
 "use client"
 import { cn } from "@/lib/utils"
 import { cva, VariantProps } from "class-variance-authority"
-import React, { forwardRef, MouseEvent, useEffect, useState } from "react"
+import { useTheme } from "next-themes"
+import React, { MouseEvent, useEffect, useState } from "react"
 
 export const buttonVariants = cva(
-	"inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all duration-200 ease-in-out [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-6 shrink-0 [&_svg]:shrink-0 cursor-pointer focus:outline-none overflow-hidden",
+	"relative flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all duration-200 ease-in-out [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-6 shrink-0 [&_svg]:shrink-0 cursor-pointer focus:outline-none overflow-hidden active:scale-[0.97]",
 	{
 		variants: {
 			variant: {
@@ -46,67 +47,70 @@ export const buttonVariants = cva(
 	}
 )
 
-export interface ButtonProps
-	extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "disabled">,
-		VariantProps<typeof buttonVariants> {
+export type ButtonProps = VariantProps<typeof buttonVariants> & {
+	href?: string
 	rippleColor?: string
 	duration?: string
-}
+} & React.ComponentPropsWithRef<"button">
 
-const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-	(
-		{
-			className,
-			children,
-			rippleColor = "#ffffff75",
-			duration = "600ms",
-			onClick,
-			variant,
-			size,
-			disabled,
-			...props
-		},
-		ref
-	) => {
-		const [buttonRipples, setButtonRipples] = useState<
-			Array<{ x: number; y: number; size: number; key: number }>
-		>([])
+export function Button({
+	className,
+	children,
+	rippleColor,
+	duration = "600ms",
+	onClick,
+	variant,
+	size,
+	disabled,
+	href,
+	ref,
+	...props
+}: ButtonProps) {
+	const [buttonRipples, setButtonRipples] = useState<
+		Array<{ x: number; y: number; size: number; key: number }>
+	>([])
+	const { theme } = useTheme()
+	if (theme === "dark" && !rippleColor) rippleColor = "#fdfdfd75"
+	else if (theme === "light" && !rippleColor) rippleColor = "#20212775"
 
-		const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
-			createRipple(event)
-			onClick?.(event)
+	const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+		createRipple(event)
+		onClick?.(event)
+	}
+
+	const createRipple = (event: MouseEvent<HTMLButtonElement>) => {
+		const button = event.currentTarget
+		const rect = button.getBoundingClientRect()
+		const size = Math.max(rect.width, rect.height)
+		const x = event.clientX - rect.left - size / 2
+		const y = event.clientY - rect.top - size / 2
+
+		const newRipple = { x, y, size, key: Date.now() }
+		setButtonRipples(prevRipples => [...prevRipples, newRipple])
+	}
+
+	useEffect(() => {
+		if (buttonRipples.length > 0) {
+			const lastRipple = buttonRipples[buttonRipples.length - 1]
+			const timeout = setTimeout(() => {
+				setButtonRipples(prevRipples =>
+					prevRipples.filter(ripple => ripple.key !== lastRipple.key)
+				)
+			}, parseInt(duration))
+			return () => clearTimeout(timeout)
 		}
+	}, [buttonRipples, duration])
 
-		const createRipple = (event: MouseEvent<HTMLButtonElement>) => {
-			const button = event.currentTarget
-			const rect = button.getBoundingClientRect()
-			const size = Math.max(rect.width, rect.height)
-			const x = event.clientX - rect.left - size / 2
-			const y = event.clientY - rect.top - size / 2
-
-			const newRipple = { x, y, size, key: Date.now() }
-			setButtonRipples(prevRipples => [...prevRipples, newRipple])
-		}
-
-		useEffect(() => {
-			if (buttonRipples.length > 0) {
-				const lastRipple = buttonRipples[buttonRipples.length - 1]
-				const timeout = setTimeout(() => {
-					setButtonRipples(prevRipples =>
-						prevRipples.filter(ripple => ripple.key !== lastRipple.key)
-					)
-				}, parseInt(duration))
-				return () => clearTimeout(timeout)
-			}
-		}, [buttonRipples, duration])
-
+	if (href) {
 		return (
-			<button
+			<a
+				href={href}
 				className={cn(buttonVariants({ variant, size, disabled }), className)}
 				onClick={handleClick}
-				ref={ref}
 				{...props}>
-				<div className="relative z-10">{children}</div>
+				<div className="relative z-10 flex items-center justify-center gap-1.5">
+					{children}
+				</div>
 				<span className="pointer-events-none absolute inset-0">
 					{buttonRipples.map(ripple => (
 						<span
@@ -123,9 +127,37 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 						/>
 					))}
 				</span>
-			</button>
+			</a>
 		)
 	}
-)
+
+	return (
+		<button
+			className={cn(buttonVariants({ variant, size, disabled }), className)}
+			onClick={handleClick}
+			ref={ref}
+			{...props}>
+			<div className="relative z-10 flex items-center justify-center gap-1.5">
+				{children}
+			</div>
+			<span className="pointer-events-none absolute inset-0">
+				{buttonRipples.map(ripple => (
+					<span
+						className="animate-rippling bg-background absolute rounded-full opacity-30"
+						key={ripple.key}
+						style={{
+							width: `${ripple.size}px`,
+							height: `${ripple.size}px`,
+							top: `${ripple.y}px`,
+							left: `${ripple.x}px`,
+							backgroundColor: rippleColor,
+							transform: `scale(0)`
+						}}
+					/>
+				))}
+			</span>
+		</button>
+	)
+}
 
 export default Button

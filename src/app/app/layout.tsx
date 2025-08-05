@@ -1,13 +1,13 @@
 import Footer from "@/components/footer"
 import Header from "@/components/header"
 import Sidebar from "@/components/sidebar"
+import { Toast, ToastProvider } from "@/components/ui/toast"
 import { ProjectProvider } from "@/providers/project-provider"
-import { SidebarProvider } from "@/providers/sidebar-provider"
 import { createClientForServer } from "@/supabase/server"
 import type { Metadata } from "next"
 import { redirect } from "next/navigation"
 
-export const metadata: Metadata = { title: "ToOrder - App" }
+export const metadata: Metadata = { title: "Yalo" }
 
 export default async function AppLayout({
 	children
@@ -17,9 +17,9 @@ export default async function AppLayout({
 	if (!data.user) return redirect("/")
 
 	return (
-		<SidebarProvider>
+		<ToastProvider>
 			<ProjectProvider>
-				<section className="flex">
+				<section className="flex overflow-hidden">
 					<Sidebar />
 					<section className="flex w-full flex-col">
 						<Header user={data.user.user_metadata} />
@@ -28,6 +28,7 @@ export default async function AppLayout({
 					</section>
 				</section>
 			</ProjectProvider>
-		</SidebarProvider>
+			<Toast />
+		</ToastProvider>
 	)
 }
