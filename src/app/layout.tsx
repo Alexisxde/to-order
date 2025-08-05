@@ -16,7 +16,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
 	return (
 		<html lang="es" className="dark" style={{ colorScheme: "dark" }}>
-			<link rel="icon" href="/toorder-logo.svg" type="image/svg+xml" />
+			<link rel="icon" href="/yalo-logo.svg" type="image/svg+xml" />
 			<body className={`${poppins.className}`}>
 				<ThemeProvider attribute="class">{children}</ThemeProvider>
 			</body>
