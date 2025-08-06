@@ -1,4 +1,3 @@
-import { Button, type ButtonProps } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import {
 	AnimatePresence,
@@ -10,7 +9,7 @@ import {
 } from "motion/react"
 import React, {
 	createContext,
-	useCallback,
+	isValidElement,
 	useContext,
 	useId,
 	useMemo
@@ -69,24 +68,38 @@ export const DragDrawer = ({
 export type DragDrawerTriggerProps = {
 	children: React.ReactNode
 	className?: string
-} & ButtonProps
+	asChild?: boolean
+} & React.ComponentProps<typeof motion.button>
 
 export function DragDrawerTrigger({
 	children,
 	className,
+	asChild = false,
 	...props
 }: DragDrawerTriggerProps) {
 	const { setIsOpen } = useDragDrawer()
-	const handleClick = useCallback(() => setIsOpen(true), [setIsOpen])
+
+	if (asChild && isValidElement(children)) {
+		const MotionComponent = motion.create(
+			children.type as React.ForwardRefExoticComponent<any>
+		)
+		const childProps = children.props as Record<string, unknown>
+
+		return (
+			<MotionComponent
+				{...childProps}
+				onClick={() => setIsOpen(true)}
+				className={childProps.className}
+			/>
+		)
+	}
 
 	return (
-		<Button
-			variant={"outline"}
-			className={cn("", className)}
-			onClick={handleClick}
-			{...props}>
-			{children}
-		</Button>
+		<motion.div onClick={() => setIsOpen(true)}>
+			<motion.button {...props} className={className}>
+				{children}
+			</motion.button>
+		</motion.div>
 	)
 }
 

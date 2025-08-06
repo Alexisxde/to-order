@@ -6,6 +6,7 @@ import { X } from "lucide-react"
 import { AnimatePresence, motion, Transition } from "motion/react"
 import React, {
 	createContext,
+	isValidElement,
 	useCallback,
 	useContext,
 	useMemo,
@@ -53,24 +54,38 @@ export const Modal = ({ children, isOpen, setIsOpen }: ModalProps) => {
 export type ModalTriggerProps = {
 	children: React.ReactNode
 	className?: string
-} & ButtonProps
+	asChild?: boolean
+} & React.ComponentProps<typeof motion.button>
 
 export function ModalTrigger({
 	children,
 	className,
+	asChild = false,
 	...props
 }: ModalTriggerProps) {
 	const { setIsOpen } = useModal()
-	const handleClick = useCallback(() => setIsOpen(true), [setIsOpen])
+
+	if (asChild && isValidElement(children)) {
+		const MotionComponent = motion.create(
+			children.type as React.ForwardRefExoticComponent<any>
+		)
+		const childProps = children.props as Record<string, unknown>
+
+		return (
+			<MotionComponent
+				{...childProps}
+				onClick={() => setIsOpen(true)}
+				className={childProps.className}
+			/>
+		)
+	}
 
 	return (
-		<Button
-			variant={"outline"}
-			className={cn("", className)}
-			onClick={handleClick}
-			{...props}>
-			{children}
-		</Button>
+		<motion.div onClick={() => setIsOpen(true)}>
+			<motion.button {...props} className={className}>
+				{children}
+			</motion.button>
+		</motion.div>
 	)
 }
 

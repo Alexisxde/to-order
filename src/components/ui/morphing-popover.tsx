@@ -197,10 +197,7 @@ function MorphingPopoverContent({
 						id={`popover-content-${uniqueId}`}
 						role="dialog"
 						aria-modal="true"
-						className={cn(
-							"absolute overflow-hidden rounded-md border border-zinc-950/10 bg-white p-2 text-zinc-950 shadow-md dark:border-zinc-50/10 dark:bg-zinc-700 dark:text-zinc-50",
-							className
-						)}
+						className={cn("absolute overflow-hidden rounded-md", className)}
 						initial="initial"
 						animate="animate"
 						exit="exit"

@@ -3,7 +3,14 @@ import useClickOutside from "@/hooks/useClickOutside"
 import { cn } from "@/lib/utils"
 import { X } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
-import React, { createContext, useContext, useId, useMemo, useRef } from "react"
+import React, {
+	createContext,
+	isValidElement,
+	useContext,
+	useId,
+	useMemo,
+	useRef
+} from "react"
 import Button, { ButtonProps } from "./button"
 
 export type DialogContextType = {
@@ -57,23 +64,40 @@ export const Dialog = ({
 	)
 }
 
-export type DialogTriggerProps = ButtonProps
+export type DialogTriggerProps = {
+	children: React.ReactNode
+	className?: string
+	asChild?: boolean
+} & React.ComponentProps<typeof motion.button>
 
 export function DialogTrigger({
 	children,
 	className,
+	asChild = false,
 	...props
 }: DialogTriggerProps) {
-	const { idDialog, setIsOpen } = useDialog()
+	const { setIsOpen } = useDialog()
+
+	if (asChild && isValidElement(children)) {
+		const MotionComponent = motion.create(
+			children.type as React.ForwardRefExoticComponent<any>
+		)
+		const childProps = children.props as Record<string, unknown>
+
+		return (
+			<MotionComponent
+				{...childProps}
+				onClick={() => setIsOpen(true)}
+				className={childProps.className}
+			/>
+		)
+	}
 
 	return (
-		<motion.div layoutId={`dialog-{${idDialog}`}>
-			<Button
-				className={cn("", className)}
-				onClick={() => setIsOpen(true)}
-				{...props}>
+		<motion.div onClick={() => setIsOpen(true)}>
+			<motion.button {...props} className={className}>
 				{children}
-			</Button>
+			</motion.button>
 		</motion.div>
 	)
 }

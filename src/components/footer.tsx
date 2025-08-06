@@ -4,7 +4,7 @@ import SparklesIcon from "@/icons/sparkles"
 
 export default function Footer() {
 	return (
-		<footer className="sticky bottom-4 flex items-center justify-end space-x-2 px-4">
+		<footer className="sticky bottom-4 hidden items-center justify-end space-x-2 px-4 md:flex">
 			<a href="https://github.com/Alexisxde/toorder" target="_blank">
 				<Badge variant="neutral">
 					<div className="flex items-center space-x-2">

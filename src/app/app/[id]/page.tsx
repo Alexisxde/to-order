@@ -1,13 +1,5 @@
 "use client"
 import Column from "@/components/column"
-import {
-	Sheet,
-	SheetContainer,
-	SheetContent,
-	SheetHeader,
-	SheetTrigger
-} from "@/components/ui/sheet"
-import { Plus } from "lucide-react"
 import { use } from "react"
 
 interface Props {
@@ -46,17 +38,6 @@ export default function Page({ params }: Props) {
 
 	return (
 		<section className="mx-auto flex flex-col overflow-y-hidden p-5 pt-2">
-			<div className="mb-2 flex items-center justify-end">
-				<Sheet>
-					<SheetTrigger variant={"outline"} size={"icon"}>
-						<Plus />
-					</SheetTrigger>
-					<SheetContent>
-						<SheetHeader>Nueva Tarea</SheetHeader>
-						<SheetContainer>Hola</SheetContainer>
-					</SheetContent>
-				</Sheet>
-			</div>
 			<div className="flex gap-4">
 				{COLUMNS.map(({ title, column, textColor, bgColor }) => (
 					<Column
