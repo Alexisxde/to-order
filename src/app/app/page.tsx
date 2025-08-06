@@ -179,7 +179,7 @@ export default function AppPage() {
 	)
 }
 
-export const FormatButton = ({
+const FormatButton = ({
 	command,
 	icon,
 	label,
