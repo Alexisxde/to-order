@@ -8,7 +8,7 @@ import {
 	type ReactNode
 } from "react"
 
-export type SidebarMode = "mobile" | "sidebar" | "dock"
+export type SidebarMode = "mobile" | "desktop"
 
 interface SidebarContextProps {
 	mode: SidebarMode
@@ -21,7 +21,7 @@ const SidebarContext = createContext<SidebarContextProps | null>(null)
 export const SidebarProvider: React.FC<{ children: ReactNode }> = ({
 	children
 }) => {
-	const [mode, setMode] = useState<SidebarMode>("dock")
+	const [mode, setMode] = useState<SidebarMode>("desktop")
 
 	const evaluateMode = useCallback(() => {
 		const width = window.innerWidth

@@ -67,8 +67,8 @@ export default function AppPage() {
 						</motion.p>
 					</div>
 				</MorphingPopoverTrigger>
-				<MorphingPopoverContent className="bg-card-foreground border-border -translate-y-[50px] rounded-3xl border p-0 md:translate-y-0">
-					<div className="flex h-[87dvh] w-full flex-col gap-2 p-2 lg:w-[93dvw]">
+				<MorphingPopoverContent className="bg-card-foreground border-border rounded-3xl border p-0 md:translate-y-0">
+					<div className="flex h-[80dvh] w-full flex-col gap-2 p-2 md:h-[87dvh] md:w-[93dvw]">
 						<div className="bg-accent border-border flex items-center justify-between rounded-3xl border p-1.5 lg:rounded-full">
 							<motion.div
 								initial={{ opacity: 0, scale: 0 }}

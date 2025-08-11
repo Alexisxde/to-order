@@ -45,13 +45,16 @@ function useMorphingDialog() {
 export type MorphingDialogProviderProps = {
 	children: React.ReactNode
 	transition?: Transition
+	isOpen: boolean
+	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 function MorphingDialogProvider({
 	children,
-	transition
+	transition,
+	isOpen,
+	setIsOpen
 }: MorphingDialogProviderProps) {
-	const [isOpen, setIsOpen] = useState(false)
 	const uniqueId = useId()
 	const triggerRef = useRef<HTMLButtonElement>(null!)
 
@@ -70,14 +73,18 @@ function MorphingDialogProvider({
 export type MorphingDialogProps = {
 	children: React.ReactNode
 	transition?: Transition
+	isOpen: boolean
+	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 function MorphingDialog({
 	children,
-	transition = { type: "spring", stiffness: 200, damping: 24 }
+	transition = { type: "spring", stiffness: 200, damping: 24 },
+	isOpen,
+	setIsOpen
 }: MorphingDialogProps) {
 	return (
-		<MorphingDialogProvider>
+		<MorphingDialogProvider isOpen={isOpen} setIsOpen={setIsOpen}>
 			<MotionConfig transition={transition}>{children}</MotionConfig>
 		</MorphingDialogProvider>
 	)
@@ -223,9 +230,14 @@ export type MorphingDialogContainerProps = {
 	children: React.ReactNode
 	className?: string
 	style?: React.CSSProperties
+	overlay?: boolean
 }
 
-function MorphingDialogContainer({ children }: MorphingDialogContainerProps) {
+function MorphingDialogContainer({
+	children,
+	className,
+	overlay = true
+}: MorphingDialogContainerProps) {
 	const { isOpen, uniqueId } = useMorphingDialog()
 	const [mounted, setMounted] = useState(false)
 
@@ -236,18 +248,28 @@ function MorphingDialogContainer({ children }: MorphingDialogContainerProps) {
 
 	if (!mounted) return null
 
+	const Overlay = () => {
+		return (
+			<motion.div
+				key={`backdrop-${uniqueId}`}
+				className="fixed inset-0 z-50 h-full w-full bg-white/40 backdrop-blur-xs dark:bg-black/40"
+				initial={{ opacity: 0 }}
+				animate={{ opacity: 1 }}
+				exit={{ opacity: 0 }}
+			/>
+		)
+	}
+
 	return createPortal(
 		<AnimatePresence initial={false} mode="sync">
 			{isOpen && (
 				<>
-					<motion.div
-						key={`backdrop-${uniqueId}`}
-						className="fixed inset-0 z-50 h-full w-full bg-white/40 backdrop-blur-xs dark:bg-black/40"
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						exit={{ opacity: 0 }}
-					/>
-					<div className="fixed inset-0 z-50 flex items-center justify-center">
+					{overlay && <Overlay />}
+					<div
+						className={cn(
+							"fixed inset-0 z-50 flex items-center justify-center",
+							className
+						)}>
 						{children}
 					</div>
 				</>

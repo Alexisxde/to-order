@@ -29,7 +29,6 @@ export default function SignOutButton({
 	return (
 		<Button
 			variant={"ghost"}
-			size={"icon"}
 			onClick={signOut}
 			className={className}
 			{...props}>
