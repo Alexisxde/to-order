@@ -45,7 +45,7 @@ export default function Sidebar({ user }: Props) {
 		{
 			title: "Tareas",
 			icon: <PackageCheck className="text-primary size-5 lg:size-full" />,
-			href: "/app/time"
+			href: "/app/task"
 		},
 		{
 			title: "Horarios",
@@ -66,7 +66,7 @@ export default function Sidebar({ user }: Props) {
 							className="bg-muted aspect-square h-full flex-1 rounded-3xl">
 							<div className="flex flex-col items-center gap-1">
 								{item.icon}
-								<span className="text-xs">{item.title}</span>
+								<span className="text-[10px]">{item.title}</span>
 							</div>
 						</Button>
 					))}
@@ -77,7 +77,7 @@ export default function Sidebar({ user }: Props) {
 								className="bg-muted aspect-square h-full flex-1 rounded-3xl">
 								<div className="flex flex-col items-center gap-1">
 									<Settings className="size-5 lg:size-full" />
-									<span className="text-xs">Opciones</span>
+									<span className="text-[10px]">Opciones</span>
 								</div>
 							</Button>
 						</DragDrawerTrigger>
@@ -149,64 +149,16 @@ export default function Sidebar({ user }: Props) {
 		)
 	}
 
-	if (mode === "desktop") {
-		return (
-			<div className="fixed bottom-2 left-1/2 z-50 max-w-full -translate-x-1/2">
-				<Dock className="items-end pb-3">
-					{data.map((item, idx) => (
-						<DockItem key={idx} className="bg-muted aspect-square rounded-full">
-							<DockLabel>{item.title}</DockLabel>
-							<DockIcon>{item.icon}</DockIcon>
-						</DockItem>
-					))}
-				</Dock>
-			</div>
-		)
-	}
-
-	// if (mode === "sidebar") {
-	// 	return (
-	// 		<motion.aside
-	// 			layout
-	// 			className="bg-background border-muted fixed top-0 z-40 flex h-dvh flex-col items-center justify-between border-r p-4">
-	// 			<div className="flex w-full flex-col gap-2">
-	// 				<a
-	// 					href="/"
-	// 					className="bg-secondary-foreground dark:bg-primary-foreground mb-2 flex size-[44px] items-center justify-center rounded-md">
-	// 					<img src="/yalo-logo.svg" alt="Yalo Logo SVG" className="size-6" />
-	// 				</a>
-	// 				<div className="border-muted w-full rounded-full border-b" />
-	// 				<nav className="flex w-full flex-col items-center gap-1">
-	// 					{navItems.map((item, index) => (
-	// 						<Fragment key={index}>
-	// 							{item.map((item, subIndex) => (
-	// 								<div key={subIndex} className="relative">
-	// 									<a
-	// 										href={item.href}
-	// 										className={cn(
-	// 											buttonVariants({ variant: "ghost", size: "icon" }),
-	// 											"peer"
-	// 										)}>
-	// 										{item.icon}
-	// 									</a>
-	// 									<div className="bg-muted text-primary pointer-events-none absolute top-1.5 left-10 z-10 hidden rounded-lg px-2 py-1 text-xs font-medium shadow-xs transition-opacity duration-200 ease-in-out peer-hover:block">
-	// 										{item.name}
-	// 									</div>
-	// 								</div>
-	// 							))}
-	// 						</Fragment>
-	// 					))}
-	// 				</nav>
-	// 			</div>
-	// 			<div className="relative flex w-full flex-col items-center gap-2">
-	// 				<SignOutButton className="peer">
-	// 					<LogOut />
-	// 				</SignOutButton>
-	// 				<div className="bg-muted text-primary pointer-events-none absolute top-1.5 left-10 z-10 hidden rounded-lg px-2 py-1 text-xs font-medium shadow-xs transition-opacity duration-200 ease-in-out peer-hover:block">
-	// 					Salir
-	// 				</div>
-	// 			</div>
-	// 		</motion.aside>
-	// )
-	// }
+	return (
+		<div className="fixed bottom-2 left-1/2 z-50 max-w-full -translate-x-1/2">
+			<Dock className="items-end pb-3">
+				{data.map((item, idx) => (
+					<DockItem key={idx} className="bg-muted aspect-square rounded-full">
+						<DockLabel>{item.title}</DockLabel>
+						<DockIcon>{item.icon}</DockIcon>
+					</DockItem>
+				))}
+			</Dock>
+		</div>
+	)
 }

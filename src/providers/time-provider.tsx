@@ -53,7 +53,6 @@ export function TimeProvider({ children }: { children: React.ReactNode }) {
 				.insert({ ...time, user_id: user?.id })
 				.select()
 
-			console.log(data)
 			if (!data) throw new Error("Error creating Time")
 			setTimes(prev => [data[0], ...prev!])
 		} catch (error) {

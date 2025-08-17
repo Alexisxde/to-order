@@ -1,8 +1,8 @@
 import Header from "@/components/header"
 import Sidebar from "@/components/sidebar"
 import { Toast, ToastProvider } from "@/components/ui/toast"
-import { ProjectProvider } from "@/providers/project-provider"
 import { SidebarProvider } from "@/providers/sidebar-provider"
+import { TasksProvider } from "@/providers/task-provider"
 import { TimeProvider } from "@/providers/time-provider"
 import { createClientForServer } from "@/supabase/server"
 import type { Metadata } from "next"
@@ -19,8 +19,8 @@ export default async function AppLayout({
 
 	return (
 		<ToastProvider>
-			<TimeProvider>
-				<ProjectProvider>
+			<TasksProvider>
+				<TimeProvider>
 					<SidebarProvider>
 						<section className="flex h-dvh w-full flex-col">
 							<Header user={data.user} />
@@ -30,8 +30,8 @@ export default async function AppLayout({
 							<Sidebar user={data.user} />
 						</section>
 					</SidebarProvider>
-				</ProjectProvider>
-			</TimeProvider>
+				</TimeProvider>
+			</TasksProvider>
 			<Toast />
 		</ToastProvider>
 	)

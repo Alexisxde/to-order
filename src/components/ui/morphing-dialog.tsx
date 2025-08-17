@@ -11,6 +11,7 @@ import {
 	Variant
 } from "motion/react"
 import React, {
+	isValidElement,
 	useCallback,
 	useContext,
 	useEffect,
@@ -20,7 +21,7 @@ import React, {
 	useState
 } from "react"
 import { createPortal } from "react-dom"
-import Button, { ButtonProps, buttonVariants } from "./button"
+import Button, { ButtonProps } from "./button"
 
 export type MorphingDialogContextType = {
 	isOpen: boolean
@@ -91,24 +92,18 @@ function MorphingDialog({
 }
 
 export type MorphingDialogTriggerProps = {
-	style?: React.CSSProperties
-	triggerRef?: React.RefObject<HTMLButtonElement>
-} & ButtonProps
+	asChild?: boolean
+	children: React.ReactNode
+	className?: string
+} & React.ComponentProps<typeof motion.button>
 
 function MorphingDialogTrigger({
 	children,
 	className,
-	style,
-	variant = "outline",
-	size = "sm",
-	disabled = false,
-	triggerRef
+	asChild = false,
+	...props
 }: MorphingDialogTriggerProps) {
-	const { setIsOpen, isOpen, uniqueId } = useMorphingDialog()
-
-	const handleClick = useCallback(() => {
-		setIsOpen(!isOpen)
-	}, [isOpen, setIsOpen])
+	const { setIsOpen, isOpen, uniqueId, triggerRef } = useMorphingDialog()
 
 	const handleKeyDown = useCallback(
 		(event: React.KeyboardEvent) => {
@@ -120,22 +115,62 @@ function MorphingDialogTrigger({
 		[isOpen, setIsOpen]
 	)
 
+	if (asChild && isValidElement(children)) {
+		const MotionComponent = motion.create(
+			children.type as React.ForwardRefExoticComponent<any>
+		)
+		const childProps = children.props as Record<string, unknown>
+
+		return (
+			<MotionComponent
+				{...childProps}
+				onClick={open}
+				ref={triggerRef}
+				layoutId={`dialog-${uniqueId}`}
+				className={childProps.className}
+				key={uniqueId}
+				aria-expanded={isOpen}
+				aria-controls={`popover-content-${uniqueId}`}
+			/>
+		)
+	}
+
 	return (
-		<motion.button
+		<motion.div
+			key={uniqueId}
 			layoutId={`dialog-${uniqueId}`}
-			ref={triggerRef}
-			className={cn(buttonVariants({ variant, size, disabled }), className)}
-			onClick={handleClick}
-			onKeyDown={handleKeyDown}
-			style={style}
-			aria-haspopup="dialog"
-			aria-expanded={isOpen}
-			aria-controls={`motion-ui-morphing-dialog-content-${uniqueId}`}
-			aria-label={`Open dialog ${uniqueId}`}>
-			{children}
-		</motion.button>
+			onClick={() => setIsOpen(true)}
+			onKeyDown={handleKeyDown}>
+			<motion.button
+				{...props}
+				ref={triggerRef}
+				layoutId={`popover-label-${uniqueId}`}
+				key={uniqueId}
+				className={className}
+				aria-haspopup="dialog"
+				aria-expanded={isOpen}
+				aria-controls={`motion-ui-morphing-dialog-content-${uniqueId}`}
+				aria-label={`Open dialog ${uniqueId}`}>
+				{children}
+			</motion.button>
+		</motion.div>
 	)
 }
+
+// export type MorphingPopoverTriggerProps = {
+//   asChild?: boolean
+//   children: React.ReactNode
+//   className?: string
+// } & React.ComponentProps<typeof motion.button>
+
+// function MorphingPopoverTrigger({
+//   children,
+//   className,
+//   asChild = false,
+//   ...props
+// }: MorphingPopoverTriggerProps) {
+
+// }
 
 export type MorphingDialogContentProps = {
 	children: React.ReactNode

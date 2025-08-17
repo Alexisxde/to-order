@@ -54,11 +54,6 @@ export default function Page() {
 		setIsOpen(false)
 	}
 
-	const handleClose = () => {
-		reset()
-		setIsOpen(false)
-	}
-
 	return (
 		<section>
 			<header className="flex items-center justify-between px-4 py-2">
@@ -194,9 +189,6 @@ export default function Page() {
 								</div>
 								{errors.color && <Error message={errors.color.message} />}
 								<div className="flex items-center justify-end gap-2">
-									<Button onClick={handleClose} variant={"ghost"}>
-										Cancel
-									</Button>
 									<Button form="form-created-time" type="submit">
 										Guardar
 									</Button>
