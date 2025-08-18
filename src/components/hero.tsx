@@ -26,7 +26,7 @@ export default async function Hero() {
 						"radial-gradient(50% 50% at 50% 50%, transparent 20%, var(--card) 100%)"
 				}}
 			/>
-			<Text label="Yalo" />
+			<Text label="toOrder" />
 			<p className="text-primary/80 z-2 mb-4 w-full max-w-xs text-center text-sm lg:max-w-lg lg:text-base">
 				Tu espacio para notas, lista de tareas, siempre accesible en todos tus
 				dispositivos

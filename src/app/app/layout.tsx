@@ -1,4 +1,3 @@
-import Header from "@/components/header"
 import Sidebar from "@/components/sidebar"
 import { Toast, ToastProvider } from "@/components/ui/toast"
 import { SidebarProvider } from "@/providers/sidebar-provider"
@@ -23,7 +22,6 @@ export default async function AppLayout({
 				<TimeProvider>
 					<SidebarProvider>
 						<section className="flex h-dvh w-full flex-col">
-							<Header user={data.user} />
 							<main className="max-w-8xl mx-auto w-full flex-1">
 								{children}
 							</main>

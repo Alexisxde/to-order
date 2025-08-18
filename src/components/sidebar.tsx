@@ -45,7 +45,7 @@ export default function Sidebar({ user }: Props) {
 		{
 			title: "Tareas",
 			icon: <PackageCheck className="text-primary size-5 lg:size-full" />,
-			href: "/app/task"
+			href: "/app/tasks"
 		},
 		{
 			title: "Horarios",

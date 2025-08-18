@@ -15,7 +15,7 @@ const poppins = Poppins({
 	subsets: ["latin"]
 })
 
-export const metadata: Metadata = { title: "Yalo" }
+export const metadata: Metadata = { title: "toOrder" }
 
 export default function RootLayout({
 	children
