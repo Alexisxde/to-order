@@ -168,7 +168,7 @@ export function DragDrawerContent({ children, className }: DragDrawerContent) {
 				exit={{ y: "100%" }}
 				transition={{ ease: "easeInOut" }}
 				className={cn(
-					"bg-card-foreground absolute bottom-0 z-50 h-[50dvh] w-full overflow-hidden rounded-t-2xl",
+					"bg-card absolute bottom-0 z-50 h-[50dvh] w-full overflow-hidden rounded-t-2xl",
 					className
 				)}
 				style={{ y }}
@@ -182,7 +182,7 @@ export function DragDrawerContent({ children, className }: DragDrawerContent) {
 				dragElastic={{ top: 0, bottom: 0.5 }}>
 				<button
 					onPointerDown={e => controls.start(e)}
-					className="bg-card-foreground absolute top-0 right-0 left-0 z-10 flex cursor-grab touch-none justify-center p-2 active:cursor-grabbing">
+					className="bg-card absolute top-0 right-0 left-0 z-10 flex cursor-grab touch-none justify-center p-2 active:cursor-grabbing">
 					<div className="bg-primary/80 h-1 w-12 rounded-full"></div>
 				</button>
 				<div className="relative z-0 size-full overflow-hidden p-4 pt-12 select-none">

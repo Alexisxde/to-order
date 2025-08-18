@@ -54,7 +54,7 @@ export default function AppPage() {
 				transition={{ type: "spring", bounce: 0.05, duration: 0.3 }}
 				open={isOpen}
 				onOpenChange={setIsOpen}>
-				<MorphingPopoverTrigger className="bg-card-foreground border-border size-full cursor-pointer rounded-xl border px-3">
+				<MorphingPopoverTrigger className="bg-card border-border size-full cursor-pointer rounded-xl border px-3">
 					<div className="flex h-[200px] w-[324px] flex-col items-start px-1 py-2 lg:w-[364px]">
 						<span className="text-primary text-base select-none">
 							Nota rápida
@@ -67,7 +67,7 @@ export default function AppPage() {
 						</motion.p>
 					</div>
 				</MorphingPopoverTrigger>
-				<MorphingPopoverContent className="bg-card-foreground border-border rounded-3xl border p-0 md:translate-y-0">
+				<MorphingPopoverContent className="bg-card border-border rounded-3xl border p-0 md:translate-y-0">
 					<div className="flex h-[80dvh] w-full flex-col gap-2 p-2 md:h-[87dvh] md:w-[93dvw]">
 						<div className="bg-accent border-border flex items-center justify-between rounded-3xl border p-1.5 lg:rounded-full">
 							<motion.div

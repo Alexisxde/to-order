@@ -57,7 +57,7 @@ export default function Sidebar({ user }: Props) {
 	if (mode === "mobile") {
 		return (
 			<div className="sticky bottom-0">
-				<div className="bg-card-foreground flex h-24 w-full items-center justify-center gap-4 p-4">
+				<div className="bg-card flex h-24 w-full items-center justify-center gap-4 p-4">
 					{data.map((item, idx) => (
 						<Button
 							key={idx}

@@ -103,7 +103,7 @@ function Dock({
 					mouseX.set(Infinity)
 				}}
 				className={cn(
-					"bg-card-foreground border-border mx-auto flex w-fit gap-4 rounded-2xl border px-4",
+					"bg-card border-border mx-auto flex w-fit gap-4 rounded-2xl border px-4",
 					className
 				)}
 				style={{ height: panelHeight }}
