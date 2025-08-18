@@ -46,7 +46,7 @@ export default function Task() {
 	if (mode === "mobile") {
 		return (
 			<section className="flex flex-col">
-				<div className="bg-background sticky top-14 z-30 flex flex-1 items-center justify-between px-4 py-2">
+				<div className="bg-background sticky top-0 z-30 flex flex-1 items-center justify-between px-4 py-2">
 					{COLUMNS.map(({ title, column }) => (
 						<Chip
 							title={title}
