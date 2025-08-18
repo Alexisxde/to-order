@@ -76,8 +76,8 @@
 	--radius-radius: var(--radius);
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);
-	--color-card: var(--primary);
-	--color-card-foreground: var(--primary-foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
 	--color-primary: var(--primary);
 	--color-primary-foreground: var(--primary-foreground);
 	--color-secondary: var(--secondary);

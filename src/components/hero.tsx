@@ -1,6 +1,7 @@
 import SignInButton from "@/components/button-sign-in"
 import { createClientForServer } from "@/supabase/server"
 import { ArrowRight } from "lucide-react"
+import Text from "./text"
 import Button from "./ui/button"
 
 export default async function Hero() {
@@ -9,25 +10,35 @@ export default async function Hero() {
 	const { user } = data
 
 	return (
-		<section className="relative mx-auto flex w-full max-w-3xl flex-col items-center p-10 pt-24">
-			<h1 className="text-center text-4xl font-medium text-neutral-900 sm:text-6xl dark:text-neutral-100">
-				Manage your tasks simply and efficiently
-			</h1>
-			<p className="mt-6 text-center text-xs leading-6 text-neutral-500 md:text-sm dark:text-neutral-300">
-				Organize your tasks intuitively with our task management. Drag and drop
-				to move tasks between lists, set priorities, and keep everything under
-				control.
+		<section
+			className="relative flex w-full flex-1 flex-col items-center justify-center overflow-hidden rounded-3xl"
+			style={{
+				backgroundImage: `
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(to right, var(--border) 1px, var(--background) 1px)
+    `,
+				backgroundSize: "20px 20px"
+			}}>
+			<div
+				className="pointer-events-none absolute inset-0"
+				style={{
+					background:
+						"radial-gradient(50% 50% at 50% 50%, transparent 20%, var(--card) 100%)"
+				}}
+			/>
+			<Text label="Yalo" />
+			<p className="text-primary/80 z-2 mb-4 w-full max-w-xs text-center text-sm lg:max-w-lg lg:text-base">
+				Tu espacio para notas, lista de tareas, siempre accesible en todos tus
+				dispositivos
 			</p>
-			<div className="mt-4">
-				{user ? (
-					<Button href="/app">
-						Get Started
-						<ArrowRight className="size-4" />
-					</Button>
-				) : (
-					<SignInButton />
-				)}
-			</div>
+			{user ? (
+				<Button href="/app" className="hover:scale-105">
+					Comenzar
+					<ArrowRight className="size-4" />
+				</Button>
+			) : (
+				<SignInButton />
+			)}
 		</section>
 	)
 }

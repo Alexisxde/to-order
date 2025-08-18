@@ -1,7 +1,13 @@
 import "@/styles/globals.css"
 import type { Metadata } from "next"
 import { ThemeProvider } from "next-themes"
-import { Poppins } from "next/font/google"
+import { Poppins, Roboto_Flex } from "next/font/google"
+
+const roboto_Flex = Roboto_Flex({
+	weight: ["500", "1000"],
+	style: ["normal"],
+	subsets: ["latin"]
+})
 
 const poppins = Poppins({
 	weight: ["400", "500", "600", "700", "800", "900"],
