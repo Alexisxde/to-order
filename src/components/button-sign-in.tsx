@@ -24,7 +24,7 @@ export default function SignInButton() {
 
 	return (
 		<Button variant="outline" size="sm" onClick={signInWithGithub}>
-			<GitHubIcon width={16} height={16} />
+			<GitHubIcon className="size-4" />
 			Sign in with GitHub
 		</Button>
 	)
