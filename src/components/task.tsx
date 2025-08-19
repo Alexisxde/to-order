@@ -100,7 +100,7 @@ export default function Task() {
 							)
 						})}
 				</div>
-				<div className="fixed right-4 bottom-1/6">
+				<div className="fixed right-4 bottom-1/7">
 					<MorphingDialog isOpen={isOpen} setIsOpen={setIsOpen}>
 						<MorphingDialogTrigger>
 							<Button className="size-12 rounded-full" size={"icon"}>
@@ -108,7 +108,7 @@ export default function Task() {
 							</Button>
 						</MorphingDialogTrigger>
 						<MorphingDialogContainer>
-							<MorphingDialogContent className="h-[98dvh] w-[98vw] lg:h-[95dvh]">
+							<MorphingDialogContent className="h-[97dvh] w-[97vw] lg:h-[95dvh]">
 								<MorphingDialogClose />
 							</MorphingDialogContent>
 						</MorphingDialogContainer>

@@ -12,6 +12,7 @@ export async function GET(request: Request) {
 
 		if (!error) {
 			const forwardedHost = request.headers.get("x-forwarded-host")
+			console.log(forwardedHost)
 			const isLocalEnv = process.env.NODE_ENV === "development"
 			if (isLocalEnv) {
 				return NextResponse.redirect(`${origin}${next}`)
