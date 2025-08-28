@@ -5,47 +5,71 @@ import {
 	MorphingPopoverContent,
 	MorphingPopoverTrigger
 } from "@/components/ui/morphing-popover"
-import { useRichTextEditor } from "@/hooks/useRichTextEditor"
 import { cn } from "@/lib/utils"
+import { EditorContent, useEditor, useEditorState } from "@tiptap/react"
+import { StarterKit } from "@tiptap/starter-kit"
 import {
-	AlignCenter,
-	AlignLeft,
-	AlignRight,
 	Bold,
+	Braces,
+	Code,
+	Heading1,
+	Heading2,
+	Heading3,
 	Italic,
 	List,
 	ListOrdered,
 	Redo2,
-	Underline,
+	Strikethrough,
 	Undo2,
 	X
 } from "lucide-react"
 import { motion } from "motion/react"
-import { useEffect, useId, useRef, useState } from "react"
+import { useId, useState } from "react"
+
+const extensions = [StarterKit]
 
 export default function AppPage() {
 	const uniqueId = useId()
-	const editorRef = useRef<HTMLDivElement | null>(null)
-	const [form, setForm] = useState("")
 	const [isOpen, setIsOpen] = useState(false)
+	const editor = useEditor({
+		extensions,
+		content: `<h1>Hi there!</h1>`,
 
-	const { handleFormat, isCommandActive, updateActiveCommands, handleInput } =
-		useRichTextEditor({ value: form, onChange: setForm, editorRef })
+		immediatelyRender: false,
+		autofocus: "end"
+	})
 
-	useEffect(() => {
-		if (isOpen && editorRef.current) {
-			editorRef.current.innerHTML = form || ""
-			const range = document.createRange()
-			range.selectNodeContents(editorRef.current)
-			range.collapse(false)
-
-			const selection = window.getSelection()
-			selection?.removeAllRanges()
-			selection?.addRange(range)
-
-			editorRef.current.focus()
+	const editorState = useEditorState({
+		editor,
+		selector: ctx => {
+			return {
+				isBold: ctx.editor?.isActive("bold") ?? false,
+				canBold: ctx.editor?.can().chain().toggleBold().run() ?? false,
+				isItalic: ctx.editor?.isActive("italic") ?? false,
+				canItalic: ctx.editor?.can().chain().toggleItalic().run() ?? false,
+				isStrike: ctx.editor?.isActive("strike") ?? false,
+				canStrike: ctx.editor?.can().chain().toggleStrike().run() ?? false,
+				isCode: ctx.editor?.isActive("code") ?? false,
+				canCode: ctx.editor?.can().chain().toggleCode().run() ?? false,
+				canClearMarks: ctx.editor?.can().chain().unsetAllMarks().run() ?? false,
+				isParagraph: ctx.editor?.isActive("paragraph") ?? false,
+				isHeading1: ctx.editor?.isActive("heading", { level: 1 }) ?? false,
+				isHeading2: ctx.editor?.isActive("heading", { level: 2 }) ?? false,
+				isHeading3: ctx.editor?.isActive("heading", { level: 3 }) ?? false,
+				isHeading4: ctx.editor?.isActive("heading", { level: 4 }) ?? false,
+				isHeading5: ctx.editor?.isActive("heading", { level: 5 }) ?? false,
+				isHeading6: ctx.editor?.isActive("heading", { level: 6 }) ?? false,
+				isBulletList: ctx.editor?.isActive("bulletList") ?? false,
+				isOrderedList: ctx.editor?.isActive("orderedList") ?? false,
+				isCodeBlock: ctx.editor?.isActive("codeBlock") ?? false,
+				isBlockquote: ctx.editor?.isActive("blockquote") ?? false,
+				canUndo: ctx.editor?.can().chain().undo().run() ?? false,
+				canRedo: ctx.editor?.can().chain().redo().run() ?? false
+			}
 		}
-	}, [isOpen])
+	})
+
+	if (!editorState) return null
 
 	return (
 		<div className="flex size-full items-center justify-center">
@@ -76,74 +100,82 @@ export default function AppPage() {
 								exit={{ opacity: 0, scale: 0 }}
 								className="flex flex-wrap items-center overflow-auto">
 								<FormatButton
-									command="undo"
 									icon={<Undo2 className="size-4" />}
 									label="Deshacer"
 									isActive={false}
-									onClick={handleFormat}
+									onClick={() => editor?.chain().undo().run()}
 								/>
 								<FormatButton
-									command="redo"
 									icon={<Redo2 className="size-4" />}
 									label="Rehacer"
 									isActive={false}
-									onClick={handleFormat}
+									onClick={() => editor?.chain().redo().run()}
 								/>
 								<FormatButton
-									command="bold"
 									icon={<Bold className="size-4" />}
 									label="Negrita"
-									isActive={isCommandActive("bold")}
-									onClick={handleFormat}
+									isActive={editorState.isBold}
+									onClick={() => editor?.chain().toggleBold().run()}
 								/>
 								<FormatButton
-									command="italic"
 									icon={<Italic className="size-4" />}
 									label="Itálica"
-									isActive={isCommandActive("italic")}
-									onClick={handleFormat}
+									isActive={editorState.isItalic}
+									onClick={() => editor?.chain().toggleBold().run()}
 								/>
 								<FormatButton
-									command="underline"
-									icon={<Underline className="size-4" />}
-									label="Subrayado"
-									isActive={isCommandActive("underline")}
-									onClick={handleFormat}
+									icon={<Strikethrough className="size-4" />}
+									label="Tachado"
+									isActive={editorState.isStrike}
+									onClick={() => editor?.chain().toggleStrike().run()}
 								/>
 								<FormatButton
-									command="justifyLeft"
-									icon={<AlignLeft className="size-4" />}
-									label="Alinear izquierda"
-									isActive={false}
-									onClick={handleFormat}
-								/>
-								<FormatButton
-									command="justifyCenter"
-									icon={<AlignCenter className="size-4" />}
-									label="Centrar"
-									isActive={false}
-									onClick={handleFormat}
-								/>
-								<FormatButton
-									command="justifyRight"
-									icon={<AlignRight className="size-4" />}
-									label="Alinear derecha"
-									isActive={false}
-									onClick={handleFormat}
-								/>
-								<FormatButton
-									command="insertUnorderedList"
 									icon={<List className="size-4" />}
 									label="Lista desordenada"
 									isActive={false}
-									onClick={handleFormat}
+									onClick={() => editor?.chain().toggleBulletList().run()}
 								/>
 								<FormatButton
-									command="insertOrderedList"
 									icon={<ListOrdered className="size-4" />}
 									label="Lista ordenada"
 									isActive={false}
-									onClick={handleFormat}
+									onClick={() => editor?.chain().toggleOrderedList().run()}
+								/>
+								<FormatButton
+									icon={<Heading1 className="size-4" />}
+									label="Heading 1"
+									isActive={editorState.isHeading1}
+									onClick={() =>
+										editor?.chain().toggleHeading({ level: 1 }).run()
+									}
+								/>
+								<FormatButton
+									icon={<Heading2 className="size-4" />}
+									label="Heading 2"
+									isActive={editorState.isHeading2}
+									onClick={() =>
+										editor?.chain().toggleHeading({ level: 2 }).run()
+									}
+								/>
+								<FormatButton
+									icon={<Heading3 className="size-4" />}
+									label="Heading 3"
+									isActive={editorState.isHeading3}
+									onClick={() =>
+										editor?.chain().toggleHeading({ level: 3 }).run()
+									}
+								/>
+								<FormatButton
+									icon={<Braces className="size-4" />}
+									label="Codigo"
+									isActive={false}
+									onClick={() => editor?.chain().toggleCode().run()}
+								/>
+								<FormatButton
+									icon={<Code className="size-4" />}
+									label="Bloque de codigo"
+									isActive={false}
+									onClick={() => editor?.chain().toggleBlockquote().run()}
 								/>
 							</motion.div>
 							<Button
@@ -155,20 +187,10 @@ export default function AppPage() {
 							</Button>
 						</div>
 						<div
-							ref={editorRef}
-							contentEditable
-							onInput={handleInput}
-							onMouseUp={updateActiveCommands}
-							onKeyUp={updateActiveCommands}
-							onFocus={() => updateActiveCommands()}
-							className={cn(
-								"prose prose-sm custom-scrollbar size-full max-w-none rounded-3xl p-2 text-sm focus:outline-none",
-								"[&_ol]:ml-6 [&_ol]:list-decimal [&_ul]:ml-6 [&_ul]:list-disc",
-								"[&_li]:marker:text-foreground overflow-y-auto"
-							)}
-							style={{ wordBreak: "break-word", overflowWrap: "break-word" }}
-							suppressContentEditableWarning={true}
-						/>
+							className="h-full w-full overflow-y-auto rounded-3xl p-2 text-sm"
+							onClick={() => editor?.chain().focus()}>
+							<EditorContent editor={editor} />
+						</div>
 						<div className="text-muted-foreground flex items-center justify-end px-4 py-2">
 							<Button>Guardar</Button>
 						</div>
@@ -180,22 +202,23 @@ export default function AppPage() {
 }
 
 const FormatButton = ({
-	command,
 	icon,
 	label,
 	isActive,
-	onClick
+	onClick,
+	disabled = false
 }: {
-	command: string
 	icon: React.ReactNode
 	label: string
 	isActive: boolean
-	onClick: (command: string) => void
+	onClick: () => void
+	disabled?: boolean
 }) => (
 	<Button
 		variant={"ghost"}
 		size={"icon"}
-		onClick={() => onClick(command)}
+		disabled={disabled}
+		onClick={() => onClick()}
 		className={cn(
 			"rounded-full",
 			isActive && "bg-muted dark:bg-muted/50 dark:hover:bg-muted/50"

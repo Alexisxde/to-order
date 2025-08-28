@@ -124,7 +124,7 @@ function MorphingDialogTrigger({
 		return (
 			<MotionComponent
 				{...childProps}
-				onClick={open}
+				onClick={() => setIsOpen(true)}
 				ref={triggerRef}
 				layoutId={`dialog-${uniqueId}`}
 				className={childProps.className}

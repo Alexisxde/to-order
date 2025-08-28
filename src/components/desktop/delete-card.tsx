@@ -27,7 +27,7 @@ export default function DeleteCard() {
 			onDrop={handleDragEnd}
 			onDragOver={handleDragOver}
 			onDragLeave={handleDragLeave}
-			className={`sticky top-13 z-20 grid size-56 shrink-0 place-content-center rounded border text-3xl ${
+			className={`sticky top-0 z-20 grid size-56 shrink-0 place-content-center rounded border text-3xl ${
 				active
 					? "border-red-800 bg-red-800/20 text-red-500"
 					: "border-neutral-800 bg-neutral-900/20 text-neutral-500"

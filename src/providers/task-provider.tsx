@@ -1,23 +1,16 @@
 "use client"
+import { useToast } from "@/components/ui/toast"
 import { createClient } from "@/supabase/client"
-// import type { Tasks } from "@/types"
+import type { Task } from "@/types"
 import { createContext, useContext, useEffect, useState } from "react"
-
-type Task = {
-	_id: string
-	title: string
-	description?: string
-	column: "new" | "progress" | "completed"
-	created_at: string
-	user_id: string
-}
 
 export type TasksContextType = {
 	tasks: Task[]
+	getTaskId: (id: string) => Task | undefined
 	createTask: (
-		time: Omit<Task, "_id" | "created_at" | "user_id">
+		task: Omit<Task, "_id" | "created_at" | "column" | "priority" | "user_id">
 	) => Promise<void>
-	updateTask: (updateTask: Pick<Task, "_id" | "column">) => Promise<void>
+	updateTask: (updateTask: Task) => Promise<void>
 	deleteTask: (id: string) => Promise<void>
 }
 
@@ -26,9 +19,10 @@ let debounceTimeout: NodeJS.Timeout
 
 export const TasksProvider = ({ children }: { children: React.ReactNode }) => {
 	const supabase = createClient()
+	const { toast } = useToast()
 	const [tasks, setTasks] = useState<Task[] | []>([])
 
-	const getTaskss = async () => {
+	const getTasks = async () => {
 		const {
 			data: { user }
 		} = await supabase.auth.getUser()
@@ -39,8 +33,14 @@ export const TasksProvider = ({ children }: { children: React.ReactNode }) => {
 		setTasks(data as Task[])
 	}
 
+	const getTaskId = (id: string) => {
+		const currentState = tasks
+		const task = currentState?.find(task => task._id == id)
+		return task
+	}
+
 	const createTask = async (
-		task: Omit<Task, "_id" | "created_at" | "user_id">
+		task: Omit<Task, "_id" | "created_at" | "column" | "priority" | "user_id">
 	) => {
 		try {
 			const {
@@ -49,7 +49,7 @@ export const TasksProvider = ({ children }: { children: React.ReactNode }) => {
 
 			const { data } = await supabase
 				.from("tasks")
-				.insert({ ...task, user_id: user?.id })
+				.insert({ ...task, column: "new", user_id: user?.id })
 				.select()
 
 			if (!data) throw new Error("Error creating Tasks")
@@ -66,25 +66,31 @@ export const TasksProvider = ({ children }: { children: React.ReactNode }) => {
 		setTasks(updatedTasks)
 
 		try {
-			await supabase.from("tasks").delete().eq("_id", id)
+			const { data } = await supabase
+				.from("tasks")
+				.delete()
+				.eq("_id", id)
+				.select()
+			toast.success({ text: data?.[0].title, description: "Tarea eliminada" })
 		} catch (error) {
 			console.error("Error deleting task:", error) // eslint-disable-line no-console
 			setTasks(currentState)
 		}
 	}
 
-	const updateTask = async (updateTask: Pick<Task, "_id" | "column">) => {
-		const { _id, column } = updateTask
+	const updateTask = async (updateTask: Task) => {
+		const { _id } = updateTask
 		const currentState = tasks
 		const updatedTasks = currentState?.map(task =>
-			task._id == _id ? { ...task, column } : task
+			task._id == _id ? { ...updateTask } : task
 		)
 		setTasks(updatedTasks)
-		if (debounceTimeout) clearTimeout(debounceTimeout)
+		toast.success({ text: updateTask.title, description: "Tarea guardada." })
 
+		if (debounceTimeout) clearTimeout(debounceTimeout)
 		debounceTimeout = setTimeout(async () => {
 			try {
-				await supabase.from("tasks").update({ column }).eq("_id", _id)
+				await supabase.from("tasks").update({ updateTask }).eq("_id", _id)
 			} catch (error) {
 				console.error("Error updating task:", error) // eslint-disable-line no-console
 				setTasks(currentState)
@@ -93,12 +99,12 @@ export const TasksProvider = ({ children }: { children: React.ReactNode }) => {
 	}
 
 	useEffect(() => {
-		getTaskss()
+		getTasks()
 	}, [])
 
 	return (
 		<TasksContext.Provider
-			value={{ tasks, createTask, updateTask, deleteTask }}>
+			value={{ tasks, getTaskId, createTask, updateTask, deleteTask }}>
 			{children}
 		</TasksContext.Provider>
 	)

@@ -144,6 +144,35 @@ export function ModalClose({ children, className, ...props }: ModalClose) {
 	)
 }
 
+export type ModalAction = {
+	children?: React.ReactNode
+	className?: string
+	onClick: () => void
+} & ButtonProps
+
+export function ModalAction({
+	children,
+	className,
+	onClick,
+	...props
+}: ModalAction) {
+	const { setIsOpen } = useModal()
+
+	return (
+		<Button
+			variant={"destructive"}
+			size={"default"}
+			className={cn("", className)}
+			onClick={() => {
+				onClick()
+				setIsOpen(false)
+			}}
+			{...props}>
+			{children ?? <X />}
+		</Button>
+	)
+}
+
 export type ModalContent = {
 	children: React.ReactNode
 	className?: string

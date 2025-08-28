@@ -148,7 +148,6 @@ export function DragDrawerContent({ children, className }: DragDrawerContent) {
 	const [drawerRef, { height }] = useMeasure()
 	const y = useMotionValue(0)
 	const controls = useDragControls()
-	let pressTimer: NodeJS.Timeout
 
 	const handleClose = async () => {
 		animate(scope.current, { opacity: [1, 0] })
@@ -185,7 +184,7 @@ export function DragDrawerContent({ children, className }: DragDrawerContent) {
 					className="bg-card absolute top-0 right-0 left-0 z-10 flex cursor-grab touch-none justify-center p-2 active:cursor-grabbing">
 					<div className="bg-primary/80 h-1 w-12 rounded-full"></div>
 				</button>
-				<div className="relative z-0 size-full overflow-hidden p-4 pt-12 select-none">
+				<div className="relative z-0 w-full overflow-hidden p-4 pt-12 select-none">
 					{children}
 				</div>
 			</motion.div>

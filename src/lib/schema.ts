@@ -57,3 +57,24 @@ export const createTimeShema = z
 			path: ["time_end"]
 		}
 	)
+
+export const createTaskSchema = z.object({
+	title: z.string().min(5, "No puede estar vacío."),
+	description: z.string().optional(),
+	url: z.string().optional(),
+	priority: z.enum(["low", "medium", "high"], {
+		errorMap: () => ({ message: "Tipo inválido." })
+	})
+})
+
+export const editTaskSchema = z.object({
+	title: z.string().min(5, "No puede estar vacío."),
+	description: z.string().optional(),
+	url: z.string().optional(),
+	column: z.enum(["new", "progress", "completed"], {
+		errorMap: () => ({ message: "Columna inválida." })
+	}),
+	priority: z.enum(["low", "medium", "high"], {
+		errorMap: () => ({ message: "Tipo inválido." })
+	})
+})
