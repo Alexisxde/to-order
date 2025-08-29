@@ -47,15 +47,23 @@ export const TasksProvider = ({ children }: { children: React.ReactNode }) => {
 				data: { user }
 			} = await supabase.auth.getUser()
 
-			const { data } = await supabase
+			const { data, error } = await supabase
 				.from("tasks")
 				.insert({ ...task, column: "new", user_id: user?.id })
 				.select()
-
-			if (!data) throw new Error("Error creating Tasks")
-			setTasks(prev => [data[0], ...prev!])
+			if (!data) throw new Error("Error al crear la tarea")
+			if (!error) {
+				toast.success({
+					text: data?.[0].title,
+					description: "Tarea eliminada correctamente."
+				})
+			}
+			setTasks(prev => [data[0], ...prev])
 		} catch (error) {
-			console.error("Error creating task:", error)
+			toast.error({
+				text: error instanceof Error ? error.message : "A ocurrido un error",
+				description: "Error al eliminar la tarea."
+			})
 			setTasks(prev => prev)
 		}
 	}
@@ -66,36 +74,62 @@ export const TasksProvider = ({ children }: { children: React.ReactNode }) => {
 		setTasks(updatedTasks)
 
 		try {
-			const { data } = await supabase
+			const { data, error } = await supabase
 				.from("tasks")
 				.delete()
 				.eq("_id", id)
 				.select()
-			toast.success({ text: data?.[0].title, description: "Tarea eliminada" })
+			if (!data) throw new Error("Error al eliminar una tarea.")
+			if (!error) {
+				toast.success({
+					text: data?.[0].title,
+					description: "Tarea eliminada correctamente."
+				})
+			}
 		} catch (error) {
-			console.error("Error deleting task:", error) // eslint-disable-line no-console
+			toast.error({
+				text: error instanceof Error ? error.message : "A ocurrido un error",
+				description: "Error al eliminar la tarea."
+			})
 			setTasks(currentState)
 		}
 	}
 
 	const updateTask = async (updateTask: Task) => {
 		const { _id } = updateTask
+		console.log(updateTask)
 		const currentState = tasks
 		const updatedTasks = currentState?.map(task =>
 			task._id == _id ? { ...updateTask } : task
 		)
 		setTasks(updatedTasks)
-		toast.success({ text: updateTask.title, description: "Tarea guardada." })
 
-		if (debounceTimeout) clearTimeout(debounceTimeout)
-		debounceTimeout = setTimeout(async () => {
-			try {
-				await supabase.from("tasks").update({ updateTask }).eq("_id", _id)
-			} catch (error) {
-				console.error("Error updating task:", error) // eslint-disable-line no-console
-				setTasks(currentState)
+		try {
+			const { data, error } = await supabase
+				.from("tasks")
+				.update({
+					column: updateTask.column,
+					title: updateTask.title,
+					description: updateTask.description,
+					priority: updateTask.priority,
+					url: updateTask.url
+				})
+				.eq("_id", _id)
+				.select()
+			if (!data) throw new Error("Error al actualizar la tarea.")
+			if (!error) {
+				toast.success({
+					text: data?.[0].title,
+					description: "Tarea actualizada correctamente."
+				})
 			}
-		}, 3000)
+		} catch (error) {
+			toast.error({
+				text: error instanceof Error ? error.message : "A ocurrido un error",
+				description: "Error al actualizar la tarea."
+			})
+			setTasks(currentState)
+		}
 	}
 
 	useEffect(() => {
