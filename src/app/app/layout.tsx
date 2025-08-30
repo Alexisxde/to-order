@@ -7,7 +7,7 @@ import { createClientForServer } from "@/supabase/server"
 import type { Metadata } from "next"
 import { redirect } from "next/navigation"
 
-export const metadata: Metadata = { title: "Yalo" }
+export const metadata: Metadata = { title: "ToOrder" }
 
 export default async function AppLayout({
 	children

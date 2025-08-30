@@ -131,11 +131,11 @@ export default function Sidebar({ user }: Props) {
 						</div>
 						<a href="/" className="mt-2 flex items-center justify-center gap-1">
 							<img
-								src="/yalo-logo.svg"
-								alt="Yalo Logo SVG"
+								src="/toorder-logo.svg"
+								alt="ToOrder Logo SVG"
 								className="size-6"
 							/>
-							<span className="text-xs">Yalo Notes</span>
+							<span className="text-xs">ToOrder Notes</span>
 						</a>
 					</DragDrawerContent>
 				</DragDrawer>
