@@ -1,4 +1,6 @@
 "use client"
+import FormEditTask from "@/components/form-edit-task"
+import { DragDrawer, DragDrawerContent } from "@/components/ui/drag-draw"
 import {
 	DropDown,
 	DropDownContainer,
@@ -14,13 +16,12 @@ import {
 	ModalHeader,
 	ModalPortal
 } from "@/components/ui/modal"
+import { Badge } from "@/components/ui/badge"
 import { month } from "@/lib/utils"
 import { useTask } from "@/providers/task-provider"
-import { Calendar, EditIcon, FilePenIcon, Trash2Icon } from "lucide-react"
+import { Calendar, EditIcon, FilePenIcon, Trash2Icon, Plus, Loader, CheckCheckIcon, Flag, Link } from "lucide-react"
 import { motion } from "motion/react"
 import { useState } from "react"
-import FormEditTask from "../form-edit-task"
-import { DragDrawer, DragDrawerContent } from "../ui/drag-draw"
 
 interface Props {
 	columns: {
@@ -47,17 +48,17 @@ export default function Tab({ columns }: Props) {
 
 	return (
 		<>
-			<div className="bg-background sticky top-0 z-30 flex flex-1 items-center justify-between px-4 py-2">
+			<header className="bg-card border-border sticky top-0 z-30 mx-4 my-2 flex flex-1 items-center justify-between border px-4 py-2 rounded-lg select-none">
 				{columns.map(({ title, column }) => (
 					<Chip
+            key={column}
 						title={title}
 						column={column}
 						selected={tab === column}
 						setSelected={setTab}
-						key={column}
 					/>
 				))}
-			</div>
+			</header>
 			<div className="mt-1 flex h-full flex-col gap-2 px-4 pb-4">
 				{tasksFilter.length === 0 && (
 					<div className="flex flex-col items-center justify-center p-4">
@@ -69,7 +70,7 @@ export default function Tab({ columns }: Props) {
 					</div>
 				)}
 				{tasksFilter.map((task, i) => {
-					const { _id, title, description, created_at } = task
+					const { _id, title, description, priority, url, created_at } = task
 					const data_format = new Date(created_at)
 					return (
 						<motion.article
@@ -77,9 +78,9 @@ export default function Tab({ columns }: Props) {
 							initial={{ opacity: 0, y: 20 }}
 							animate={{ opacity: 1, y: 0 }}
 							transition={{ duration: 0.3, delay: 0.1 * i }}
-							className="bg-background border-border rounded-md border p-4">
+							className="bg-card border-border rounded-md border p-4">
 							<div className="flex items-center justify-between">
-								<span className="flex items-center gap-1 text-xs text-neutral-500">
+								<div className="flex items-center gap-2 text-xs text-neutral-500">
 									<Calendar className="size-4" />
 									<span>
 										{month(data_format.getMonth())}{" "}
@@ -89,7 +90,28 @@ export default function Tab({ columns }: Props) {
 										{", "}
 										{data_format.getFullYear()}
 									</span>
-								</span>
+                  { priority === "low" && (
+                      <Badge variant={"emerald"} className="text-[10px]">
+                        <Flag className="fill-emerald-500 stroke-emerald-500 size-3" />
+                        Bajo
+                      </Badge>
+                    )
+                  }
+                  { priority === "medium" && (
+                      <Badge variant={"orange"} className="text-[10px]">
+                        <Flag className="fill-orange-500 stroke-orange-500 size-3" />
+                        Medio
+                      </Badge>
+                    )
+                  }
+                  { priority === "high" && (
+                      <Badge variant={"red"} className="text-[10px]">
+                        <Flag className="fill-red-500 stroke-red-500 size-3" />
+                        Alto
+                      </Badge>
+                    )
+                  }
+								</div>
 								<DropDown>
 									<DropDownContainer>
 										<DropDownTrigger />
@@ -114,12 +136,21 @@ export default function Tab({ columns }: Props) {
 									</DropDownContainer>
 								</DropDown>
 							</div>
-							<span className="text-primary text-sm font-medium">{title}</span>
+							<span className="text-primary text-md font-medium">{title}</span>
 							{description && (
 								<p className="mb-2 text-xs text-pretty text-neutral-500">
 									{description}
 								</p>
 							)}
+              {
+                description && url && <div className="my-2 border-b-1 border-border" />
+              }
+              {url && (
+                <a href={url} target="_blank" className={`text-xs flex items-center ${description && "justify-end"} gap-1`}>
+                  <Link className="size-3" />
+                  URL
+                </a>
+              )}
 						</motion.article>
 					)
 				})}
@@ -177,7 +208,10 @@ const Chip = ({ title, column, selected, setSelected }: ChipProps) => {
 			onClick={() => setSelected(column)}
 			className={`${
 				selected ? "text-primary" : "text-primary/80"
-			} relative h-9 cursor-pointer rounded-md px-4 py-2 text-sm transition-colors duration-200 ease-in-out`}>
+			} relative flex items-center justify-center gap-1 h-9 w-full cursor-pointer rounded-md px-4 py-2 text-sm transition-colors duration-200 ease-in-out`}>
+      { column === "new" && <Plus className="size-5" /> }
+      { column === "progress" && <Loader className="size-5" /> }
+      { column === "completed" && <CheckCheckIcon className="size-5" /> }
 			<span className="relative z-10">{title}</span>
 			{selected && (
 				<motion.span
