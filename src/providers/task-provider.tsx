@@ -10,12 +10,12 @@ export type TasksContextType = {
 	createTask: (
 		task: Omit<Task, "_id" | "created_at" | "column" | "priority" | "user_id">
 	) => Promise<void>
+	updateTaskColumn: (_id: string, column: Task["column"]) => Promise<void>
 	updateTask: (updateTask: Task) => Promise<void>
 	deleteTask: (id: string) => Promise<void>
 }
 
 const TasksContext = createContext<TasksContextType | null>(null)
-let debounceTimeout: NodeJS.Timeout
 
 export const TasksProvider = ({ children }: { children: React.ReactNode }) => {
 	const supabase = createClient()
@@ -55,14 +55,14 @@ export const TasksProvider = ({ children }: { children: React.ReactNode }) => {
 			if (!error) {
 				toast.success({
 					text: data?.[0].title,
-					description: "Tarea eliminada correctamente."
+					description: "Tarea creada correctamente."
 				})
 			}
 			setTasks(prev => [data[0], ...prev])
 		} catch (error) {
 			toast.error({
 				text: error instanceof Error ? error.message : "A ocurrido un error",
-				description: "Error al eliminar la tarea."
+				description: "Error al crear la tarea."
 			})
 			setTasks(prev => prev)
 		}
@@ -95,9 +95,31 @@ export const TasksProvider = ({ children }: { children: React.ReactNode }) => {
 		}
 	}
 
+	const updateTaskColumn = async (_id: string, column: Task["column"]) => {
+		const currentState = tasks
+		const updatedTasks = currentState?.map(task =>
+			task._id == _id ? { ...task, column } : task
+		)
+		setTasks(updatedTasks)
+
+		try {
+			const { data } = await supabase
+				.from("tasks")
+				.update({ column })
+				.eq("_id", _id)
+				.select()
+			if (!data) throw new Error("Error al actualizar la tarea.")
+		} catch (error) {
+			toast.error({
+				text: error instanceof Error ? error.message : "A ocurrido un error",
+				description: "Error al actualizar la tarea."
+			})
+			setTasks(currentState)
+		}
+	}
+
 	const updateTask = async (updateTask: Task) => {
 		const { _id } = updateTask
-		console.log(updateTask)
 		const currentState = tasks
 		const updatedTasks = currentState?.map(task =>
 			task._id == _id ? { ...updateTask } : task
@@ -138,7 +160,14 @@ export const TasksProvider = ({ children }: { children: React.ReactNode }) => {
 
 	return (
 		<TasksContext.Provider
-			value={{ tasks, getTaskId, createTask, updateTask, deleteTask }}>
+			value={{
+				tasks,
+				getTaskId,
+				createTask,
+				updateTaskColumn,
+				updateTask,
+				deleteTask
+			}}>
 			{children}
 		</TasksContext.Provider>
 	)

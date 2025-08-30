@@ -1,4 +1,3 @@
-import Footer from "@/components/footer"
 import Hero from "@/components/hero"
 import { ListTodo, MonitorCog, NotebookPen, Palette } from "lucide-react"
 
@@ -35,7 +34,6 @@ export default function HomePage() {
 			<section className="flex h-dvh flex-col gap-4 p-4">
 				<header></header>
 				<Hero />
-				<Footer />
 			</section>
 			<section className="mb-6 flex flex-col gap-4 p-6">
 				<h2 className="mt-2 text-center text-6xl">

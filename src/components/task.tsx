@@ -1,8 +1,8 @@
 "use client"
 import Column from "@/components/desktop/column"
 import DeleteCard from "@/components/desktop/delete-card"
+import { useIsMobile } from "@/hooks/useIsMobile"
 import { createTaskSchema } from "@/lib/schema"
-import { useSidebar } from "@/providers/sidebar-provider"
 import { Plus } from "lucide-react"
 import { useState } from "react"
 import { z } from "zod"
@@ -53,10 +53,10 @@ const COLUMNS = [
 ] as ColumnType[]
 
 export default function Task() {
-	const { mode } = useSidebar()
+	const isMobile = useIsMobile()
 	const [isOpen, setIsOpen] = useState(false)
 
-	return mode === "mobile" ? (
+	return isMobile ? (
 		<section className="flex flex-col">
 			<Tab columns={COLUMNS} />
 			<div className="fixed right-4 bottom-1/6">
@@ -73,7 +73,7 @@ export default function Task() {
 			</div>
 		</section>
 	) : (
-		<div className="flex gap-4 p-4">
+		<section className="flex gap-4 p-4">
 			{COLUMNS.map(({ title, column, textColor, bgColor }) => (
 				<Column
 					key={column}
@@ -101,6 +101,6 @@ export default function Task() {
 				</MorphingDialog>
 			</div>
 			<DeleteCard />
-		</div>
+		</section>
 	)
 }

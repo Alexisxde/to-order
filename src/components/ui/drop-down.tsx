@@ -94,7 +94,7 @@ export const DropDownContent = ({
 			initial={wrapperVariants.closed}
 			variants={wrapperVariants}
 			style={{ originY: "top" }}
-			className="bg-card absolute top-[100%] right-0 z-30 flex flex-col gap-1 overflow-hidden rounded-lg p-2 shadow-xl">
+			className="bg-card border-border absolute top-[100%] right-0 z-30 flex flex-col gap-1 overflow-hidden rounded-lg border p-2 shadow-xl">
 			{children}
 		</motion.ul>
 	)

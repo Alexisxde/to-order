@@ -1,6 +1,13 @@
 "use client"
-import { Dock, DockIcon, DockItem, DockLabel } from "@/components/ui/dock"
-import { useSidebar } from "@/providers/sidebar-provider"
+import SignOutButton from "@/components/button-sign-out"
+import Button from "@/components/ui/button"
+import {
+	DragDrawer,
+	DragDrawerContent,
+	DragDrawerTrigger
+} from "@/components/ui/drag-draw"
+import { FloatingDockDesktop } from "@/components/ui/floating-dock"
+import { useIsMobile } from "@/hooks/useIsMobile"
 import { User } from "@supabase/supabase-js"
 import {
 	CalendarDays,
@@ -15,13 +22,6 @@ import {
 } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useState } from "react"
-import SignOutButton from "./button-sign-out"
-import Button from "./ui/button"
-import {
-	DragDrawer,
-	DragDrawerContent,
-	DragDrawerTrigger
-} from "./ui/drag-draw"
 
 interface Props {
 	user: User
@@ -29,9 +29,9 @@ interface Props {
 
 export default function Sidebar({ user }: Props) {
 	const { theme, setTheme } = useTheme()
-	const { mode } = useSidebar()
+	const isMobile = useIsMobile()
 	const [openDraw, setOpenDraw] = useState(false)
-	const data = [
+	const nav = [
 		{
 			title: "Inicio",
 			icon: <House className="text-primary size-5 lg:size-full" />,
@@ -54,10 +54,10 @@ export default function Sidebar({ user }: Props) {
 		}
 	]
 
-	return mode === "mobile" ? (
+	return isMobile ? (
 		<div className="sticky bottom-0">
 			<div className="bg-card flex h-24 w-full items-center justify-center gap-4 p-4">
-				{data.map((item, idx) => (
+				{nav.map((item, idx) => (
 					<Button
 						key={idx}
 						href={item.href}
@@ -143,14 +143,7 @@ export default function Sidebar({ user }: Props) {
 		</div>
 	) : (
 		<div className="fixed bottom-2 left-1/2 z-50 max-w-full -translate-x-1/2">
-			<Dock className="items-end pb-3">
-				{data.map((item, idx) => (
-					<DockItem key={idx} className="bg-muted aspect-square rounded-full">
-						<DockLabel>{item.title}</DockLabel>
-						<DockIcon>{item.icon}</DockIcon>
-					</DockItem>
-				))}
-			</Dock>
+			<FloatingDockDesktop items={nav} />
 		</div>
 	)
 }

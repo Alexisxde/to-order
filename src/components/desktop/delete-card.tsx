@@ -1,10 +1,11 @@
 "use client"
-import { useTask } from "@/providers/task-provider"
-import { FireExtinguisherIcon, TrashIcon } from "lucide-react"
+import { BrickWallFire, TrashIcon } from "lucide-react"
 import { useState } from "react"
+import ModalDeleteTask from "../modal-delete-task"
 
 export default function DeleteCard() {
-	const { deleteTask } = useTask()
+	const [deleteTaskId, setDeleteTaskId] = useState<string | null>(null)
+	const [isOpenModal, setIsOpenModal] = useState(false)
 	const [active, setActive] = useState(false)
 
 	const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -18,7 +19,8 @@ export default function DeleteCard() {
 
 	const handleDragEnd = async (e: React.DragEvent<HTMLDivElement>) => {
 		const cardId = e.dataTransfer.getData("cardId")
-		await deleteTask(cardId)
+		setDeleteTaskId(cardId)
+		setIsOpenModal(true)
 		setActive(false)
 	}
 
@@ -33,10 +35,15 @@ export default function DeleteCard() {
 					: "border-neutral-800 bg-neutral-900/20 text-neutral-500"
 			}`}>
 			{active ? (
-				<FireExtinguisherIcon className="pointer-events-none size-11 animate-bounce" />
+				<BrickWallFire className="pointer-events-none size-11 animate-bounce" />
 			) : (
 				<TrashIcon className="size-11" />
 			)}
+			<ModalDeleteTask
+				idDelete={deleteTaskId}
+				isOpen={isOpenModal}
+				setIsOpen={setIsOpenModal}
+			/>
 		</div>
 	)
 }

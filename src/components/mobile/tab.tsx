@@ -1,27 +1,12 @@
 "use client"
 import FormEditTask from "@/components/form-edit-task"
+import Card from "@/components/mobile/card"
 import { DragDrawer, DragDrawerContent } from "@/components/ui/drag-draw"
-import {
-	DropDown,
-	DropDownContainer,
-	DropDownContent,
-	DropDownOption,
-	DropDownTrigger
-} from "@/components/ui/drop-down"
-import {
-	Modal,
-	ModalAction,
-	ModalClose,
-	ModalContent,
-	ModalHeader,
-	ModalPortal
-} from "@/components/ui/modal"
-import { Badge } from "@/components/ui/badge"
-import { month } from "@/lib/utils"
 import { useTask } from "@/providers/task-provider"
-import { Calendar, EditIcon, FilePenIcon, Trash2Icon, Plus, Loader, CheckCheckIcon, Flag, Link } from "lucide-react"
+import { CheckCheckIcon, FilePenIcon, Loader, Plus } from "lucide-react"
 import { motion } from "motion/react"
-import { useState } from "react"
+import { JSX, useState } from "react"
+import ModalDeleteTask from "../modal-delete-task"
 
 interface Props {
 	columns: {
@@ -31,6 +16,12 @@ interface Props {
 		bgColor: string
 	}[]
 }
+
+const TABSICONS: Record<string, JSX.Element> = {
+	new: <Plus className="size-4" />,
+	progress: <Loader className="size-4" />,
+	completed: <CheckCheckIcon className="size-4" />
+} as const
 
 export default function Tab({ columns }: Props) {
 	const { tasks, deleteTask } = useTask()
@@ -48,10 +39,10 @@ export default function Tab({ columns }: Props) {
 
 	return (
 		<>
-			<header className="bg-card border-border sticky top-0 z-30 mx-4 my-2 flex flex-1 items-center justify-between border px-4 py-2 rounded-lg select-none">
+			<header className="bg-card border-border sticky top-0 z-30 mx-4 my-2 flex flex-1 items-center justify-between rounded-lg border px-4 py-2 select-none">
 				{columns.map(({ title, column }) => (
 					<Chip
-            key={column}
+						key={column}
 						title={title}
 						column={column}
 						selected={tab === column}
@@ -69,119 +60,23 @@ export default function Tab({ columns }: Props) {
 						</p>
 					</div>
 				)}
-				{tasksFilter.map((task, i) => {
-					const { _id, title, description, priority, url, created_at } = task
-					const data_format = new Date(created_at)
-					return (
-						<motion.article
-							key={_id}
-							initial={{ opacity: 0, y: 20 }}
-							animate={{ opacity: 1, y: 0 }}
-							transition={{ duration: 0.3, delay: 0.1 * i }}
-							className="bg-card border-border rounded-md border p-4">
-							<div className="flex items-center justify-between">
-								<div className="flex items-center gap-2 text-xs text-neutral-500">
-									<Calendar className="size-4" />
-									<span>
-										{month(data_format.getMonth())}{" "}
-										{data_format.getDate() < 10
-											? `0${data_format.getDate()}`
-											: data_format.getDate()}
-										{", "}
-										{data_format.getFullYear()}
-									</span>
-                  { priority === "low" && (
-                      <Badge variant={"emerald"} className="text-[10px]">
-                        <Flag className="fill-emerald-500 stroke-emerald-500 size-3" />
-                        Bajo
-                      </Badge>
-                    )
-                  }
-                  { priority === "medium" && (
-                      <Badge variant={"orange"} className="text-[10px]">
-                        <Flag className="fill-orange-500 stroke-orange-500 size-3" />
-                        Medio
-                      </Badge>
-                    )
-                  }
-                  { priority === "high" && (
-                      <Badge variant={"red"} className="text-[10px]">
-                        <Flag className="fill-red-500 stroke-red-500 size-3" />
-                        Alto
-                      </Badge>
-                    )
-                  }
-								</div>
-								<DropDown>
-									<DropDownContainer>
-										<DropDownTrigger />
-										<DropDownContent>
-											<DropDownOption
-												onClick={() => {
-													setEditTaskId(_id)
-													setIsOpenDragDrawer(true)
-												}}
-												Icon={EditIcon}
-												text="Editar"
-											/>
-											<DropDownOption
-												onClick={() => {
-													setDeleteTaskId(_id)
-													setIsOpenModal(true)
-												}}
-												Icon={Trash2Icon}
-												text="Eliminar"
-											/>
-										</DropDownContent>
-									</DropDownContainer>
-								</DropDown>
-							</div>
-							<span className="text-primary text-md font-medium">{title}</span>
-							{description && (
-								<p className="mb-2 text-xs text-pretty text-neutral-500">
-									{description}
-								</p>
-							)}
-              {
-                description && url && <div className="my-2 border-b-1 border-border" />
-              }
-              {url && (
-                <a href={url} target="_blank" className={`text-xs flex items-center ${description && "justify-end"} gap-1`}>
-                  <Link className="size-3" />
-                  URL
-                </a>
-              )}
-						</motion.article>
-					)
-				})}
+				{tasksFilter.map((task, i) => (
+					<Card
+						key={task._id}
+						index={i}
+						task={task}
+						setEditTaskId={setEditTaskId}
+						setIsOpenEdit={setIsOpenDragDrawer}
+						setDeleteTaskId={setDeleteTaskId}
+						setIsOpenDelete={setIsOpenModal}
+					/>
+				))}
 			</div>
-			<Modal isOpen={isOpenModal} setIsOpen={setIsOpenModal}>
-				<ModalPortal>
-					<ModalContent className="w-full max-w-xs space-y-2">
-						<ModalHeader>
-							<h2 className="text-2xl font-medium">¿Estás seguro?</h2>
-							<ModalClose />
-						</ModalHeader>
-						<div className="flex flex-col gap-2">
-							<p className="text-primary/70 text-sm">
-								Esta acción no se puede deshacer. ¿Quieres eliminar esta tarea?
-							</p>
-							<div className="flex items-center justify-end gap-2">
-								<ModalClose
-									variant={"outline"}
-									size="default"
-									className="rounded-md">
-									Cancelar
-								</ModalClose>
-								<ModalAction
-									onClick={() => deleteTaskId && handleDelete(deleteTaskId)}>
-									Confirmar
-								</ModalAction>
-							</div>
-						</div>
-					</ModalContent>
-				</ModalPortal>
-			</Modal>
+			<ModalDeleteTask
+				idDelete={deleteTaskId}
+				isOpen={isOpenModal}
+				setIsOpen={setIsOpenModal}
+			/>
 			<DragDrawer isOpen={isOpenDragDrawer} setIsOpen={setIsOpenDragDrawer}>
 				<DragDrawerContent className="h-fit">
 					{editTaskId && (
@@ -208,10 +103,8 @@ const Chip = ({ title, column, selected, setSelected }: ChipProps) => {
 			onClick={() => setSelected(column)}
 			className={`${
 				selected ? "text-primary" : "text-primary/80"
-			} relative flex items-center justify-center gap-1 h-9 w-full cursor-pointer rounded-md px-4 py-2 text-sm transition-colors duration-200 ease-in-out`}>
-      { column === "new" && <Plus className="size-5" /> }
-      { column === "progress" && <Loader className="size-5" /> }
-      { column === "completed" && <CheckCheckIcon className="size-5" /> }
+			} relative flex h-9 w-full cursor-pointer items-center justify-center gap-1 rounded-md px-4 py-2 text-sm transition-colors duration-200 ease-in-out`}>
+			{TABSICONS[column]}
 			<span className="relative z-10">{title}</span>
 			{selected && (
 				<motion.span
