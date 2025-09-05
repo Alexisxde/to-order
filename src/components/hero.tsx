@@ -27,17 +27,20 @@ export default async function Hero() {
 				}}
 			/>
 			<Text label="toOrder" />
-			<p className="text-primary/80 z-2 mb-4 w-full max-w-xs text-center text-sm lg:max-w-lg lg:text-base">
-				Tu espacio para notas, lista de tareas, siempre accesible en todos tus
-				dispositivos
+			<p className="text-primary/80 z-2 mb-4 w-full max-w-xs text-center text-xs lg:max-w-lg lg:text-base">
+				Tu espacio para notas, lista de tareas y tus horarios siempre accesible
+				en todos tus dispositivos.
 			</p>
+
 			{user ? (
 				<Button href="/app" className="hover:scale-105">
 					Comenzar
 					<ArrowRight className="size-4" />
 				</Button>
 			) : (
-				<SignInButton />
+				<div className="flex flex-wrap gap-2">
+					<SignInButton />
+				</div>
 			)}
 		</section>
 	)

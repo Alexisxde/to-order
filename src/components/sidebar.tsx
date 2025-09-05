@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/drag-draw"
 import { FloatingDockDesktop } from "@/components/ui/floating-dock"
 import { useIsMobile } from "@/hooks/useIsMobile"
-import { User } from "@supabase/supabase-js"
+import type { User } from "@supabase/supabase-js"
 import {
 	CalendarDays,
 	Folder,
@@ -120,7 +120,7 @@ export default function Sidebar({ user }: Props) {
 										className="size-10 rounded-full"
 									/>
 									<span className="text-xs">
-										{user.user_metadata.preferred_username}
+										{user.user_metadata.full_name}
 									</span>
 								</div>
 								<SignOutButton className="w-full" variant={"default"}>
