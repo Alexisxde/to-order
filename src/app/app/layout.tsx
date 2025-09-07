@@ -1,3 +1,4 @@
+import Sidebar from "@/components/sidebar"
 import { Toast, ToastProvider } from "@/components/ui/toast"
 import { FoldersProvider } from "@/providers/folder-provider"
 import { SidebarProvider } from "@/providers/sidebar-provider"
@@ -26,7 +27,7 @@ export default async function AppLayout({
 								<main className="max-w-8xl mx-auto w-full flex-1">
 									{children}
 								</main>
-								{/* <Sidebar user={data.user} /> */}
+								<Sidebar user={data.user} />
 							</section>
 						</SidebarProvider>
 					</TimeProvider>
