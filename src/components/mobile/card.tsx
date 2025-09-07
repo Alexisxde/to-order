@@ -30,7 +30,6 @@ export default function Card({
 	setDeleteTaskId
 }: Props) {
 	const { _id, title, description, url, priority, created_at } = task
-	const date_format = new Date(created_at)
 
 	return (
 		<motion.article
@@ -42,14 +41,7 @@ export default function Card({
 			<div className="flex items-center justify-between">
 				<div className="flex items-center gap-2 text-xs text-neutral-500">
 					<Calendar className="size-4" />
-					<span>
-						{month(date_format.getMonth())}{" "}
-						{date_format.getDate() < 10
-							? `0${date_format.getDate()}`
-							: date_format.getDate()}
-						{", "}
-						{date_format.getFullYear()}
-					</span>
+					<span>{month(new Date(created_at))}</span>
 					{priority === "low" && (
 						<Badge variant={"emerald"} className="text-[10px]">
 							<Flag className="size-3 fill-emerald-500 stroke-emerald-500" />

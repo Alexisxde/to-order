@@ -1,5 +1,6 @@
 import useClickOutside from "@/hooks/useClickOutside"
-import { ChevronDown, LucideIcon } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { EllipsisVerticalIcon, LucideIcon } from "lucide-react"
 import { motion } from "motion/react"
 import { createContext, useContext, useRef, useState } from "react"
 
@@ -29,19 +30,20 @@ export const DropDown = ({ children }: { children: React.ReactNode }) => {
 	)
 }
 
-const iconVariants = { open: { rotate: 180 }, closed: { rotate: 0 } }
+type DropDownTriggerProps = { className?: string }
 
-export const DropDownTrigger = () => {
-	const { isOpen, setIsOpen, triggerRef } = useDropDown()
+export const DropDownTrigger = ({ className }: DropDownTriggerProps) => {
+	const { setIsOpen, triggerRef } = useDropDown()
 
 	return (
 		<button
 			ref={triggerRef}
 			onClick={() => setIsOpen(prev => !prev)}
-			className="flex items-center gap-2 rounded-md px-3 py-2 transition-colors">
-			<motion.span variants={iconVariants} animate={isOpen ? "open" : "closed"}>
-				<ChevronDown className="size-4" />
-			</motion.span>
+			className={cn(
+				"flex cursor-pointer items-center gap-2 rounded-md p-1",
+				className
+			)}>
+			<EllipsisVerticalIcon className="size-4" />
 		</button>
 	)
 }

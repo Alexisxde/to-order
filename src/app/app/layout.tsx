@@ -1,5 +1,5 @@
-import Sidebar from "@/components/sidebar"
 import { Toast, ToastProvider } from "@/components/ui/toast"
+import { FoldersProvider } from "@/providers/folder-provider"
 import { SidebarProvider } from "@/providers/sidebar-provider"
 import { TasksProvider } from "@/providers/task-provider"
 import { TimeProvider } from "@/providers/time-provider"
@@ -18,18 +18,20 @@ export default async function AppLayout({
 
 	return (
 		<ToastProvider>
-			<TasksProvider>
-				<TimeProvider>
-					<SidebarProvider>
-						<section className="flex h-dvh w-full flex-col">
-							<main className="max-w-8xl mx-auto w-full flex-1">
-								{children}
-							</main>
-							<Sidebar user={data.user} />
-						</section>
-					</SidebarProvider>
-				</TimeProvider>
-			</TasksProvider>
+			<FoldersProvider>
+				<TasksProvider>
+					<TimeProvider>
+						<SidebarProvider>
+							<section className="flex h-dvh w-full flex-col">
+								<main className="max-w-8xl mx-auto w-full flex-1">
+									{children}
+								</main>
+								{/* <Sidebar user={data.user} /> */}
+							</section>
+						</SidebarProvider>
+					</TimeProvider>
+				</TasksProvider>
+			</FoldersProvider>
 			<Toast />
 		</ToastProvider>
 	)

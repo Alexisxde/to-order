@@ -22,7 +22,6 @@ export default function Card({
 	handleDragStart
 }: Props) {
 	const { _id, title, description, priority, url, created_at, column } = task
-	const date_format = new Date(created_at)
 
 	return (
 		<>
@@ -42,14 +41,7 @@ export default function Card({
 				className="bg-card border-border cursor-grabbing rounded-md border p-4">
 				<div className="flex items-center gap-2 text-xs text-neutral-500">
 					<Calendar className="size-4" />
-					<span>
-						{month(date_format.getMonth())}{" "}
-						{date_format.getDate() < 10
-							? `0${date_format.getDate()}`
-							: date_format.getDate()}
-						{", "}
-						{date_format.getFullYear()}
-					</span>
+					<span>{month(new Date(created_at))}</span>
 					{priority === "low" && (
 						<Badge variant={"emerald"} className="text-[10px]">
 							<Flag className="size-3 fill-emerald-500 stroke-emerald-500" />

@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs))
 }
 
-export function month(number: number) {
+export function month(date: Date) {
 	const month = [
 		"Ene",
 		"Feb",
@@ -20,7 +20,7 @@ export function month(number: number) {
 		"Nov",
 		"Dic"
 	]
-	return month[number]
+	return ` ${month[date.getMonth()]} ${date.getDate().toString().padStart(2, "0")}, ${date.getFullYear()}`
 }
 
 export function filterItems<T>(query: string, items: T[]): T[] {

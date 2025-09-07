@@ -1,5 +1,4 @@
 "use client"
-import NoteCard from "@/components/mobile/note-card"
 import Button from "@/components/ui/button"
 import {
 	DropDown,
@@ -18,7 +17,7 @@ import {
 	Trash2Icon
 } from "lucide-react"
 import { motion } from "motion/react"
-import { useRouter } from "next/navigation"
+import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
 
 type Note = {
@@ -29,19 +28,14 @@ type Note = {
 	update_at: string
 }
 
-export default function FoldersPage() {
-	const router = useRouter()
+export default function FolderId() {
+	const { id } = useParams()
 	const [grid, setGrid] = useState(true)
-	const [notes, setNotes] = useState<Note[]>([
-		{
-			_id: "1",
-			name: "work",
-			created_at: "Sep 5, 2025",
-			update_at: "Sep 5, 2025",
-			content: `<h1>Hello World</h1>`
-		}
-	])
-	const { folders } = useFolder()
+	const { folders, getFolders } = useFolder()
+
+	useEffect(() => {
+		getFolders(id?.[id?.length - 1] ?? null)
+	}, [])
 
 	useEffect(() => {}, [grid])
 
@@ -72,12 +66,13 @@ export default function FoldersPage() {
 						? "grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4"
 						: "grid grid-cols-1 gap-2"
 				}>
+				{folders.length === 0 && <h1>No hay más Carpetas</h1>}
 				{folders.map(({ _id, name, created_at }) => (
 					<motion.div
 						key={_id}
 						layoutId={_id}
 						className="border-border bg-card flex items-center justify-between gap-2 rounded-lg border px-4 py-2">
-						<a href={`/app/folders/${_id}`} className="flex-1 cursor-pointer">
+						<a href={`${id}/${_id}`} className="flex-1 cursor-pointer">
 							<div className="flex w-full items-center justify-between">
 								<div className="flex items-center gap-2">
 									<FolderIcon className="size-5" />
@@ -108,9 +103,6 @@ export default function FoldersPage() {
 							</DropDownContainer>
 						</DropDown>
 					</motion.div>
-				))}
-				{notes.map(note => (
-					<NoteCard key={note._id} note={note} />
 				))}
 			</section>
 		</main>
