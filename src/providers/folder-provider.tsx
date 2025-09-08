@@ -4,7 +4,7 @@ import type { Folder, Note } from "@/types"
 import { createContext, useContext, useEffect, useState } from "react"
 
 export type FolderContextType = {
-	history: { _id: string; name: string; id_root: string | null }[] | []
+	history: { _id: string; name: string; id_root: string | null }[]
 	folders: Folder[] | null
 	notes: Note[] | null
 	getFolderId: (_id: string | null) => Promise<void>
@@ -23,8 +23,8 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 	const [folders, setFolders] = useState<Folder[] | null>(null)
 	const [notes, setNotes] = useState<Note[] | null>(null)
 	const [history, setHistory] = useState<
-		{ _id: null; name: string; id_root: string | null }[] | []
-	>([])
+		{ _id: null; name: string; id_root: string | null }[]
+	>([{ _id: null, name: "Inicio", id_root: null }])
 
 	const getFolders = async () => {
 		const {
@@ -51,7 +51,6 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 		)
 		setFolders(rootFolders ?? [])
 		setNotes(rootNotes ?? [])
-		setHistory([{ _id: null, name: "Inicio", id_root: null }])
 	}
 
 	const getFolderId = async (_id: string | null) => {
