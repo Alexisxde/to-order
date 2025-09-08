@@ -6,18 +6,12 @@ import {
 	MorphingDialogContent,
 	MorphingDialogTrigger
 } from "@/components/ui/morphing-dialog"
+import { month } from "@/lib/utils"
+import { Note } from "@/types"
 import { EditorContent, useEditor } from "@tiptap/react"
 import { StarterKit } from "@tiptap/starter-kit"
 import { FileText } from "lucide-react"
 import { useState } from "react"
-
-type Note = {
-	_id: string
-	name: string
-	content: string
-	created_at: string
-	update_at: string
-}
 
 interface Props {
 	note: Note
@@ -42,7 +36,11 @@ export default function NoteCard({ note }: Props) {
 					<FileText className="size-5" />
 					<div className="flex flex-col items-start gap-0.5">
 						<span className="text-xs">{name}</span>
-						<span className="text-[9px]">Creado {created_at}</span>
+						<span className="text-[9px]">
+							{update_at
+								? `Modificado ${month(new Date(update_at))}`
+								: `Creado ${month(new Date(created_at))}`}
+						</span>
 					</div>
 				</div>
 			</MorphingDialogTrigger>

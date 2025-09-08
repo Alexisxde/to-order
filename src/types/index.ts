@@ -13,3 +13,21 @@ export type Task = {
 	created_at: string
 	user_id: string
 }
+
+export type Note = {
+	_id: string
+	name: string
+	content: JSON
+	id_folder: string | null
+	update_at: string | null
+	created_at: string
+	id_user: string
+}
+
+export type Folder = {
+	_id: string
+	name: string
+	created_at: string
+	id_root: string | null
+	id_user: string
+}

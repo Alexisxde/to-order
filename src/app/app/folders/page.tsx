@@ -18,37 +18,36 @@ import {
 	Trash2Icon
 } from "lucide-react"
 import { motion } from "motion/react"
-import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
-type Note = {
-	_id: string
-	name: string
-	content: string
-	created_at: string
-	update_at: string
-}
-
 export default function FoldersPage() {
-	const router = useRouter()
 	const [grid, setGrid] = useState(true)
-	const [notes, setNotes] = useState<Note[]>([
-		{
-			_id: "1",
-			name: "work",
-			created_at: "Sep 5, 2025",
-			update_at: "Sep 5, 2025",
-			content: `<h1>Hello World</h1>`
-		}
-	])
-	const { folders } = useFolder()
+	const [_id, setId] = useState<string | null>(null)
+	const { history, folders, notes, getFolderId } = useFolder()
+
+	useEffect(() => {
+		getFolderId(_id)
+	}, [_id])
 
 	useEffect(() => {}, [grid])
 
 	return (
 		<main className="flex w-full flex-col gap-2 p-4">
 			<header className="flex items-center justify-between px-2">
-				<span className="text-xs">Carpetas</span>
+				<div className="flex items-center">
+					{history.map((h, i) => (
+						<>
+							<Button
+								key={h._id}
+								variant={"link"}
+								className="text-xs"
+								onClick={() => setId(h._id)}>
+								{h.name}
+							</Button>
+							{i < history.length - 1 && <span className="text-xs">/</span>}
+						</>
+					))}
+				</div>
 				<div className="flex items-center justify-center gap-2">
 					<Button
 						variant={"ghost"}
@@ -72,12 +71,15 @@ export default function FoldersPage() {
 						? "grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4"
 						: "grid grid-cols-1 gap-2"
 				}>
-				{folders.map(({ _id, name, created_at }) => (
+				{folders?.map(({ _id, name, created_at }) => (
 					<motion.div
 						key={_id}
-						layoutId={_id}
+						initial={{ opacity: 0, y: 40, x: -20 }}
+						animate={{ opacity: 1, y: 0, x: 0 }}
 						className="border-border bg-card flex items-center justify-between gap-2 rounded-lg border px-4 py-2">
-						<a href={`/app/folders/${_id}`} className="flex-1 cursor-pointer">
+						<button
+							onClick={() => setId(_id)}
+							className="flex-1 cursor-pointer">
 							<div className="flex w-full items-center justify-between">
 								<div className="flex items-center gap-2">
 									<FolderIcon className="size-5" />
@@ -89,7 +91,7 @@ export default function FoldersPage() {
 									</div>
 								</div>
 							</div>
-						</a>
+						</button>
 						<DropDown>
 							<DropDownContainer>
 								<DropDownTrigger />
@@ -109,7 +111,7 @@ export default function FoldersPage() {
 						</DropDown>
 					</motion.div>
 				))}
-				{notes.map(note => (
+				{notes?.map(note => (
 					<NoteCard key={note._id} note={note} />
 				))}
 			</section>
