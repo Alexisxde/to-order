@@ -31,7 +31,10 @@ export default function NoteCard({ note }: Props) {
 
 	return (
 		<MorphingDialog isOpen={isOpen} setIsOpen={setIsOpen}>
-			<MorphingDialogTrigger className="border-border bg-card flex w-full cursor-pointer items-center gap-2 rounded-lg border px-4 py-2">
+			<MorphingDialogTrigger
+				initial={{ opacity: 0, y: 40, x: -20 }}
+				animate={{ opacity: 1, y: 0, x: 0 }}
+				className="border-border bg-card flex w-full cursor-pointer items-center gap-2 rounded-lg border px-4 py-2">
 				<div className="flex items-center gap-2">
 					<FileText className="size-5" />
 					<div className="flex flex-col items-start gap-0.5">

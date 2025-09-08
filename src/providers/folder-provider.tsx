@@ -23,7 +23,7 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 	const [folders, setFolders] = useState<Folder[] | null>(null)
 	const [notes, setNotes] = useState<Note[] | null>(null)
 	const [history, setHistory] = useState<
-		{ _id: null; name: string; id_root: string | null }[]
+		{ _id: string | null; name: string; id_root: string | null }[]
 	>([{ _id: null, name: "Inicio", id_root: null }])
 
 	const getFolders = async () => {

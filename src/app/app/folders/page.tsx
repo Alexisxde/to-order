@@ -18,7 +18,7 @@ import {
 	Trash2Icon
 } from "lucide-react"
 import { motion } from "motion/react"
-import { useEffect, useState } from "react"
+import { Fragment, useEffect, useState } from "react"
 
 export default function FoldersPage() {
 	const [grid, setGrid] = useState(true)
@@ -36,16 +36,15 @@ export default function FoldersPage() {
 			<header className="flex items-center justify-between px-2">
 				<div className="flex items-center">
 					{history.map((h, i) => (
-						<>
+						<Fragment key={h._id}>
 							<Button
-								key={h._id}
 								variant={"link"}
 								className="text-xs"
 								onClick={() => setId(h._id)}>
 								{h.name}
 							</Button>
 							{i < history.length - 1 && <span className="text-xs">/</span>}
-						</>
+						</Fragment>
 					))}
 				</div>
 				<div className="flex items-center justify-center gap-2">
@@ -71,6 +70,7 @@ export default function FoldersPage() {
 						? "grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4"
 						: "grid grid-cols-1 gap-2"
 				}>
+				{folders?.length === 0 && <div>No hay nada :c</div>}
 				{folders?.map(({ _id, name, created_at }) => (
 					<motion.div
 						key={_id}
