@@ -51,14 +51,14 @@ export default function FoldersPage() {
 					<Button
 						variant={"ghost"}
 						size={"icon"}
-						onClick={() => setGrid(prev => !prev)}
+						onClick={() => setGrid(false)}
 						className={`${!grid && "bg-card"}`}>
 						<Rows3Icon className="size-5" />
 					</Button>
 					<Button
 						variant={"ghost"}
 						size={"icon"}
-						onClick={() => setGrid(prev => !prev)}
+						onClick={() => setGrid(true)}
 						className={`${grid && "bg-card"}`}>
 						<Columns3Icon className="size-5" />
 					</Button>

@@ -21,6 +21,7 @@ import {
 	MorphingDialogContent,
 	MorphingDialogTrigger
 } from "./ui/morphing-dialog"
+import { useToast } from "./ui/toast"
 
 type FormData = z.infer<typeof createTaskSchema>
 
@@ -54,6 +55,7 @@ const COLUMNS = [
 
 export default function Task() {
 	const isMobile = useIsMobile()
+	const { toast } = useToast()
 	const [isOpen, setIsOpen] = useState(false)
 
 	return isMobile ? (

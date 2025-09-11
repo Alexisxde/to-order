@@ -58,18 +58,18 @@ export const useToast = () => {
 }
 
 export const toastVariants = cva(
-	"pointer-events-auto flex items-center gap-2 rounded-lg bg-indigo-500 p-2 font-medium shadow-xs z-50",
+	"pointer-events-none flex items-center gap-1 rounded-full bg-indigo-500 py-1 px-2 text-xs font-medium shadow-xs z-50",
 	{
 		variants: {
 			variant: {
 				default:
-					"border bg-neutral-100 border-neutral-200 text-neutral-600 dark:bg-neutral-900 dark:border-neutral-800 dark:text-neutral-400",
+					"bg-neutral-50 text-neutral-600 ring-1 ring-neutral-600 ring-inset dark:bg-neutral-800/75 dark:text-neutral-400 dark:ring-neutral-700",
 				success:
-					"border bg-emerald-100 border-emerald-200 text-emerald-600 dark:bg-emerald-900 dark:border-emerald-800 dark:text-emerald-400",
+					"bg-emerald-50 text-emerald-600 ring-1 ring-emerald-600 ring-inset dark:bg-emerald-500/75 dark:text-emerald-300 dark:ring-emerald-500",
 				warning:
-					"border bg-orange-100 border-orange-200 text-orange-600 dark:bg-orange-900 dark:border-orange-800 dark:text-orange-400",
+					"bg-orange-50 text-orange-600 ring-1 ring-orange-600 ring-inset dark:bg-orange-400/75 dark:text-orange-200 dark:ring-orange-400",
 				error:
-					"border bg-red-100 border-red-200 text-red-600 dark:bg-red-900 dark:border-red-800 dark:text-red-400"
+					"bg-red-50 text-red-600 ring-1 ring-red-600 ring-inset dark:bg-red-500/75 dark:text-red-300 dark:ring-red-500"
 			}
 		},
 		defaultVariants: { variant: "default" }
@@ -87,25 +87,19 @@ export function Toast() {
 	}
 
 	return (
-		<div className="pointer-events-none fixed top-2 right-2 z-50 flex w-72 flex-col-reverse gap-1">
+		<div className="pointer-events-none fixed top-4 z-50 flex w-full flex-col items-center justify-center gap-1">
 			<AnimatePresence>
-				{list.map(({ id, text, description, type }) => (
+				{list.map(({ id, text, type }) => (
 					<motion.div
 						layout
 						key={id}
-						initial={{ y: -15, scale: 0.95 }}
-						animate={{ y: 0, scale: 1 }}
-						exit={{ y: 15, opacity: 0 }}
+						initial={{ y: -15, scale: 0.95, opacity: 0 }}
+						animate={{ y: 0, scale: 1, opacity: 1 }}
+						exit={{ y: -15, scale: 0.95, opacity: 0 }}
 						transition={{ duration: 0.35, ease: "easeOut" }}
-						className={cn(
-							toastVariants({ variant: type }),
-							"flex items-center gap-2"
-						)}>
+						className={cn(toastVariants({ variant: type }))}>
 						{icons?.[type ?? "default"] ?? null}
-						<div className="flex flex-col">
-							<span className="text-sm font-semibold">{text}</span>
-							{description && <p className="text-xs">{description}</p>}
-						</div>
+						<span className="text-xs font-semibold">{text}</span>
 					</motion.div>
 				))}
 			</AnimatePresence>
