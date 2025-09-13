@@ -53,19 +53,23 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 
 		allSetFolders(dataFolders as Folder[])
 		allSetNotes(dataNotes as Note[])
-		const rootFolders = (dataFolders as Folder[])?.filter(
-			folder => folder.id_root === null
-		)
-		const rootNotes = (dataNotes as Note[])?.filter(
-			note => note.id_folder === null
-		)
+		const rootFolders = (dataFolders as Folder[])
+			?.filter(folder => folder.id_root === null)
+			.sort((a, b) => a.name.localeCompare(b.name))
+		const rootNotes = (dataNotes as Note[])
+			?.filter(note => note.id_folder === null)
+			.sort((a, b) => a.name.localeCompare(b.name))
 		setFolders(rootFolders ?? [])
 		setNotes(rootNotes ?? [])
 	}
 
 	const getFolderId = async (_id: string | null) => {
-		const rootFolders = allFolders?.filter(folder => folder.id_root === _id)
-		const rootNotes = allNotes?.filter(note => note.id_folder === _id)
+		const rootFolders = allFolders
+			?.filter(folder => folder.id_root === _id)
+			.sort((a, b) => a.name.localeCompare(b.name))
+		const rootNotes = allNotes
+			?.filter(note => note.id_folder === _id)
+			.sort((a, b) => a.name.localeCompare(b.name))
 		setFolders(rootFolders ?? [])
 		setNotes(rootNotes ?? [])
 		const active = allFolders?.find(folder => folder._id === _id)
