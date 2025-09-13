@@ -72,7 +72,7 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 		setHistory(prev => {
 			const idx = prev.findIndex(item => item._id === _id)
 			if (idx !== -1) return prev.slice(0, idx + 1)
-			return [...prev, active]
+			return active ? [...prev, active] : prev
 		})
 	}
 
