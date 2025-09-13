@@ -157,21 +157,6 @@ function MorphingDialogTrigger({
 	)
 }
 
-// export type MorphingPopoverTriggerProps = {
-//   asChild?: boolean
-//   children: React.ReactNode
-//   className?: string
-// } & React.ComponentProps<typeof motion.button>
-
-// function MorphingPopoverTrigger({
-//   children,
-//   className,
-//   asChild = false,
-//   ...props
-// }: MorphingPopoverTriggerProps) {
-
-// }
-
 export type MorphingDialogContentProps = {
 	children: React.ReactNode
 	className?: string

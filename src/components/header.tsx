@@ -6,7 +6,7 @@ interface Props {
 
 export default function Header({ user }: Props) {
 	return (
-		<header className="bg-background border-muted sticky top-0 z-20 flex h-16 items-center justify-between border-b px-6 py-4">
+		<header className="bg-background border-muted sticky top-0 z-20 flex h-12 items-center justify-between border-b px-6 py-4">
 			<div className="text-xs">
 				<span className="">ToOrder</span>
 			</div>

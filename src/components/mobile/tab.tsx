@@ -18,9 +18,9 @@ interface Props {
 }
 
 const TABSICONS: Record<string, JSX.Element> = {
-	new: <Plus className="size-4" />,
-	progress: <Loader className="size-4" />,
-	completed: <CheckCheckIcon className="size-4" />
+	new: <Plus className="text-primary size-4" />,
+	progress: <Loader className="text-primary size-4" />,
+	completed: <CheckCheckIcon className="text-primary size-4" />
 } as const
 
 export default function Tab({ columns }: Props) {
@@ -31,11 +31,6 @@ export default function Tab({ columns }: Props) {
 	const [isOpenModal, setIsOpenModal] = useState(false)
 	const [isOpenDragDrawer, setIsOpenDragDrawer] = useState(false)
 	const tasksFilter = tasks?.filter(t => t.column === tab)
-
-	const handleDelete = async (id: string) => {
-		if (!id) return
-		await deleteTask(id)
-	}
 
 	return (
 		<>
@@ -101,16 +96,16 @@ const Chip = ({ title, column, selected, setSelected }: ChipProps) => {
 	return (
 		<button
 			onClick={() => setSelected(column)}
-			className={`${
-				selected ? "text-primary" : "text-primary/80"
-			} relative flex h-9 w-full cursor-pointer items-center justify-center gap-1 rounded-md px-4 py-2 text-sm transition-colors duration-200 ease-in-out`}>
-			{TABSICONS[column]}
-			<span className="relative z-10">{title}</span>
+			className={`relative flex h-9 w-full cursor-pointer items-center justify-center gap-1 rounded-md px-4 py-2 text-xs text-nowrap transition-colors duration-200 ease-in-out`}>
+			<span className="z-1 flex gap-1">
+				{TABSICONS[column]}
+				{title}
+			</span>
 			{selected && (
 				<motion.span
 					layoutId="pill-tab"
 					transition={{ type: "spring", duration: 0.3 }}
-					className="bg-muted dark:bg-muted/50 absolute inset-0 z-0 rounded-md px-2"
+					className="bg-muted absolute inset-0 rounded-md px-2"
 				/>
 			)}
 		</button>

@@ -34,7 +34,7 @@ export default function FormEditTask({ id, setIsOpen }: Props) {
 		register,
 		handleSubmit,
 		reset,
-		formState: { errors }
+		formState: { isSubmitting, errors }
 	} = useForm<FormData>({ resolver: zodResolver(editTaskSchema) })
 
 	const onSubmit: SubmitHandler<FormData> = async ({
@@ -61,7 +61,7 @@ export default function FormEditTask({ id, setIsOpen }: Props) {
 				id="form-edit-task"
 				autoComplete="off"
 				onSubmit={handleSubmit(onSubmit)}
-				className="text-primary/75 flex flex-col gap-2 text-xs">
+				className="text-primary/75 flex flex-col gap-2 text-sm">
 				<label className="border-border relative flex items-center justify-between rounded-lg border px-3 py-1.5">
 					<span className="bg-card pointer-events-none absolute -top-2 left-2.5 h-fit px-1 text-[10px] text-neutral-400">
 						Título <b className="text-destructive">*</b>
@@ -192,8 +192,12 @@ export default function FormEditTask({ id, setIsOpen }: Props) {
 				</label>
 				{errors.url && <Error message={errors.url.message} />}
 				<div className="flex items-center justify-end gap-2">
-					<Button form="form-edit-task" type="submit">
-						Guardar
+					<Button
+						form="form-edit-task"
+						size={"lg"}
+						type="submit"
+						disabled={isSubmitting}>
+						{isSubmitting ? "Guardando..." : "Guardar"}
 					</Button>
 				</div>
 			</form>

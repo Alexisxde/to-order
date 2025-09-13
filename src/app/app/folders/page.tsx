@@ -1,6 +1,12 @@
 "use client"
+import EditorHeader from "@/components/editor-header"
 import NoteCard from "@/components/mobile/note-card"
 import Button from "@/components/ui/button"
+import {
+	DragDrawer,
+	DragDrawerContent,
+	DragDrawerTrigger
+} from "@/components/ui/drag-draw"
 import {
 	DropDown,
 	DropDownContainer,
@@ -8,31 +14,47 @@ import {
 	DropDownOption,
 	DropDownTrigger
 } from "@/components/ui/drop-down"
+import {
+	MorphingDialog,
+	MorphingDialogContainer,
+	MorphingDialogContent,
+	MorphingDialogTrigger
+} from "@/components/ui/morphing-dialog"
 import { month } from "@/lib/utils"
 import { useFolder } from "@/providers/folder-provider"
+import { EditorContent, useEditor } from "@tiptap/react"
+import StarterKit from "@tiptap/starter-kit"
 import {
 	Columns3Icon,
 	EditIcon,
+	FileText,
+	Folder,
 	FolderIcon,
+	Plus,
 	Rows3Icon,
 	Trash2Icon
 } from "lucide-react"
-import { motion } from "motion/react"
+import { AnimatePresence, motion } from "motion/react"
 import { Fragment, useEffect, useState } from "react"
 
 export default function FoldersPage() {
+	const items = [
+		{ title: "Folder", open: "folder", icon: <Folder /> },
+		{ title: "Notes", open: "notes", icon: <FileText /> }
+	]
 	const [grid, setGrid] = useState(true)
-	const [_id, setId] = useState<string | null>(null)
-	const { history, folders, notes, getFolderId } = useFolder()
+	const [open, setOpen] = useState(false)
+	const { history, folders, notes, getFolderId, folderId, setFolderId } =
+		useFolder()
 
 	useEffect(() => {
-		getFolderId(_id)
-	}, [_id])
+		getFolderId(folderId)
+	}, [folderId])
 
 	useEffect(() => {}, [grid])
 
 	return (
-		<main className="flex w-full flex-col gap-2 p-4">
+		<main className="flex h-svh w-full flex-col gap-2 p-4">
 			<header className="flex items-center justify-between px-2">
 				<div className="flex items-center">
 					{history.map((h, i) => (
@@ -40,7 +62,7 @@ export default function FoldersPage() {
 							<Button
 								variant={"link"}
 								className="text-xs"
-								onClick={() => setId(h._id)}>
+								onClick={() => setFolderId(h._id)}>
 								{h.name}
 							</Button>
 							{i < history.length - 1 && <span className="text-xs">/</span>}
@@ -78,7 +100,7 @@ export default function FoldersPage() {
 						animate={{ opacity: 1, y: 0, x: 0 }}
 						className="border-border bg-card flex items-center justify-between gap-2 rounded-lg border px-4 py-2">
 						<button
-							onClick={() => setId(_id)}
+							onClick={() => setFolderId(_id)}
 							className="flex-1 cursor-pointer">
 							<div className="flex w-full items-center justify-between">
 								<div className="flex items-center gap-2">
@@ -115,6 +137,100 @@ export default function FoldersPage() {
 					<NoteCard key={note._id} note={note} />
 				))}
 			</section>
+			<div className="fixed right-4 bottom-1/12 lg:bottom-4">
+				<div className="relative">
+					<AnimatePresence>
+						{open && (
+							<div className="absolute bottom-full left-1/2 mb-2 flex -translate-x-1/2 flex-col items-center gap-2">
+								<CreateFolder />
+								<CreateNote />
+							</div>
+						)}
+					</AnimatePresence>
+					<Button
+						onClick={() => setOpen(!open)}
+						className={`size-12 rounded-full ${open && "rotate-45"}`}
+						size={"icon"}>
+						<Plus className="size-6" />
+					</Button>
+				</div>
+			</div>
 		</main>
+	)
+}
+
+export function CreateFolder() {
+	const [isOpen, setIsOpen] = useState(false)
+
+	return (
+		<motion.div
+			initial={{ opacity: 0, y: 10 }}
+			animate={{ opacity: 1, y: 0 }}
+			exit={{ opacity: 0, y: 10, transition: { delay: 0.05 } }}
+			transition={{ delay: 0.05 }}>
+			<DragDrawer isOpen={isOpen} setIsOpen={setIsOpen}>
+				<DragDrawerTrigger asChild>
+					<Button
+						variant={"secondary"}
+						className="size-10 rounded-full"
+						size={"icon"}>
+						<Folder className="size-5" />
+					</Button>
+				</DragDrawerTrigger>
+				<DragDrawerContent className="h-fit">
+					<h2 className="mb-4 text-xl font-medium">Nueva Carpeta</h2>
+					<form className="text-primary/75 flex flex-col gap-2 text-sm">
+						<label className="border-border relative flex items-center justify-between rounded-lg border px-3 py-1.5">
+							<span className="bg-card pointer-events-none absolute -top-2 left-2.5 h-fit px-1 text-[10px] text-neutral-400">
+								Título <b className="text-destructive">*</b>
+							</span>
+							<Folder className="size-5" />
+							<input
+								type="text"
+								className="size-full px-3 py-1.5 focus:outline-none"
+								placeholder="Añadir título"
+							/>
+						</label>
+						<Button size={"lg"}>Guardar</Button>
+					</form>
+				</DragDrawerContent>
+			</DragDrawer>
+		</motion.div>
+	)
+}
+
+export function CreateNote() {
+	const [isOpen, setIsOpen] = useState(false)
+
+	const editor = useEditor({
+		extensions: [StarterKit],
+		content: `<h1>Agrega tus notas aquí</h1>`,
+		immediatelyRender: false,
+		autofocus: "end"
+	})
+
+	return (
+		<motion.div
+			initial={{ opacity: 0, y: 10 }}
+			animate={{ opacity: 1, y: 0 }}
+			exit={{ opacity: 0, y: 10, transition: { delay: 0.1 } }}
+			transition={{ delay: 0.1 }}>
+			<MorphingDialog isOpen={isOpen} setIsOpen={setIsOpen}>
+				<MorphingDialogTrigger asChild>
+					<Button
+						variant={"secondary"}
+						className="size-10 rounded-full"
+						size={"icon"}>
+						<FileText className="size-5" />
+					</Button>
+				</MorphingDialogTrigger>
+				<MorphingDialogContainer>
+					<MorphingDialogContent className="h-[98dvh] w-[97dvw] rounded-3xl p-4 lg:h-[98dvh] lg:w-[98dvw]">
+						<EditorHeader editor={editor} setIsOpen={setIsOpen} />
+						<EditorContent className="mt-4" editor={editor} />
+					</MorphingDialogContent>
+				</MorphingDialogContainer>
+			</MorphingDialog>
+		</motion.div>
 	)
 }

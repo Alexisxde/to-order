@@ -61,7 +61,7 @@ export function Button({
 	onClick,
 	variant,
 	size,
-	disabled,
+	disabled = false,
 	href,
 	ref,
 	...props
@@ -107,6 +107,7 @@ export function Button({
 				href={href}
 				className={cn(buttonVariants({ variant, size, disabled }), className)}
 				onClick={handleClick}
+				disabled={disabled}
 				{...props}>
 				<div className="relative z-10 flex items-center justify-center gap-1.5">
 					{children}
@@ -135,6 +136,7 @@ export function Button({
 		<button
 			className={cn(buttonVariants({ variant, size, disabled }), className)}
 			onClick={handleClick}
+			disabled={disabled}
 			ref={ref}
 			{...props}>
 			<div className="relative z-10 flex items-center justify-center gap-1.5">

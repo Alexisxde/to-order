@@ -8,6 +8,8 @@ export type FolderContextType = {
 	folders: Folder[] | null
 	notes: Note[] | null
 	getFolderId: (_id: string | null) => Promise<void>
+	folderId: string | null
+	setFolderId: React.Dispatch<React.SetStateAction<string | null>>
 }
 
 const FolderContext = createContext<FolderContextType | null>(null)
@@ -22,6 +24,8 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 	const [allNotes, allSetNotes] = useState<Note[] | null>(null)
 	const [folders, setFolders] = useState<Folder[] | null>(null)
 	const [notes, setNotes] = useState<Note[] | null>(null)
+	const [folderId, setFolderId] = useState<string | null>(null)
+
 	const [history, setHistory] = useState<
 		{ _id: string | null; name: string; id_root: string | null }[]
 	>([{ _id: null, name: "Inicio", id_root: null }])
@@ -71,7 +75,8 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 	}, [])
 
 	return (
-		<FolderContext.Provider value={{ history, folders, notes, getFolderId }}>
+		<FolderContext.Provider
+			value={{ folderId, setFolderId, history, folders, notes, getFolderId }}>
 			{children}
 		</FolderContext.Provider>
 	)

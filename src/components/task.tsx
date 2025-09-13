@@ -21,7 +21,6 @@ import {
 	MorphingDialogContent,
 	MorphingDialogTrigger
 } from "./ui/morphing-dialog"
-import { useToast } from "./ui/toast"
 
 type FormData = z.infer<typeof createTaskSchema>
 
@@ -55,13 +54,12 @@ const COLUMNS = [
 
 export default function Task() {
 	const isMobile = useIsMobile()
-	const { toast } = useToast()
 	const [isOpen, setIsOpen] = useState(false)
 
 	return isMobile ? (
 		<section className="flex flex-col">
 			<Tab columns={COLUMNS} />
-			<div className="fixed right-4 bottom-1/6">
+			<div className="fixed right-4 bottom-1/12">
 				<DragDrawer isOpen={isOpen} setIsOpen={setIsOpen}>
 					<DragDrawerTrigger asChild>
 						<Button className="size-12 rounded-full" size={"icon"}>
