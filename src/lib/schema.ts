@@ -78,3 +78,8 @@ export const editTaskSchema = z.object({
 		errorMap: () => ({ message: "Tipo inválido." })
 	})
 })
+
+export const createFolderSchema = z.object({
+	name: z.string().min(4, "No puede estar vacío.")
+	// description: z.string().optional()
+})

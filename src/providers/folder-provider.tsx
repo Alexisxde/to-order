@@ -1,4 +1,5 @@
 "use client"
+import { useToast } from "@/components/ui/toast"
 import { createClient } from "@/supabase/client"
 import type { Folder, Note } from "@/types"
 import { createContext, useContext, useEffect, useState } from "react"
@@ -9,6 +10,10 @@ export type FolderContextType = {
 	notes: Note[] | null
 	getFolderId: (_id: string | null) => Promise<void>
 	folderId: string | null
+	createFolder: (
+		_id: string | null,
+		{ name }: { name: string }
+	) => Promise<void>
 	setFolderId: React.Dispatch<React.SetStateAction<string | null>>
 }
 
@@ -25,6 +30,7 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 	const [folders, setFolders] = useState<Folder[] | null>(null)
 	const [notes, setNotes] = useState<Note[] | null>(null)
 	const [folderId, setFolderId] = useState<string | null>(null)
+	const { toast } = useToast()
 
 	const [history, setHistory] = useState<
 		{ _id: string | null; name: string; id_root: string | null }[]
@@ -70,13 +76,56 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 		})
 	}
 
+	const createFolder = async (
+		_id: string | null,
+		{ name }: { name: string }
+	) => {
+		try {
+			const {
+				data: { user }
+			} = await supabase.auth.getUser()
+			const exists = allFolders?.some(
+				folder => folder.id_root === _id && folder.name === name
+			)
+			if (exists) {
+				toast.error({
+					text: "Ya existe una carpeta con ese nombre en esta ubicación."
+				})
+				return
+			}
+
+			const { data, error } = await supabase
+				.from("folders")
+				.insert({ name, id_root: _id, id_user: user?.id })
+				.select()
+			if (!data) throw new Error("Error al crear la carpeta.")
+			if (!error)
+				toast.success({ text: `Carpeta ${name} creada correctamente.` })
+			if (_id === folderId) setFolders(p => (p ? [...p, data[0]] : [data[0]]))
+			allSetFolders(p => (p ? [...p, data[0]] : [data[0]]))
+		} catch (error) {
+			toast.error({
+				text: error instanceof Error ? error.message : "A ocurrido un error"
+			})
+			allSetFolders(prev => prev)
+		}
+	}
+
 	useEffect(() => {
 		getFolders()
 	}, [])
 
 	return (
 		<FolderContext.Provider
-			value={{ folderId, setFolderId, history, folders, notes, getFolderId }}>
+			value={{
+				folderId,
+				setFolderId,
+				createFolder,
+				history,
+				folders,
+				notes,
+				getFolderId
+			}}>
 			{children}
 		</FolderContext.Provider>
 	)

@@ -14,14 +14,17 @@ import {
 	DropDownOption,
 	DropDownTrigger
 } from "@/components/ui/drop-down"
+import Error from "@/components/ui/error"
 import {
 	MorphingDialog,
 	MorphingDialogContainer,
 	MorphingDialogContent,
 	MorphingDialogTrigger
 } from "@/components/ui/morphing-dialog"
+import { createFolderSchema } from "@/lib/schema"
 import { month } from "@/lib/utils"
 import { useFolder } from "@/providers/folder-provider"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { EditorContent, useEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 import {
@@ -36,6 +39,8 @@ import {
 } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
 import { Fragment, useEffect, useState } from "react"
+import { SubmitHandler, useForm } from "react-hook-form"
+import { z } from "zod"
 
 export default function FoldersPage() {
 	const items = [
@@ -159,8 +164,25 @@ export default function FoldersPage() {
 	)
 }
 
+type FormData = z.infer<typeof createFolderSchema>
+
 export function CreateFolder() {
 	const [isOpen, setIsOpen] = useState(false)
+	const { folderId, createFolder } = useFolder()
+	const {
+		register,
+		handleSubmit,
+		reset,
+		formState: { isSubmitting, errors }
+	} = useForm<FormData>({ resolver: zodResolver(createFolderSchema) })
+
+	const onSubmit: SubmitHandler<FormData> = async ({ name }) => {
+		await createFolder(folderId, {
+			name: `${name.trim()[0].toUpperCase()}${name.trim().slice(1)}`
+		})
+		reset()
+		setIsOpen(false)
+	}
 
 	return (
 		<motion.div
@@ -179,19 +201,25 @@ export function CreateFolder() {
 				</DragDrawerTrigger>
 				<DragDrawerContent className="h-fit">
 					<h2 className="mb-4 text-xl font-medium">Nueva Carpeta</h2>
-					<form className="text-primary/75 flex flex-col gap-2 text-sm">
+					<form
+						className="text-primary/75 flex flex-col gap-2 text-sm"
+						onSubmit={handleSubmit(onSubmit)}>
 						<label className="border-border relative flex items-center justify-between rounded-lg border px-3 py-1.5">
 							<span className="bg-card pointer-events-none absolute -top-2 left-2.5 h-fit px-1 text-[10px] text-neutral-400">
-								Título <b className="text-destructive">*</b>
+								Nombre <b className="text-destructive">*</b>
 							</span>
 							<Folder className="size-5" />
 							<input
 								type="text"
 								className="size-full px-3 py-1.5 focus:outline-none"
-								placeholder="Añadir título"
+								placeholder="Añadir nombre"
+								{...register("name")}
 							/>
 						</label>
-						<Button size={"lg"}>Guardar</Button>
+						{errors.name && <Error message={errors.name.message} />}
+						<Button size={"lg"} disabled={isSubmitting}>
+							{isSubmitting ? "Guardando..." : "Guardar"}
+						</Button>
 					</form>
 				</DragDrawerContent>
 			</DragDrawer>

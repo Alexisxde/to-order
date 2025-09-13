@@ -16,7 +16,6 @@ interface Props {
 
 export default function FormCreateTask({ setIsOpen }: Props) {
 	const { createTask } = useTask()
-
 	const {
 		register,
 		handleSubmit,
