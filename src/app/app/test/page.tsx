@@ -39,6 +39,7 @@ import { useState } from "react"
 export default function AppPage() {
 	const { toast } = useToast()
 	const [isOpen, setIsOpen] = useState(false)
+	const [isOpenM, setIsOpenM] = useState(false)
 	const [isOpen2, setIsOpen2] = useState(false)
 	const [openDraw, setOpenDraw] = useState(false)
 
@@ -76,7 +77,7 @@ export default function AppPage() {
 					</ModalPortal>
 				</Modal>
 
-				<MorphingDialog>
+				<MorphingDialog isOpen={isOpenM} setIsOpen={setIsOpenM}>
 					<MorphingDialogTrigger>Open Morphing Dialog</MorphingDialogTrigger>
 					<MorphingDialogContainer>
 						<MorphingDialogContent className="h-[98dvh] w-[98vw] lg:h-[95dvh]">
@@ -101,7 +102,7 @@ export default function AppPage() {
 							<motion.span
 								layoutId="morphing-popover-basic-label"
 								layout="position">
-								Open popover
+								Dimensions
 							</motion.span>
 						</Button>
 					</MorphingPopoverTrigger>

@@ -18,9 +18,7 @@ type Time = {
 
 export type TimeContextType = {
 	times: Time[]
-	createTime: (
-		time: Omit<Time, "_id" | "created_at" | "user_id">
-	) => Promise<void>
+	createTime: (time: Omit<Time, "_id" | "created_at" | "user_id">) => Promise<void>
 }
 
 const TimeContext = createContext<TimeContextType | null>(null)
@@ -33,16 +31,11 @@ export function TimeProvider({ children }: { children: React.ReactNode }) {
 		const {
 			data: { user }
 		} = await supabase.auth.getUser()
-		const { data } = await supabase
-			.from("times")
-			.select()
-			.eq("user_id", user?.id)
+		const { data } = await supabase.from("times").select().eq("user_id", user?.id)
 		setTimes(data as Time[])
 	}
 
-	const createTime = async (
-		time: Omit<Time, "_id" | "created_at" | "user_id">
-	) => {
+	const createTime = async (time: Omit<Time, "_id" | "created_at" | "user_id">) => {
 		try {
 			const {
 				data: { user }
@@ -65,11 +58,7 @@ export function TimeProvider({ children }: { children: React.ReactNode }) {
 		getTimes()
 	}, [])
 
-	return (
-		<TimeContext.Provider value={{ times, createTime }}>
-			{children}
-		</TimeContext.Provider>
-	)
+	return <TimeContext.Provider value={{ times, createTime }}>{children}</TimeContext.Provider>
 }
 
 export const useTime = () => {

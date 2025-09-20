@@ -4,7 +4,6 @@ import { FloatingDockDesktop } from "@/components/ui/floating-dock"
 import { useIsMobile } from "@/hooks/useIsMobile"
 import type { User } from "@supabase/supabase-js"
 import {
-	CalendarDays,
 	Folder,
 	House,
 	LaptopMinimal,
@@ -49,12 +48,12 @@ export default function Sidebar({ user }: Props) {
 			title: "Tareas",
 			icon: <PackageCheck className="text-primary size-6 lg:size-full" />,
 			href: "/app/tasks"
-		},
-		{
-			title: "Horarios",
-			icon: <CalendarDays className="text-primary size-6 lg:size-full" />,
-			href: "/app/time"
 		}
+		// {
+		// 	title: "Horarios",
+		// 	icon: <CalendarDays className="text-primary size-6 lg:size-full" />,
+		// 	href: "/app/time"
+		// }
 	]
 
 	return isMobile ? (

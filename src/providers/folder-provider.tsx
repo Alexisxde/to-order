@@ -8,13 +8,12 @@ export type FolderContextType = {
 	history: { _id: string; name: string; id_root: string | null }[]
 	folders: Folder[] | null
 	notes: Note[] | null
-	getFolderId: (_id: string | null) => Promise<void>
 	folderId: string | null
-	createFolder: (
-		_id: string | null,
-		{ name }: { name: string }
-	) => Promise<void>
 	setFolderId: React.Dispatch<React.SetStateAction<string | null>>
+	getFolderId: (_id: string | null) => Promise<void>
+	createFolder: (_id: string | null, { name }: { name: string }) => Promise<void>
+	createNote: ({ name, content }: { name: string; content: unknown }) => Promise<void>
+	updateNote: ({ _id, name, content }: { _id: string; name: string; content: unknown }) => Promise<void>
 }
 
 const FolderContext = createContext<FolderContextType | null>(null)
@@ -32,24 +31,17 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 	const [folderId, setFolderId] = useState<string | null>(null)
 	const { toast } = useToast()
 
-	const [history, setHistory] = useState<
-		{ _id: string | null; name: string; id_root: string | null }[]
-	>([{ _id: null, name: "Inicio", id_root: null }])
+	const [history, setHistory] = useState<{ _id: string | null; name: string; id_root: string | null }[]>([
+		{ _id: null, name: "Inicio", id_root: null }
+	])
 
 	const getFolders = async () => {
 		const {
 			data: { user }
 		} = await supabase.auth.getUser()
 
-		const { data: dataFolders } = await supabase
-			.from("folders")
-			.select("*")
-			.eq("id_user", user?.id)
-
-		const { data: dataNotes } = await supabase
-			.from("notes")
-			.select("*")
-			.eq("id_user", user?.id)
+		const { data: dataFolders } = await supabase.from("folders").select("*").eq("id_user", user?.id)
+		const { data: dataNotes } = await supabase.from("notes").select("*").eq("id_user", user?.id)
 
 		allSetFolders(dataFolders as Folder[])
 		allSetNotes(dataNotes as Note[])
@@ -67,9 +59,7 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 		const rootFolders = allFolders
 			?.filter(folder => folder.id_root === _id)
 			.sort((a, b) => a.name.localeCompare(b.name))
-		const rootNotes = allNotes
-			?.filter(note => note.id_folder === _id)
-			.sort((a, b) => a.name.localeCompare(b.name))
+		const rootNotes = allNotes?.filter(note => note.id_folder === _id).sort((a, b) => a.name.localeCompare(b.name))
 		setFolders(rootFolders ?? [])
 		setNotes(rootNotes ?? [])
 		const active = allFolders?.find(folder => folder._id === _id)
@@ -80,17 +70,12 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 		})
 	}
 
-	const createFolder = async (
-		_id: string | null,
-		{ name }: { name: string }
-	) => {
+	const createFolder = async (_id: string | null, { name }: { name: string }) => {
 		try {
 			const {
 				data: { user }
 			} = await supabase.auth.getUser()
-			const exists = allFolders?.some(
-				folder => folder.id_root === _id && folder.name === name
-			)
+			const exists = allFolders?.some(folder => folder.id_root === _id && folder.name === name)
 			if (exists) {
 				toast.error({
 					text: "Ya existe una carpeta con ese nombre en esta ubicación."
@@ -98,20 +83,77 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 				return
 			}
 
-			const { data, error } = await supabase
-				.from("folders")
-				.insert({ name, id_root: _id, id_user: user?.id })
-				.select()
+			const { data, error } = await supabase.from("folders").insert({ name, id_root: _id, id_user: user?.id }).select()
 			if (!data) throw new Error("Error al crear la carpeta.")
-			if (!error)
-				toast.success({ text: `Carpeta ${name} creada correctamente.` })
+			if (!error) toast.success({ text: `Carpeta ${name} creada correctamente.` })
 			if (_id === folderId) setFolders(p => (p ? [...p, data[0]] : [data[0]]))
 			allSetFolders(p => (p ? [...p, data[0]] : [data[0]]))
 		} catch (error) {
 			toast.error({
 				text: error instanceof Error ? error.message : "A ocurrido un error"
 			})
-			allSetFolders(prev => prev)
+		}
+	}
+
+	const createNote = async ({ name, content }: { name: string; content: unknown }) => {
+		try {
+			const {
+				data: { user }
+			} = await supabase.auth.getUser()
+
+			const { data, error } = await supabase
+				.from("notes")
+				.insert({ name, content, id_folder: folderId, id_user: user?.id })
+				.select()
+			if (!data) throw new Error("Error al crear la nota.")
+			if (!error) toast.success({ text: `${name} creada correctamente.` })
+			if (data?.[0]?.id_folder === folderId) setNotes(p => (p ? [...p, data[0]] : [data[0]]))
+			allSetNotes(p => (p ? [...p, data[0]] : [data[0]]))
+		} catch (error) {
+			toast.error({
+				text: error instanceof Error ? error.message : "A ocurrido un error"
+			})
+		}
+	}
+
+	const updateNote = async ({ _id, name, content }: { _id: string; name: string; content: unknown }) => {
+		try {
+			const { data, error } = await supabase.from("notes").update({ name, content }).eq("_id", _id).select()
+			if (!data) throw new Error("Error al actualizar la nota.")
+			if (!error) toast.success({ text: `${name} guardada correctamente.` })
+			if (data?.[0]) {
+				const updatedNote = data[0]
+				setNotes(prev =>
+					prev
+						? prev.map(note =>
+								note._id === _id
+									? {
+											...note,
+											name: updatedNote.name,
+											content: updatedNote.content
+										}
+									: note
+							)
+						: prev
+				)
+				allSetNotes(prev =>
+					prev
+						? prev.map(note =>
+								note._id === _id
+									? {
+											...note,
+											name: updatedNote.name,
+											content: updatedNote.content
+										}
+									: note
+							)
+						: prev
+				)
+			}
+		} catch (error) {
+			toast.error({
+				text: error instanceof Error ? error.message : "A ocurrido un error"
+			})
 		}
 	}
 
@@ -125,6 +167,8 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 				folderId,
 				setFolderId,
 				createFolder,
+				createNote,
+				updateNote,
 				history,
 				folders,
 				notes,
@@ -137,7 +181,6 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 
 export const useFolder = () => {
 	const context = useContext(FolderContext)
-	if (!context)
-		throw new Error("useFolder must be used within a FolderProvider")
+	if (!context) throw new Error("useFolder must be used within a FolderProvider")
 	return context
 }

@@ -58,7 +58,7 @@ export const useToast = () => {
 }
 
 export const toastVariants = cva(
-	"pointer-events-none flex items-center gap-1 rounded-full bg-indigo-500 py-1 px-2 text-xs font-medium shadow-xs z-50",
+	"pointer-events-none flex items-center gap-1 rounded-full bg-indigo-500 py-1 px-2 text-xs z-[9999]",
 	{
 		variants: {
 			variant: {
@@ -87,7 +87,7 @@ export function Toast() {
 	}
 
 	return (
-		<div className="pointer-events-none fixed top-4 z-50 flex w-full flex-col items-center justify-center gap-1">
+		<div className="pointer-events-none fixed top-4 z-[9999] flex w-full flex-col items-center justify-center gap-1">
 			<AnimatePresence>
 				{list.map(({ id, text, type }) => (
 					<motion.div

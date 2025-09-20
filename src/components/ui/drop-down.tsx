@@ -39,10 +39,7 @@ export const DropDownTrigger = ({ className }: DropDownTriggerProps) => {
 		<button
 			ref={triggerRef}
 			onClick={() => setIsOpen(prev => !prev)}
-			className={cn(
-				"flex cursor-pointer items-center gap-2 rounded-md p-1",
-				className
-			)}>
+			className={cn("flex cursor-pointer items-center gap-2 p-1", className)}>
 			<EllipsisVerticalIcon className="size-4" />
 		</button>
 	)

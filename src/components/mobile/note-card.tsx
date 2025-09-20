@@ -7,6 +7,7 @@ import {
 	MorphingDialogTrigger
 } from "@/components/ui/morphing-dialog"
 import { month } from "@/lib/utils"
+import { useFolder } from "@/providers/folder-provider"
 import { Note } from "@/types"
 import { EditorContent, useEditor } from "@tiptap/react"
 import { StarterKit } from "@tiptap/starter-kit"
@@ -19,8 +20,19 @@ interface Props {
 }
 
 export default function NoteCard({ note }: Props) {
-	const { name, created_at, update_at, content } = note
+	const { _id, name: noteName, created_at, update_at, content } = note
 	const [isOpen, setIsOpen] = useState(false)
+	const [isSaving, setIsSaving] = useState(false)
+	const [name, setName] = useState(noteName)
+	const { updateNote } = useFolder()
+
+	const handleClick = async () => {
+		if (isSaving) return
+		setIsSaving(true)
+		await updateNote({ _id, name, content: editor?.getJSON() })
+		setIsSaving(false)
+		setIsOpen(false)
+	}
 
 	const editor = useEditor({
 		extensions: [StarterKit],
@@ -38,19 +50,24 @@ export default function NoteCard({ note }: Props) {
 				<div className="flex items-center gap-2">
 					<FileText className="size-5" />
 					<div className="flex flex-col items-start gap-0.5">
-						<span className="text-xs">{name}</span>
+						<span className="text-xs">{noteName}</span>
 						<span className="text-[9px]">
-							{update_at
-								? `Modificado ${month(new Date(update_at))}`
-								: `Creado ${month(new Date(created_at))}`}
+							{update_at ? `Modificado ${month(new Date(update_at))}` : `Creado ${month(new Date(created_at))}`}
 						</span>
 					</div>
 				</div>
 			</MorphingDialogTrigger>
 			<MorphingDialogContainer>
-				<MorphingDialogContent className="h-[98dvh] w-[97dvw] rounded-3xl p-4 lg:h-[98dvh] lg:w-[98dvw]">
-					<EditorHeader editor={editor} setIsOpen={setIsOpen} />
-					<EditorContent className="mt-4" editor={editor} />
+				<MorphingDialogContent className="relative h-[98dvh] w-[97dvw] rounded-3xl p-4 lg:h-[98dvh] lg:w-[98dvw]">
+					<EditorHeader
+						isSaving={isSaving}
+						editor={editor}
+						setIsOpen={setIsOpen}
+						handleClick={handleClick}
+						name={name}
+						setName={setName}
+					/>
+					<EditorContent editor={editor} className="mt-2 overflow-y-auto rounded-3xl p-2" />
 				</MorphingDialogContent>
 			</MorphingDialogContainer>
 		</MorphingDialog>

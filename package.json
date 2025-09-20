@@ -47,6 +47,7 @@
 		"typescript": "^5"
 	},
 	"prettier": {
+		"printWidth": 120,
 		"trailingComma": "none",
 		"arrowParens": "avoid",
 		"bracketSameLine": true,
@@ -57,7 +58,7 @@
 		"singleQuote": false,
 		"tabWidth": 2,
 		"useTabs": true,
-		"objectWrap": "collapse",
+		"objectWrap": "preserve",
 		"plugins": [
 			"prettier-plugin-tailwindcss"
 		]

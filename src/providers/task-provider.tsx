@@ -7,9 +7,7 @@ import { createContext, useContext, useEffect, useState } from "react"
 export type TasksContextType = {
 	tasks: Task[]
 	getTaskId: (id: string) => Task | undefined
-	createTask: (
-		task: Omit<Task, "_id" | "created_at" | "column" | "priority" | "user_id">
-	) => Promise<void>
+	createTask: (task: Omit<Task, "_id" | "created_at" | "column" | "priority" | "user_id">) => Promise<void>
 	updateTaskColumn: (_id: string, column: Task["column"]) => Promise<void>
 	updateTask: (updateTask: Task) => Promise<void>
 	deleteTask: (id: string) => Promise<void>
@@ -26,10 +24,7 @@ export const TasksProvider = ({ children }: { children: React.ReactNode }) => {
 		const {
 			data: { user }
 		} = await supabase.auth.getUser()
-		const { data } = await supabase
-			.from("tasks")
-			.select()
-			.eq("user_id", user?.id)
+		const { data } = await supabase.from("tasks").select().eq("user_id", user?.id)
 		setTasks(data as Task[])
 	}
 
@@ -39,9 +34,7 @@ export const TasksProvider = ({ children }: { children: React.ReactNode }) => {
 		return task
 	}
 
-	const createTask = async (
-		task: Omit<Task, "_id" | "created_at" | "column" | "priority" | "user_id">
-	) => {
+	const createTask = async (task: Omit<Task, "_id" | "created_at" | "column" | "priority" | "user_id">) => {
 		try {
 			const {
 				data: { user }
@@ -74,11 +67,7 @@ export const TasksProvider = ({ children }: { children: React.ReactNode }) => {
 		setTasks(updatedTasks)
 
 		try {
-			const { data, error } = await supabase
-				.from("tasks")
-				.delete()
-				.eq("_id", id)
-				.select()
+			const { data, error } = await supabase.from("tasks").delete().eq("_id", id).select()
 			if (!data) throw new Error("Error al eliminar una tarea.")
 			if (!error) {
 				toast.success({
@@ -97,17 +86,11 @@ export const TasksProvider = ({ children }: { children: React.ReactNode }) => {
 
 	const updateTaskColumn = async (_id: string, column: Task["column"]) => {
 		const currentState = tasks
-		const updatedTasks = currentState?.map(task =>
-			task._id == _id ? { ...task, column } : task
-		)
+		const updatedTasks = currentState?.map(task => (task._id == _id ? { ...task, column } : task))
 		setTasks(updatedTasks)
 
 		try {
-			const { data } = await supabase
-				.from("tasks")
-				.update({ column })
-				.eq("_id", _id)
-				.select()
+			const { data } = await supabase.from("tasks").update({ column }).eq("_id", _id).select()
 			if (!data) throw new Error("Error al actualizar la tarea.")
 		} catch (error) {
 			toast.error({
@@ -121,9 +104,7 @@ export const TasksProvider = ({ children }: { children: React.ReactNode }) => {
 	const updateTask = async (updateTask: Task) => {
 		const { _id } = updateTask
 		const currentState = tasks
-		const updatedTasks = currentState?.map(task =>
-			task._id == _id ? { ...updateTask } : task
-		)
+		const updatedTasks = currentState?.map(task => (task._id == _id ? { ...updateTask } : task))
 		setTasks(updatedTasks)
 
 		try {

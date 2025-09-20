@@ -167,7 +167,7 @@ export function DragDrawerContent({ children, className }: DragDrawerContent) {
 				exit={{ y: "100%" }}
 				transition={{ ease: "easeInOut" }}
 				className={cn(
-					"bg-card absolute bottom-0 z-50 h-[50dvh] w-full overflow-hidden rounded-t-2xl",
+					"bg-card absolute bottom-0 z-50 h-fit w-full overflow-hidden rounded-t-2xl",
 					className
 				)}
 				style={{ y }}

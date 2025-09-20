@@ -1,6 +1,8 @@
+import Button from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { Editor, useEditorState } from "@tiptap/react"
 import {
+	ArrowLeft,
 	Bold,
 	Braces,
 	Code,
@@ -11,20 +13,30 @@ import {
 	List,
 	ListOrdered,
 	Redo2Icon,
+	Save,
 	Strikethrough,
-	Undo2,
-	X
+	Undo2
 } from "lucide-react"
 import { motion } from "motion/react"
 import React from "react"
-import Button from "./ui/button"
 
 interface Props {
+	isSaving: boolean
 	editor: Editor | null
 	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+	name: string
+	setName: React.Dispatch<React.SetStateAction<string>>
+	handleClick: () => void
 }
 
-export default function HeaderNote({ editor, setIsOpen }: Props) {
+export default function HeaderNote({
+	isSaving,
+	name,
+	setName,
+	editor,
+	setIsOpen,
+	handleClick
+}: Props) {
 	const editorState = useEditorState({
 		editor,
 		selector: ctx => {
@@ -55,13 +67,43 @@ export default function HeaderNote({ editor, setIsOpen }: Props) {
 		}
 	})
 
+	if (!editorState) return
+
 	return (
-		<div className="bg-card border-border flex items-center justify-between rounded-2xl border p-1.5 lg:rounded-full">
+		<>
+			<div className="mb-2 flex items-center justify-between">
+				<Button
+					variant={"ghost"}
+					size={"icon"}
+					className="rounded-full"
+					onClick={() => setIsOpen(false)}>
+					<ArrowLeft className="size-5" />
+				</Button>
+				<div className="flex flex-1 items-center justify-center">
+					<input
+						className="bg-transparent text-center focus:outline-none"
+						value={name}
+						onChange={e => setName(e.target.value)}
+						style={{
+							width: `${Math.max(name.length, 1)}ch`,
+							minWidth: "4ch",
+							maxWidth: "100%"
+						}}
+					/>
+				</div>
+				<Button
+					size={"icon"}
+					className="rounded-full"
+					onClick={handleClick}
+					disabled={isSaving}>
+					<Save className="size-5" />
+				</Button>
+			</div>
 			<motion.div
 				initial={{ opacity: 0, scale: 0 }}
 				animate={{ opacity: 1, scale: 1 }}
 				exit={{ opacity: 0, scale: 0 }}
-				className="flex flex-wrap items-center overflow-auto">
+				className="bg-card border-border flex flex-wrap items-center overflow-auto rounded-2xl border p-1.5 lg:rounded-full">
 				<FormatButton
 					icon={<Undo2 className="size-4" />}
 					label="Deshacer"
@@ -135,14 +177,7 @@ export default function HeaderNote({ editor, setIsOpen }: Props) {
 					onClick={() => editor?.chain().toggleBlockquote().run()}
 				/>
 			</motion.div>
-			<Button
-				variant={"secondary"}
-				size={"icon"}
-				className="rounded-full"
-				onClick={() => setIsOpen(false)}>
-				<X className="size-5" />
-			</Button>
-		</div>
+		</>
 	)
 }
 

@@ -1,12 +1,5 @@
 "use client"
-import {
-	createContext,
-	useCallback,
-	useContext,
-	useEffect,
-	useState,
-	type ReactNode
-} from "react"
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react"
 
 export type SidebarMode = "mobile" | "desktop"
 
@@ -18,9 +11,7 @@ interface SidebarContextProps {
 const STORAGE_KEY = "SIDEBAR_MODE"
 const SidebarContext = createContext<SidebarContextProps | null>(null)
 
-export const SidebarProvider: React.FC<{ children: ReactNode }> = ({
-	children
-}) => {
+export const SidebarProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 	const [mode, setMode] = useState<SidebarMode>("desktop")
 
 	const evaluateMode = useCallback(() => {
@@ -55,16 +46,11 @@ export const SidebarProvider: React.FC<{ children: ReactNode }> = ({
 		return () => window.removeEventListener("resize", evaluateMode)
 	}, [evaluateMode])
 
-	return (
-		<SidebarContext.Provider value={{ mode, setMode }}>
-			{children}
-		</SidebarContext.Provider>
-	)
+	return <SidebarContext.Provider value={{ mode, setMode }}>{children}</SidebarContext.Provider>
 }
 
 export const useSidebar = (): SidebarContextProps => {
 	const context = useContext(SidebarContext)
-	if (!context)
-		throw new Error("useSidebar must be used within SidebarProvider")
+	if (!context) throw new Error("useSidebar must be used within SidebarProvider")
 	return context
 }
