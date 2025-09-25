@@ -5,13 +5,14 @@ import NoteCard from "@/components/mobile/note-card"
 import Button from "@/components/ui/button"
 import { DragDrawer, DragDrawerContent, DragDrawerTrigger } from "@/components/ui/drag-draw"
 import Error from "@/components/ui/error"
+import { Modal, ModalClose, ModalContent, ModalHeader, ModalPortal } from "@/components/ui/modal"
 import {
 	MorphingDialog,
 	MorphingDialogContainer,
 	MorphingDialogContent,
 	MorphingDialogTrigger
 } from "@/components/ui/morphing-dialog"
-import useClickOutside from "@/hooks/useClickOutside"
+import { useIsMobile } from "@/hooks/useIsMobile"
 import { createFolderSchema } from "@/lib/schema"
 import { useFolder } from "@/providers/folder-provider"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -19,14 +20,13 @@ import { EditorContent, useEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 import { Columns3Icon, FileText, Folder, Plus, Rows3Icon } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
-import { Fragment, useEffect, useRef, useState } from "react"
+import { Fragment, useEffect, useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { z } from "zod"
 
 export default function FoldersPage() {
 	const [grid, setGrid] = useState(true)
 	const [isOpen, setIsOpen] = useState(false)
-	const refDiv = useRef<HTMLDivElement | null>(null)
 	const { history, folders, notes, getFolderId, folderId, setFolderId } = useFolder()
 
 	useEffect(() => {
@@ -35,13 +35,9 @@ export default function FoldersPage() {
 
 	useEffect(() => {}, [grid])
 
-	useClickOutside(refDiv as React.RefObject<HTMLDivElement>, () => {
-		if (isOpen) setIsOpen(false)
-	})
-
 	return (
-		<main className="flex h-svh w-full flex-col gap-2 p-4">
-			<header className="flex items-center justify-between px-2">
+		<main className="flex w-full flex-1 flex-col gap-2 p-4">
+			<header className="flex w-full items-center justify-between">
 				<div className="flex items-center">
 					{history.map((h, i) => (
 						<Fragment key={h._id}>
@@ -71,15 +67,11 @@ export default function FoldersPage() {
 				))}
 			</section>
 			<div className="fixed right-4 bottom-1/12 lg:bottom-4">
-				<div ref={refDiv} className="relative">
-					<AnimatePresence>
-						{isOpen && (
-							<div className="absolute bottom-full left-1/2 mb-2 flex -translate-x-1/2 flex-col items-center gap-2">
-								<CreateFolder />
-								<CreateNote />
-							</div>
-						)}
-					</AnimatePresence>
+				<div className="relative">
+					<div className="absolute bottom-full left-1/2 mb-2 flex -translate-x-1/2 flex-col items-center gap-2">
+						<CreateFolder isOpen={isOpen} />
+						<CreateNote isOpen={isOpen} />
+					</div>
 					<Button
 						onClick={() => setIsOpen(prev => !prev)}
 						className={`size-12 rounded-full ${isOpen && "rotate-45"}`}
@@ -94,8 +86,9 @@ export default function FoldersPage() {
 
 type FormData = z.infer<typeof createFolderSchema>
 
-export function CreateFolder() {
+export function CreateFolder({ isOpen: initialIsOpen }: { isOpen: boolean }) {
 	const [isOpen, setIsOpen] = useState(false)
+	const isMobile = useIsMobile()
 	const { folderId, createFolder } = useFolder()
 	const {
 		register,
@@ -113,49 +106,108 @@ export function CreateFolder() {
 	}
 
 	return (
-		<motion.div
-			initial={{ opacity: 0, y: 10 }}
-			animate={{ opacity: 1, y: 0 }}
-			exit={{ opacity: 0, y: 10, transition: { delay: 0.05 } }}
-			transition={{ delay: 0.05 }}>
-			<DragDrawer isOpen={isOpen} setIsOpen={setIsOpen}>
-				<DragDrawerTrigger asChild>
-					<Button variant={"secondary"} className="size-10 rounded-full" size={"icon"}>
-						<Folder className="size-5" />
-					</Button>
-				</DragDrawerTrigger>
-				<DragDrawerContent>
-					<h2 className="mb-4 text-xl font-medium">Nueva Carpeta</h2>
-					<form className="text-primary/75 flex flex-col gap-2 text-sm" onSubmit={handleSubmit(onSubmit)}>
-						<label className="border-border relative flex items-center justify-between rounded-lg border px-3 py-1.5">
-							<span className="bg-card pointer-events-none absolute -top-2 left-2.5 h-fit px-1 text-[10px] text-neutral-400">
-								Nombre <b className="text-destructive">*</b>
-							</span>
-							<Folder className="size-5" />
-							<input
-								type="text"
-								className="size-full px-3 py-1.5 focus:outline-none"
-								placeholder="Añadir nombre"
-								{...register("name")}
-							/>
-						</label>
-						{errors.name && <Error message={errors.name.message} />}
-						<div className="flex items-center gap-2">
-							<Button type="button" variant={"ghost"} size={"lg"} className="flex-1" onClick={() => setIsOpen(false)}>
-								Cancelar
+		<AnimatePresence>
+			{initialIsOpen && (
+				<motion.div
+					initial={{ opacity: 0, y: 10 }}
+					animate={{ opacity: 1, y: 0 }}
+					exit={{ opacity: 0, y: 10, transition: { delay: 0.05 } }}
+					transition={{ delay: 0.05 }}>
+					{isMobile ? (
+						<DragDrawer isOpen={isOpen} setIsOpen={setIsOpen}>
+							<DragDrawerTrigger asChild>
+								<Button variant={"secondary"} className="size-10 rounded-full" size={"icon"}>
+									<Folder className="size-5" />
+								</Button>
+							</DragDrawerTrigger>
+							<DragDrawerContent>
+								<h2 className="mb-4 text-xl font-medium">Nueva Carpeta</h2>
+								<form className="text-primary/75 flex flex-col gap-2 text-sm" onSubmit={handleSubmit(onSubmit)}>
+									<label className="border-border relative flex items-center justify-between rounded-lg border px-3 py-1.5">
+										<span className="bg-card pointer-events-none absolute -top-2 left-2.5 h-fit px-1 text-[10px] text-neutral-400">
+											Nombre <b className="text-destructive">*</b>
+										</span>
+										<Folder className="size-5" />
+										<input
+											type="text"
+											className="size-full px-3 py-1.5 focus:outline-none"
+											placeholder="Añadir nombre"
+											{...register("name")}
+										/>
+									</label>
+									{errors.name && <Error message={errors.name.message} />}
+									<div className="flex items-center gap-2">
+										<Button
+											type="button"
+											variant={"ghost"}
+											size={"lg"}
+											className="flex-1"
+											onClick={() => setIsOpen(false)}>
+											Cancelar
+										</Button>
+										<Button type="submit" size={"lg"} className="flex-1" disabled={isSubmitting}>
+											{isSubmitting ? "Guardando..." : "Guardar"}
+										</Button>
+									</div>
+								</form>
+							</DragDrawerContent>
+						</DragDrawer>
+					) : (
+						<>
+							<Button
+								variant={"secondary"}
+								className="size-10 rounded-full"
+								size={"icon"}
+								onClick={() => setIsOpen(true)}>
+								<Folder className="size-5" />
 							</Button>
-							<Button type="submit" size={"lg"} className="flex-1" disabled={isSubmitting}>
-								{isSubmitting ? "Guardando..." : "Guardar"}
-							</Button>
-						</div>
-					</form>
-				</DragDrawerContent>
-			</DragDrawer>
-		</motion.div>
+							<Modal isOpen={isOpen} setIsOpen={setIsOpen}>
+								<ModalPortal>
+									<ModalContent className="w-full max-w-xs space-y-2">
+										<ModalHeader>
+											<h2 className="mb-4 text-xl font-medium">Nueva Carpeta</h2>
+											<ModalClose />
+										</ModalHeader>
+										<form className="text-primary/75 flex flex-col gap-2 text-sm" onSubmit={handleSubmit(onSubmit)}>
+											<label className="border-border relative flex items-center justify-between rounded-lg border px-3 py-1.5">
+												<span className="bg-background pointer-events-none absolute -top-2 left-2.5 h-fit px-1 text-[10px] text-neutral-400">
+													Nombre <b className="text-destructive">*</b>
+												</span>
+												<Folder className="size-5" />
+												<input
+													type="text"
+													className="size-full px-3 py-1.5 focus:outline-none"
+													placeholder="Añadir nombre"
+													{...register("name")}
+												/>
+											</label>
+											{errors.name && <Error message={errors.name.message} />}
+											<div className="flex items-center gap-2">
+												<Button
+													type="button"
+													variant={"ghost"}
+													size={"lg"}
+													className="flex-1"
+													onClick={() => setIsOpen(false)}>
+													Cancelar
+												</Button>
+												<Button type="submit" size={"lg"} className="flex-1" disabled={isSubmitting}>
+													{isSubmitting ? "Guardando..." : "Guardar"}
+												</Button>
+											</div>
+										</form>
+									</ModalContent>
+								</ModalPortal>
+							</Modal>
+						</>
+					)}
+				</motion.div>
+			)}
+		</AnimatePresence>
 	)
 }
 
-export function CreateNote() {
+export function CreateNote({ isOpen: initialIsOpen }: { isOpen: boolean }) {
 	const [name, setName] = useState("Example")
 	const [isOpen, setIsOpen] = useState(false)
 	const [isSaving, setIsSaving] = useState(false)
@@ -187,31 +239,35 @@ export function CreateNote() {
 	}
 
 	return (
-		<motion.div
-			initial={{ opacity: 0, y: 10 }}
-			animate={{ opacity: 1, y: 0 }}
-			exit={{ opacity: 0, y: 10, transition: { delay: 0.1 } }}
-			transition={{ delay: 0.1 }}>
-			<MorphingDialog isOpen={isOpen} setIsOpen={setIsOpen}>
-				<MorphingDialogTrigger asChild>
-					<Button variant={"secondary"} className="size-10 rounded-full" size={"icon"}>
-						<FileText className="size-5" />
-					</Button>
-				</MorphingDialogTrigger>
-				<MorphingDialogContainer>
-					<MorphingDialogContent className="h-[98dvh] w-[97dvw] rounded-3xl p-4 lg:h-[98dvh] lg:w-[98dvw]">
-						<EditorHeader
-							isSaving={isSaving}
-							editor={editor}
-							setIsOpen={setIsOpen}
-							handleClick={handleClick}
-							name={name}
-							setName={setName}
-						/>
-						<EditorContent editor={editor} className="mt-2 overflow-y-auto rounded-3xl p-2" />
-					</MorphingDialogContent>
-				</MorphingDialogContainer>
-			</MorphingDialog>
-		</motion.div>
+		<AnimatePresence>
+			{initialIsOpen && (
+				<motion.div
+					initial={{ opacity: 0, y: 10 }}
+					animate={{ opacity: 1, y: 0 }}
+					exit={{ opacity: 0, y: 10, transition: { delay: 0.1 } }}
+					transition={{ delay: 0.1 }}>
+					<MorphingDialog isOpen={isOpen} setIsOpen={setIsOpen}>
+						<MorphingDialogTrigger asChild>
+							<Button variant={"secondary"} className="size-10 rounded-full" size={"icon"}>
+								<FileText className="size-5" />
+							</Button>
+						</MorphingDialogTrigger>
+						<MorphingDialogContainer>
+							<MorphingDialogContent className="h-[98dvh] w-[97dvw] rounded-3xl p-4 lg:h-[98dvh] lg:w-[98dvw]">
+								<EditorHeader
+									isSaving={isSaving}
+									editor={editor}
+									setIsOpen={setIsOpen}
+									handleClick={handleClick}
+									name={name}
+									setName={setName}
+								/>
+								<EditorContent editor={editor} className="mt-2 overflow-y-auto rounded-3xl p-2" />
+							</MorphingDialogContent>
+						</MorphingDialogContainer>
+					</MorphingDialog>
+				</motion.div>
+			)}
+		</AnimatePresence>
 	)
 }

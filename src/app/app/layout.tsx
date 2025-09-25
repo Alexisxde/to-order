@@ -1,3 +1,4 @@
+import Header from "@/components/header"
 import Sidebar from "@/components/sidebar"
 import { Toast, ToastProvider } from "@/components/ui/toast"
 import { FoldersProvider } from "@/providers/folder-provider"
@@ -10,9 +11,7 @@ import { redirect } from "next/navigation"
 
 export const metadata: Metadata = { title: "ToOrder" }
 
-export default async function AppLayout({
-	children
-}: Readonly<{ children: React.ReactNode }>) {
+export default async function AppLayout({ children }: Readonly<{ children: React.ReactNode }>) {
 	const supabase = await createClientForServer()
 	const { data } = await supabase.auth.getUser()
 	if (!data.user) return redirect("/")
@@ -24,9 +23,8 @@ export default async function AppLayout({
 					<TimeProvider>
 						<SidebarProvider>
 							<section className="flex h-dvh w-full flex-col">
-								<main className="max-w-8xl mx-auto w-full flex-1">
-									{children}
-								</main>
+								<Header user={data.user} />
+								<main className="max-w-8xl mx-auto w-full flex-1">{children}</main>
 								<Sidebar user={data.user} />
 							</section>
 						</SidebarProvider>

@@ -20,7 +20,8 @@
 	--destructive: oklck(0.6521 0.1858 18.19);
 	--border: oklch(0.922 0 0);
 	--input: oklch(0.922 0 0);
-	--icon: oklch(0.205 0 0);
+	--icon-primary: oklch(0.205 0 0);
+	--icon-secondary: oklch(0.205 0 0);
 }
 
 .dark {
@@ -41,7 +42,8 @@
 	--destructive: oklch(50.5% 0.213 27.518);
 	--border: oklch(1 0 0 / 10%);
 	--input: oklch(1 0 0 / 15%);
-	--icon: oklch(0.922 0 0);
+	--icon-primary: oklch(0.922 0 0);
+	--icon-secondary: oklch(0.922 0 0);
 }
 
 @theme {
@@ -62,7 +64,8 @@
 	--color-muted-foreground: var(--muted-foreground);
 	--color-destructive: var(--destructive);
 	--color-border: var(--border);
-	--color-icon: var(--icon);
+	--color-icon-primary: var(--icon-primary);
+	--color-icon-secondary: var(--icon-secondary);
 	--color-input: var(--input);
 
 	--animate-rippling: rippling 500ms ease-out;
