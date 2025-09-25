@@ -18,7 +18,7 @@ import { useFolder } from "@/providers/folder-provider"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { EditorContent, useEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
-import { Columns3Icon, FileText, Folder, Plus, Rows3Icon } from "lucide-react"
+import { Columns3Icon, FileText, Folder, Loader2, Plus, Rows3Icon } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
 import { Fragment, useEffect, useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
@@ -27,7 +27,7 @@ import { z } from "zod"
 export default function FoldersPage() {
 	const [grid, setGrid] = useState(true)
 	const [isOpen, setIsOpen] = useState(false)
-	const { history, folders, notes, getFolderId, folderId, setFolderId } = useFolder()
+	const { loading, history, folders, notes, getFolderId, folderId, setFolderId } = useFolder()
 
 	useEffect(() => {
 		getFolderId(folderId)
@@ -57,8 +57,22 @@ export default function FoldersPage() {
 					</Button>
 				</div>
 			</header>
+			{loading && (
+				<div className="flex w-full flex-col items-center justify-center py-8">
+					<Loader2 className="text-primary size-8 animate-spin lg:size-10" />
+				</div>
+			)}
+			{folders?.length === 0 && !loading && (
+				<div className="flex w-full flex-col items-center justify-center py-8">
+					<Folder className="text-muted-foreground mb-2 size-8 lg:size-10" />
+					<p className="text-muted-foreground mb-1 text-sm">¡Aún no tienes carpetas!</p>
+					<p className="text-muted-foreground mb-2 text-xs">Crea tus carpetas para organizar tus notas.</p>
+					<span className="text-muted-foreground text-xs">
+						Haz clic en <Plus className="inline size-4 align-text-bottom" /> para empezar.
+					</span>
+				</div>
+			)}
 			<section className={grid ? "grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4" : "grid grid-cols-1 gap-2"}>
-				{folders?.length === 0 && <div>No hay nada :c</div>}
 				{folders?.map(folder => (
 					<FolderCard key={folder._id} folder={folder} />
 				))}

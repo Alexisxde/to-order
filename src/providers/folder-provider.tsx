@@ -5,6 +5,7 @@ import type { Folder, Note } from "@/types"
 import { createContext, useContext, useEffect, useState } from "react"
 
 export type FolderContextType = {
+	loading: boolean
 	history: { _id: string; name: string; id_root: string | null }[]
 	folders: Folder[] | null
 	notes: Note[] | null
@@ -24,6 +25,7 @@ interface FolderProviderProps {
 
 export const FoldersProvider = ({ children }: FolderProviderProps) => {
 	const supabase = createClient()
+	const [isLoading, setIsLoading] = useState(false)
 	const [allFolders, allSetFolders] = useState<Folder[] | null>(null)
 	const [allNotes, allSetNotes] = useState<Note[] | null>(null)
 	const [folders, setFolders] = useState<Folder[] | null>(null)
@@ -36,6 +38,7 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 	])
 
 	const getFolders = async () => {
+		setIsLoading(true)
 		const {
 			data: { user }
 		} = await supabase.auth.getUser()
@@ -53,9 +56,11 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 			.sort((a, b) => a.name.localeCompare(b.name))
 		setFolders(rootFolders ?? [])
 		setNotes(rootNotes ?? [])
+		setIsLoading(false)
 	}
 
 	const getFolderId = async (_id: string | null) => {
+		setIsLoading(true)
 		const rootFolders = allFolders
 			?.filter(folder => folder.id_root === _id)
 			.sort((a, b) => a.name.localeCompare(b.name))
@@ -68,6 +73,7 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 			if (idx !== -1) return prev.slice(0, idx + 1)
 			return active ? [...prev, active] : prev
 		})
+		setIsLoading(false)
 	}
 
 	const createFolder = async (_id: string | null, { name }: { name: string }) => {
@@ -164,6 +170,7 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 	return (
 		<FolderContext.Provider
 			value={{
+				loading: isLoading,
 				folderId,
 				setFolderId,
 				createFolder,
