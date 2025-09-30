@@ -24,7 +24,7 @@ const TABSICONS: Record<string, JSX.Element> = {
 } as const
 
 export default function Tab({ columns }: Props) {
-	const { tasks, deleteTask } = useTask()
+	const { tasks } = useTask()
 	const [tab, setTab] = useState<"new" | "progress" | "completed">("new")
 	const [editTaskId, setEditTaskId] = useState<string | null>(null)
 	const [deleteTaskId, setDeleteTaskId] = useState<string | null>(null)

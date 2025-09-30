@@ -13,6 +13,7 @@ export type FolderContextType = {
 	setFolderId: React.Dispatch<React.SetStateAction<string | null>>
 	getFolderId: (_id: string | null) => Promise<void>
 	createFolder: (_id: string | null, { name }: { name: string }) => Promise<void>
+	deleteFolder: (_id: string) => Promise<void>
 	createNote: ({ name, content }: { name: string; content: unknown }) => Promise<void>
 	updateNote: ({ _id, name, content }: { _id: string; name: string; content: unknown }) => Promise<void>
 }
@@ -43,7 +44,7 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 			data: { user }
 		} = await supabase.auth.getUser()
 
-		const { data: dataFolders } = await supabase.from("folders").select("*").eq("id_user", user?.id)
+		const { data: dataFolders } = await supabase.from("folders").select("*").eq("id_user", user?.id).eq("delete", false)
 		const { data: dataNotes } = await supabase.from("notes").select("*").eq("id_user", user?.id)
 
 		allSetFolders(dataFolders as Folder[])
@@ -163,9 +164,22 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 				)
 			}
 		} catch (error) {
-			toast.error({
-				text: error instanceof Error ? error.message : "A ocurrido un error"
-			})
+			toast.error({ text: error instanceof Error ? error.message : "A ocurrido un error" })
+		}
+	}
+
+	const deleteFolder = async (id: string) => {
+		const currentState = folders
+		const updatedFolder = currentState?.filter(task => task._id != id)
+		setFolders(updatedFolder!)
+
+		try {
+			const { data, error } = await supabase.from("folders").update({ delete: true }).eq("_id", id).select()
+			if (!data) throw new Error("Error al eliminar una tarea.")
+			if (!error) toast.success({ text: "Carpeta eliminada correctamente." })
+		} catch (error) {
+			toast.error({ text: error instanceof Error ? error.message : "A ocurrido un error" })
+			setFolders(currentState)
 		}
 	}
 
@@ -180,6 +194,7 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 				folderId,
 				setFolderId,
 				createFolder,
+				deleteFolder,
 				createNote,
 				updateNote,
 				history,
