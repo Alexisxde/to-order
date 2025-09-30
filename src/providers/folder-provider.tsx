@@ -2,7 +2,7 @@
 import { useToast } from "@/components/ui/toast"
 import { createClient } from "@/supabase/client"
 import type { Folder, Note } from "@/types"
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useEffect, useState } from "react"
 
 export type FolderContextType = {
 	loading: boolean
@@ -17,7 +17,7 @@ export type FolderContextType = {
 	updateNote: ({ _id, name, content }: { _id: string; name: string; content: unknown }) => Promise<void>
 }
 
-const FolderContext = createContext<FolderContextType | null>(null)
+export const FolderContext = createContext<FolderContextType | null>(null)
 
 interface FolderProviderProps {
 	children: React.ReactNode
@@ -184,10 +184,4 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 			{children}
 		</FolderContext.Provider>
 	)
-}
-
-export const useFolder = () => {
-	const context = useContext(FolderContext)
-	if (!context) throw new Error("useFolder must be used within a FolderProvider")
-	return context
 }

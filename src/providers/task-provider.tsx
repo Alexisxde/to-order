@@ -2,7 +2,7 @@
 import { useToast } from "@/components/ui/toast"
 import { createClient } from "@/supabase/client"
 import type { Task } from "@/types"
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useEffect, useState } from "react"
 
 export type TasksContextType = {
 	tasks: Task[]
@@ -13,7 +13,7 @@ export type TasksContextType = {
 	deleteTask: (id: string) => Promise<void>
 }
 
-const TasksContext = createContext<TasksContextType | null>(null)
+export const TasksContext = createContext<TasksContextType | null>(null)
 
 export const TasksProvider = ({ children }: { children: React.ReactNode }) => {
 	const supabase = createClient()
@@ -152,10 +152,4 @@ export const TasksProvider = ({ children }: { children: React.ReactNode }) => {
 			{children}
 		</TasksContext.Provider>
 	)
-}
-
-export const useTask = () => {
-	const context = useContext(TasksContext)
-	if (!context) throw new Error("useTask must be used within a TasksProvider")
-	return context
 }

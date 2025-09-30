@@ -1,14 +1,8 @@
 "use client"
-import Card from "@/components/desktop/card"
-import DropIndicator from "@/components/desktop/drop-indicator"
-import {
-	Modal,
-	ModalClose,
-	ModalContent,
-	ModalHeader,
-	ModalPortal
-} from "@/components/ui/modal"
-import { useTask } from "@/providers/task-provider"
+import Card from "@/components/tasks/desktop/card"
+import DropIndicator from "@/components/tasks/desktop/drop-indicator"
+import { Modal, ModalClose, ModalContent, ModalHeader, ModalPortal } from "@/components/ui/modal"
+import { useTask } from "@/hooks/useTask"
 import { Task } from "@/types"
 import { CheckCheckIcon, Loader, Plus } from "lucide-react"
 import { JSX, useState } from "react"
@@ -108,8 +102,7 @@ export default function Column({ title, column, textColor, bgColor }: Props) {
 				<div className="text-md inline-flex items-center gap-2">
 					<h3>{title}</h3>
 				</div>
-				<div
-					className={`inline-flex items-center gap-1 rounded-lg px-1.5 py-0.5 text-xs ${textColor} ${bgColor}`}>
+				<div className={`inline-flex items-center gap-1 rounded-lg px-1.5 py-0.5 text-xs ${textColor} ${bgColor}`}>
 					{COLUMNSICONS[column]}
 					{cardFilter?.length}
 				</div>
@@ -142,9 +135,7 @@ export default function Column({ title, column, textColor, bgColor }: Props) {
 								<div />
 								<ModalClose className="absolute top-4 right-4" />
 							</ModalHeader>
-							{editTaskId && (
-								<FormEditTask id={editTaskId} setIsOpen={setIsOpenDialog} />
-							)}
+							{editTaskId && <FormEditTask id={editTaskId} setIsOpen={setIsOpenDialog} />}
 						</ModalContent>
 					</ModalPortal>
 				</Modal>

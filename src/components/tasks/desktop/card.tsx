@@ -1,10 +1,10 @@
 "use client"
-import DropIndicator from "@/components/desktop/drop-indicator"
+import DropIndicator from "@/components/tasks/desktop/drop-indicator"
 import { month } from "@/lib/utils"
 import { Task } from "@/types"
 import { Calendar, Flag, Link } from "lucide-react"
 import { motion } from "motion/react"
-import { Badge } from "../ui/badge"
+import { Badge } from "../../ui/badge"
 
 interface Props {
 	index?: number
@@ -14,13 +14,7 @@ interface Props {
 	handleDragStart: (e: any, task: any) => void // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
-export default function Card({
-	index = 1,
-	task,
-	setEditTaskId,
-	setIsOpenEdit,
-	handleDragStart
-}: Props) {
+export default function Card({ index = 1, task, setEditTaskId, setIsOpenEdit, handleDragStart }: Props) {
 	const { _id, title, description, priority, url, created_at, column } = task
 
 	return (
@@ -62,14 +56,8 @@ export default function Card({
 					)}
 				</div>
 				<span className="text-primary text-md font-medium">{title}</span>
-				{description && (
-					<p className="mb-2 text-xs text-pretty text-neutral-500">
-						{description}
-					</p>
-				)}
-				{description && url && (
-					<div className="border-border my-2 border-b-1" />
-				)}
+				{description && <p className="mb-2 text-xs text-pretty text-neutral-500">{description}</p>}
+				{description && url && <div className="border-border my-2 border-b-1" />}
 				{url && (
 					<a
 						href={url}

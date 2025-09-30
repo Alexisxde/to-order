@@ -1,13 +1,13 @@
 "use client"
-import EditorHeader from "@/components/editor-header"
+import EditorHeader from "@/components/folders/editor-header"
 import {
 	MorphingDialog,
 	MorphingDialogContainer,
 	MorphingDialogContent,
 	MorphingDialogTrigger
 } from "@/components/ui/morphing-dialog"
+import { useFolder } from "@/hooks/useFolder"
 import { month } from "@/lib/utils"
-import { useFolder } from "@/providers/folder-provider"
 import { Note } from "@/types"
 import { EditorContent, useEditor } from "@tiptap/react"
 import { StarterKit } from "@tiptap/starter-kit"
@@ -39,6 +39,9 @@ export default function NoteCard({ note }: Props) {
 		content,
 		immediatelyRender: false,
 		autofocus: "end"
+		// onUpdate: async ({ editor }) => {
+		// 	await updateNote({ _id, name, content: editor?.getJSON() })
+		// }
 	})
 
 	return (

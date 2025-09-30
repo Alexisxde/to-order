@@ -1,8 +1,8 @@
-import SignInButton from "@/components/button-sign-in"
+import SignInButton from "@/components/shared/button-sign-in"
 import { createClientForServer } from "@/supabase/server"
 import { ArrowRight } from "lucide-react"
+import Button from "../ui/button"
 import Text from "./text"
-import Button from "./ui/button"
 
 export default async function Hero() {
 	const supabase = await createClientForServer()
@@ -22,14 +22,12 @@ export default async function Hero() {
 			<div
 				className="pointer-events-none absolute inset-0"
 				style={{
-					background:
-						"radial-gradient(50% 50% at 50% 50%, transparent 20%, var(--card) 100%)"
+					background: "radial-gradient(50% 50% at 50% 50%, transparent 20%, var(--card) 100%)"
 				}}
 			/>
 			<Text label="toOrder" />
 			<p className="text-primary/80 z-2 mb-4 w-full max-w-xs text-center text-xs lg:max-w-lg lg:text-base">
-				Tu espacio para notas, lista de tareas y tus horarios siempre accesible
-				en todos tus dispositivos.
+				Tu espacio para notas, lista de tareas y tus horarios siempre accesible en todos tus dispositivos.
 			</p>
 
 			{user ? (

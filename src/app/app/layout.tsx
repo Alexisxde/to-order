@@ -1,5 +1,5 @@
-import Header from "@/components/header"
-import Sidebar from "@/components/sidebar"
+import Header from "@/components/shared/header"
+import Sidebar from "@/components/shared/sidebar"
 import { Toast, ToastProvider } from "@/components/ui/toast"
 import { FoldersProvider } from "@/providers/folder-provider"
 import { SidebarProvider } from "@/providers/sidebar-provider"

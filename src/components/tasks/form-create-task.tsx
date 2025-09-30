@@ -1,12 +1,12 @@
 "use client"
+import Button from "@/components/ui/button"
 import Error from "@/components/ui/error"
+import { useTask } from "@/hooks/useTask"
 import { createTaskSchema } from "@/lib/schema"
-import { useTask } from "@/providers/task-provider"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AlignLeft, BookOpen, Flag, Link } from "lucide-react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { z } from "zod"
-import Button from "./ui/button"
 
 type FormData = z.infer<typeof createTaskSchema>
 
@@ -23,17 +23,11 @@ export default function FormCreateTask({ setIsOpen }: Props) {
 		formState: { isSubmitting, errors }
 	} = useForm<FormData>({ resolver: zodResolver(createTaskSchema) })
 
-	const onSubmit: SubmitHandler<FormData> = async ({
-		title,
-		description,
-		...restForm
-	}) => {
+	const onSubmit: SubmitHandler<FormData> = async ({ title, description, ...restForm }) => {
 		await createTask({
 			...restForm,
 			title: `${title.trim()[0].toUpperCase()}${title.trim().slice(1)}`,
-			description: description
-				? `${description.trim()[0].toUpperCase()}${description.trim().slice(1)}`
-				: ""
+			description: description ? `${description.trim()[0].toUpperCase()}${description.trim().slice(1)}` : ""
 		})
 		reset()
 		setIsOpen(false)
@@ -82,16 +76,12 @@ export default function FormCreateTask({ setIsOpen }: Props) {
 							{
 								label: "Bajo",
 								value: "low",
-								icon: (
-									<Flag className="size-3 fill-green-600 stroke-green-700" />
-								)
+								icon: <Flag className="size-3 fill-green-600 stroke-green-700" />
 							},
 							{
 								label: "Medio",
 								value: "medium",
-								icon: (
-									<Flag className="size-3 fill-orange-600 stroke-orange-700" />
-								)
+								icon: <Flag className="size-3 fill-orange-600 stroke-orange-700" />
 							},
 							{
 								label: "Alto",
@@ -99,9 +89,7 @@ export default function FormCreateTask({ setIsOpen }: Props) {
 								icon: <Flag className="size-3 fill-red-600 stroke-red-700" />
 							}
 						].map(({ label, icon, value }) => (
-							<label
-								key={value}
-								className="flex cursor-pointer items-center gap-1">
+							<label key={value} className="flex cursor-pointer items-center gap-1">
 								<input
 									type="radio"
 									defaultChecked={value === "low"}
@@ -132,11 +120,7 @@ export default function FormCreateTask({ setIsOpen }: Props) {
 				</label>
 				{errors.url && <Error message={errors.url.message} />}
 				<div className="flex w-full items-center justify-end">
-					<Button
-						form="form-created-task"
-						type="submit"
-						size={"lg"}
-						disabled={isSubmitting}>
+					<Button form="form-created-task" type="submit" size={"lg"} disabled={isSubmitting}>
 						{isSubmitting ? "Guardando..." : "Guardar"}
 					</Button>
 				</div>

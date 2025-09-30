@@ -1,9 +1,5 @@
 import Button from "@/components/ui/button"
-import {
-	DragDrawer,
-	DragDrawerContent,
-	DragDrawerTrigger
-} from "@/components/ui/drag-draw"
+import { DragDrawer, DragDrawerContent, DragDrawerTrigger } from "@/components/ui/drag-draw"
 import {
 	DropDown,
 	DropDownContainer,
@@ -11,16 +7,11 @@ import {
 	DropDownOption,
 	DropDownTrigger
 } from "@/components/ui/drop-down"
+import { useFolder } from "@/hooks/useFolder"
 import { useIsMobile } from "@/hooks/useIsMobile"
 import { month } from "@/lib/utils"
-import { useFolder } from "@/providers/folder-provider"
 import type { Folder } from "@/types"
-import {
-	EditIcon,
-	EllipsisVerticalIcon,
-	FolderIcon,
-	Trash2Icon
-} from "lucide-react"
+import { EditIcon, EllipsisVerticalIcon, FolderIcon, Trash2Icon } from "lucide-react"
 import { motion } from "motion/react"
 import { useState } from "react"
 
@@ -40,17 +31,13 @@ export default function FolderCard({ folder }: Props) {
 			initial={{ opacity: 0, y: 40, x: -20 }}
 			animate={{ opacity: 1, y: 0, x: 0 }}
 			className="border-border bg-card flex items-center justify-between gap-2 rounded-lg border px-4 py-2">
-			<button
-				onClick={() => setFolderId(_id)}
-				className="flex-1 cursor-pointer">
+			<button onClick={() => setFolderId(_id)} className="flex-1 cursor-pointer">
 				<div className="flex w-full items-center justify-between">
 					<div className="flex items-center gap-2">
 						<FolderIcon className="size-5" />
 						<div className="flex flex-col items-start gap-0.5">
 							<span className="text-xs">{name}</span>
-							<span className="text-[9px]">
-								Creado {month(new Date(created_at))}
-							</span>
+							<span className="text-[9px]">Creado {month(new Date(created_at))}</span>
 						</div>
 					</div>
 				</div>
@@ -80,16 +67,8 @@ export default function FolderCard({ folder }: Props) {
 					<DropDownContainer>
 						<DropDownTrigger />
 						<DropDownContent>
-							<DropDownOption
-								onClick={() => {}}
-								Icon={EditIcon}
-								text="Editar"
-							/>
-							<DropDownOption
-								onClick={() => {}}
-								Icon={Trash2Icon}
-								text="Eliminar"
-							/>
+							<DropDownOption onClick={() => {}} Icon={EditIcon} text="Editar" />
+							<DropDownOption onClick={() => {}} Icon={Trash2Icon} text="Eliminar" />
 						</DropDownContent>
 					</DropDownContainer>
 				</DropDown>

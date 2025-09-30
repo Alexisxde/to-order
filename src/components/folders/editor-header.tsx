@@ -18,7 +18,6 @@ import {
 	Undo2
 } from "lucide-react"
 import { motion } from "motion/react"
-import React from "react"
 
 interface Props {
 	isSaving: boolean
@@ -29,14 +28,7 @@ interface Props {
 	handleClick: () => void
 }
 
-export default function HeaderNote({
-	isSaving,
-	name,
-	setName,
-	editor,
-	setIsOpen,
-	handleClick
-}: Props) {
+export default function HeaderNote({ isSaving, name, setName, editor, setIsOpen, handleClick }: Props) {
 	const editorState = useEditorState({
 		editor,
 		selector: ctx => {
@@ -72,11 +64,7 @@ export default function HeaderNote({
 	return (
 		<>
 			<div className="mb-2 flex items-center justify-between">
-				<Button
-					variant={"ghost"}
-					size={"icon"}
-					className="rounded-full"
-					onClick={() => setIsOpen(false)}>
+				<Button variant={"ghost"} size={"icon"} className="rounded-full" onClick={() => setIsOpen(false)}>
 					<ArrowLeft className="size-5" />
 				</Button>
 				<div className="flex flex-1 items-center justify-center">
@@ -91,11 +79,7 @@ export default function HeaderNote({
 						}}
 					/>
 				</div>
-				<Button
-					size={"icon"}
-					className="rounded-full"
-					onClick={handleClick}
-					disabled={isSaving}>
+				<Button size={"icon"} className="rounded-full" onClick={handleClick} disabled={isSaving}>
 					<Save className="size-5" />
 				</Button>
 			</div>
@@ -199,10 +183,7 @@ const FormatButton = ({
 		size={"icon"}
 		disabled={disabled}
 		onClick={onClick}
-		className={cn(
-			"rounded-full",
-			isActive && "bg-muted dark:bg-muted/50 dark:hover:bg-muted/50"
-		)}
+		className={cn("rounded-full", isActive && "bg-muted dark:bg-muted/50 dark:hover:bg-muted/50")}
 		aria-label={label}>
 		{icon}
 	</Button>

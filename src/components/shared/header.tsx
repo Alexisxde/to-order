@@ -6,9 +6,9 @@ import { LogOutIcon, Moon, Sun } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
 import { useTheme } from "next-themes"
 import { useRef, useState } from "react"
+import Button from "../ui/button"
+import { DragDrawer, DragDrawerContent, DragDrawerTrigger } from "../ui/drag-draw"
 import SignOutButton from "./button-sign-out"
-import Button from "./ui/button"
-import { DragDrawer, DragDrawerContent, DragDrawerTrigger } from "./ui/drag-draw"
 
 interface Props {
 	user: User

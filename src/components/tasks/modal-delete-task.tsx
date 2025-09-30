@@ -1,13 +1,6 @@
 "use client"
-import {
-	Modal,
-	ModalAction,
-	ModalClose,
-	ModalContent,
-	ModalHeader,
-	ModalPortal
-} from "@/components/ui/modal"
-import { useTask } from "@/providers/task-provider"
+import { Modal, ModalAction, ModalClose, ModalContent, ModalHeader, ModalPortal } from "@/components/ui/modal"
+import { useTask } from "@/hooks/useTask"
 import React from "react"
 
 interface Props {
@@ -16,11 +9,7 @@ interface Props {
 	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function ModalDeleteTask({
-	idDelete,
-	isOpen,
-	setIsOpen
-}: Props) {
+export default function ModalDeleteTask({ idDelete, isOpen, setIsOpen }: Props) {
 	if (!idDelete) return
 	const { deleteTask } = useTask()
 
@@ -35,19 +24,12 @@ export default function ModalDeleteTask({
 						<ModalClose />
 					</ModalHeader>
 					<div className="flex flex-col gap-2">
-						<p className="text-primary/70 text-xs">
-							¿Quieres eliminar esta tarea? Esta acción no se puede deshacer.
-						</p>
+						<p className="text-primary/70 text-xs">¿Quieres eliminar esta tarea? Esta acción no se puede deshacer.</p>
 						<div className="flex items-center justify-end gap-2">
-							<ModalClose
-								variant={"outline"}
-								size="default"
-								className="rounded-md">
+							<ModalClose variant={"outline"} size="default" className="rounded-md">
 								Cancelar
 							</ModalClose>
-							<ModalAction onClick={() => idDelete && handleDelete(idDelete)}>
-								Confirmar
-							</ModalAction>
+							<ModalAction onClick={() => idDelete && handleDelete(idDelete)}>Confirmar</ModalAction>
 						</div>
 					</div>
 				</ModalContent>

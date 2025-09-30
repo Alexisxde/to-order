@@ -1,21 +1,12 @@
 "use client"
 import Error from "@/components/ui/error"
+import { useTask } from "@/hooks/useTask"
 import { editTaskSchema } from "@/lib/schema"
-import { useTask } from "@/providers/task-provider"
 import { zodResolver } from "@hookform/resolvers/zod"
-import {
-	AlignLeft,
-	BookOpen,
-	Check,
-	Columns3,
-	Flag,
-	Link,
-	Loader,
-	Plus
-} from "lucide-react"
+import { AlignLeft, BookOpen, Check, Columns3, Flag, Link, Loader, Plus } from "lucide-react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { z } from "zod"
-import Button from "./ui/button"
+import Button from "../ui/button"
 
 type FormData = z.infer<typeof editTaskSchema>
 
@@ -37,18 +28,12 @@ export default function FormEditTask({ id, setIsOpen }: Props) {
 		formState: { isSubmitting, errors }
 	} = useForm<FormData>({ resolver: zodResolver(editTaskSchema) })
 
-	const onSubmit: SubmitHandler<FormData> = async ({
-		title,
-		description,
-		...restForm
-	}) => {
+	const onSubmit: SubmitHandler<FormData> = async ({ title, description, ...restForm }) => {
 		await updateTask({
 			...task,
 			...restForm,
 			title: `${title.trim()[0].toUpperCase()}${title.trim().slice(1)}`,
-			description: description
-				? `${description.trim()[0].toUpperCase()}${description.trim().slice(1)}`
-				: ""
+			description: description ? `${description.trim()[0].toUpperCase()}${description.trim().slice(1)}` : ""
 		})
 		reset()
 		setIsOpen(false)
@@ -99,16 +84,12 @@ export default function FormEditTask({ id, setIsOpen }: Props) {
 							{
 								label: "Bajo",
 								value: "low",
-								icon: (
-									<Flag className="size-3 fill-green-600 stroke-green-700" />
-								)
+								icon: <Flag className="size-3 fill-green-600 stroke-green-700" />
 							},
 							{
 								label: "Medio",
 								value: "medium",
-								icon: (
-									<Flag className="size-3 fill-orange-600 stroke-orange-700" />
-								)
+								icon: <Flag className="size-3 fill-orange-600 stroke-orange-700" />
 							},
 							{
 								label: "Alto",
@@ -116,9 +97,7 @@ export default function FormEditTask({ id, setIsOpen }: Props) {
 								icon: <Flag className="size-3 fill-red-600 stroke-red-700" />
 							}
 						].map(({ label, icon, value }) => (
-							<label
-								key={value}
-								className="flex cursor-pointer items-center gap-1">
+							<label key={value} className="flex cursor-pointer items-center gap-1">
 								<input
 									type="radio"
 									defaultChecked={value === priority}
@@ -158,9 +137,7 @@ export default function FormEditTask({ id, setIsOpen }: Props) {
 								icon: <Check className="size-3 stroke-green-700" />
 							}
 						].map(({ label, icon, value }) => (
-							<label
-								key={value}
-								className="flex cursor-pointer items-center gap-1">
+							<label key={value} className="flex cursor-pointer items-center gap-1">
 								<input
 									type="radio"
 									defaultChecked={value === column}
@@ -192,11 +169,7 @@ export default function FormEditTask({ id, setIsOpen }: Props) {
 				</label>
 				{errors.url && <Error message={errors.url.message} />}
 				<div className="flex items-center justify-end gap-2">
-					<Button
-						form="form-edit-task"
-						size={"lg"}
-						type="submit"
-						disabled={isSubmitting}>
+					<Button form="form-edit-task" size={"lg"} type="submit" disabled={isSubmitting}>
 						{isSubmitting ? "Guardando..." : "Guardar"}
 					</Button>
 				</div>
