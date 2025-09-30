@@ -42,7 +42,7 @@ export default function Sidebar({ user }: Props) {
 			initial={{ opacity: 0, scale: 0.9, y: 15 }}
 			animate={{ opacity: 1, scale: 1, y: 0 }}
 			className="sticky bottom-2 flex items-center justify-center">
-			<div className="bg-card flex items-center justify-center gap-2 rounded-full px-4 py-2">
+			<div className="bg-card border-border flex items-center justify-center gap-2 rounded-full border px-4 py-2">
 				{nav.map((item, idx) => (
 					<Button
 						key={idx}

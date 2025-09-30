@@ -30,7 +30,7 @@ export default function DeleteCard() {
 			onDragOver={handleDragOver}
 			onDragLeave={handleDragLeave}
 			className={`sticky top-0 z-10 grid size-56 shrink-0 place-content-center rounded border text-3xl ${
-				active ? "border-red-800 bg-red-800/20 text-red-500" : "border-neutral-800 bg-neutral-900/20 text-neutral-500"
+				active ? "border-red-800 bg-red-800/20 text-red-500" : "border-border bg-card text-gray"
 			}`}>
 			{active ? (
 				<BrickWallFire className="pointer-events-none size-11 animate-bounce" />

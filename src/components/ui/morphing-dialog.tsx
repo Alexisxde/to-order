@@ -191,7 +191,7 @@ function MorphingDialogContent({ children, className, style }: MorphingDialogCon
 			ref={containerRef}
 			layoutId={`dialog-${uniqueId}`}
 			animate={{ opacity: 1 }}
-			className={cn("bg-background border-border relative overflow-hidden rounded-lg border p-4", className)}
+			className={cn("bg-card border-border relative overflow-hidden rounded-lg border p-4", className)}
 			style={style}
 			role="dialog"
 			aria-modal="true"
