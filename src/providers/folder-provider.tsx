@@ -124,7 +124,12 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 
 	const updateNote = async ({ _id, name, content }: { _id: string; name: string; content: unknown }) => {
 		try {
-			const { data, error } = await supabase.from("notes").update({ name, content }).eq("_id", _id).select()
+			const currentNote = allNotes?.find(note => note._id === _id)
+			console.log(new Date(), currentNote?.created_at)
+			if (currentNote && currentNote.name === name && JSON.stringify(currentNote.content) === JSON.stringify(content))
+				return
+			const update_at = new Date().toISOString()
+			const { data, error } = await supabase.from("notes").update({ name, content, update_at }).eq("_id", _id).select()
 			if (!data) throw new Error("Error al actualizar la nota.")
 			if (!error) toast.success({ text: `${name} guardada correctamente.` })
 			if (data?.[0]) {
@@ -136,7 +141,8 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 									? {
 											...note,
 											name: updatedNote.name,
-											content: updatedNote.content
+											content: updatedNote.content,
+											update_at
 										}
 									: note
 							)

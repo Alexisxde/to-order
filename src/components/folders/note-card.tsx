@@ -39,9 +39,6 @@ export default function NoteCard({ note }: Props) {
 		content,
 		immediatelyRender: false,
 		autofocus: "end"
-		// onUpdate: async ({ editor }) => {
-		// 	await updateNote({ _id, name, content: editor?.getJSON() })
-		// }
 	})
 
 	return (

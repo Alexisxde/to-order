@@ -1,17 +1,17 @@
-import Button from "@/components/ui/button"
-import { DragDrawer, DragDrawerContent, DragDrawerTrigger } from "@/components/ui/drag-draw"
-import {
-	DropDown,
-	DropDownContainer,
-	DropDownContent,
-	DropDownOption,
-	DropDownTrigger
-} from "@/components/ui/drop-down"
+// import Button from "@/components/ui/button"
+// import { DragDrawer, DragDrawerContent, DragDrawerTrigger } from "@/components/ui/drag-draw"
+// import {
+// 	DropDown,
+// 	DropDownContainer,
+// 	DropDownContent,
+// 	DropDownOption,
+// 	DropDownTrigger
+// } from "@/components/ui/drop-down"
 import { useFolder } from "@/hooks/useFolder"
 import { useIsMobile } from "@/hooks/useIsMobile"
 import { month } from "@/lib/utils"
 import type { Folder } from "@/types"
-import { EditIcon, EllipsisVerticalIcon, FolderIcon, Trash2Icon } from "lucide-react"
+import { FolderIcon } from "lucide-react"
 import { motion } from "motion/react"
 import { useState } from "react"
 
@@ -22,7 +22,7 @@ interface Props {
 export default function FolderCard({ folder }: Props) {
 	const [isOpen, setIsOpen] = useState(false)
 	const isMobile = useIsMobile()
-	const { setFolderId } = useFolder()
+	const { history, setFolderId } = useFolder()
 	const { _id, name, created_at } = folder
 
 	return (
@@ -42,7 +42,7 @@ export default function FolderCard({ folder }: Props) {
 					</div>
 				</div>
 			</button>
-			{isMobile ? (
+			{/* { isMobile ? (
 				<DragDrawer isOpen={isOpen} setIsOpen={setIsOpen}>
 					<DragDrawerTrigger asChild>
 						<button className="flex cursor-pointer items-center gap-2 p-1">
@@ -50,13 +50,36 @@ export default function FolderCard({ folder }: Props) {
 						</button>
 					</DragDrawerTrigger>
 					<DragDrawerContent className="h-fit">
+						<div className="mb-4 flex w-full flex-col items-start gap-1 px-2">
+							<p className="text-primary text-xs">Carpeta: {name}</p>
+							<p className="text-primary text-xs">
+								Ubicación:{" "}
+								{history.map((h, i) => (
+									<>
+										<span key={h._id} className="text-xs">
+											{h.name}
+										</span>
+										{i < history.length - 1 && <span className="text-xs">/</span>}
+									</>
+								)) ?? "/root"}
+							</p>
+							<p className="text-primary text-xs">Creación: {month(new Date(created_at))}</p>
+						</div>
 						<div className="flex w-full flex-col items-center gap-2">
 							<Button variant={"secondary"} className="w-full" size={"icon"}>
-								<EditIcon className="size-4" />
-								Editar
+								<FolderSymlink className="stroke-icon-primary size-4" />
+								Mover
 							</Button>
 							<Button variant={"secondary"} className="w-full" size={"icon"}>
-								<Trash2Icon className="size-4" />
+								<Archive className="stroke-icon-primary size-4" />
+								Archivar
+							</Button>
+							<Button variant={"secondary"} className="w-full" size={"icon"}>
+								<EditIcon className="stroke-icon-primary size-4" />
+								Renombrar
+							</Button>
+							<Button variant={"secondary"} className="w-full" size={"icon"}>
+								<Trash2Icon className="stroke-icon-primary size-4" />
 								Eliminar
 							</Button>
 						</div>
@@ -67,12 +90,14 @@ export default function FolderCard({ folder }: Props) {
 					<DropDownContainer>
 						<DropDownTrigger />
 						<DropDownContent>
-							<DropDownOption onClick={() => {}} Icon={EditIcon} text="Editar" />
+							<DropDownOption onClick={() => {}} Icon={FolderSymlink} text="Mover" />
+							<DropDownOption onClick={() => {}} Icon={Archive} text="Archivar" />
+							<DropDownOption onClick={() => {}} Icon={EditIcon} text="Renombrar" />
 							<DropDownOption onClick={() => {}} Icon={Trash2Icon} text="Eliminar" />
 						</DropDownContent>
 					</DropDownContainer>
 				</DropDown>
-			)}
+			)} */}
 		</motion.div>
 	)
 }

@@ -1,19 +1,6 @@
 import { cn } from "@/lib/utils"
-import {
-	AnimatePresence,
-	AnimationScope,
-	motion,
-	useAnimate,
-	useDragControls,
-	useMotionValue
-} from "motion/react"
-import React, {
-	createContext,
-	isValidElement,
-	useContext,
-	useId,
-	useMemo
-} from "react"
+import { AnimatePresence, AnimationScope, motion, useAnimate, useDragControls, useMotionValue } from "motion/react"
+import React, { createContext, isValidElement, useContext, useId, useMemo } from "react"
 import { createPortal } from "react-dom"
 import useMeasure from "react-use-measure"
 
@@ -31,33 +18,20 @@ export type DragDrawerProps = {
 	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export const DragDrawerProvider = ({
-	children,
-	isOpen,
-	setIsOpen
-}: DragDrawerProps) => {
+export const DragDrawerProvider = ({ children, isOpen, setIsOpen }: DragDrawerProps) => {
 	const _id = useId()
 	const contextValue = useMemo(() => ({ _id, isOpen, setIsOpen }), [isOpen])
 
-	return (
-		<DragDrawerContext.Provider value={contextValue}>
-			{children}
-		</DragDrawerContext.Provider>
-	)
+	return <DragDrawerContext.Provider value={contextValue}>{children}</DragDrawerContext.Provider>
 }
 
 export const useDragDrawer = () => {
 	const context = useContext(DragDrawerContext)
-	if (!context)
-		throw new Error("useDragDrawer must be used within a DragDrawerProvider")
+	if (!context) throw new Error("useDragDrawer must be used within a DragDrawerProvider")
 	return context
 }
 
-export const DragDrawer = ({
-	children,
-	isOpen,
-	setIsOpen
-}: DragDrawerProps) => {
+export const DragDrawer = ({ children, isOpen, setIsOpen }: DragDrawerProps) => {
 	return (
 		<DragDrawerProvider isOpen={isOpen} setIsOpen={setIsOpen}>
 			{children}
@@ -71,27 +45,14 @@ export type DragDrawerTriggerProps = {
 	asChild?: boolean
 } & React.ComponentProps<typeof motion.button>
 
-export function DragDrawerTrigger({
-	children,
-	className,
-	asChild = false,
-	...props
-}: DragDrawerTriggerProps) {
+export function DragDrawerTrigger({ children, className, asChild = false, ...props }: DragDrawerTriggerProps) {
 	const { setIsOpen } = useDragDrawer()
 
 	if (asChild && isValidElement(children)) {
-		const MotionComponent = motion.create(
-			children.type as React.ForwardRefExoticComponent<any>
-		)
+		const MotionComponent = motion.create(children.type as React.ForwardRefExoticComponent<any>)
 		const childProps = children.props as Record<string, unknown>
 
-		return (
-			<MotionComponent
-				{...childProps}
-				onClick={() => setIsOpen(true)}
-				className={childProps.className}
-			/>
-		)
+		return <MotionComponent {...childProps} onClick={() => setIsOpen(true)} className={childProps.className} />
 	}
 
 	return (
@@ -109,11 +70,7 @@ export type DragDrawPortal = {
 	scope: AnimationScope<any>
 }
 
-export function DragDrawerPortal({
-	children,
-	className,
-	scope
-}: DragDrawPortal) {
+export function DragDrawerPortal({ children, className, scope }: DragDrawPortal) {
 	const { isOpen, setIsOpen } = useDragDrawer()
 
 	return createPortal(
@@ -125,10 +82,7 @@ export function DragDrawerPortal({
 					animate={{ opacity: 1 }}
 					exit={{ opacity: 0 }}
 					onClick={() => setIsOpen(false)}
-					className={cn(
-						"fixed inset-0 z-50 flex items-center justify-center bg-black/25",
-						className
-					)}>
+					className={cn("fixed inset-0 z-50 flex items-center justify-center bg-black/25", className)}>
 					{children}
 				</motion.div>
 			)}
@@ -166,10 +120,7 @@ export function DragDrawerContent({ children, className }: DragDrawerContent) {
 				animate={{ y: "0%" }}
 				exit={{ y: "100%" }}
 				transition={{ ease: "easeInOut" }}
-				className={cn(
-					"bg-card absolute bottom-0 z-50 h-fit w-full overflow-hidden rounded-t-2xl",
-					className
-				)}
+				className={cn("bg-card absolute bottom-0 z-50 h-fit w-full overflow-hidden rounded-t-2xl", className)}
 				style={{ y }}
 				drag="y"
 				dragControls={controls}
@@ -184,9 +135,7 @@ export function DragDrawerContent({ children, className }: DragDrawerContent) {
 					className="bg-card absolute top-0 right-0 left-0 z-10 flex cursor-grab touch-none justify-center p-2 active:cursor-grabbing">
 					<div className="bg-primary/80 h-1 w-12 rounded-full"></div>
 				</button>
-				<div className="relative z-0 w-full overflow-hidden p-4 pt-12 select-none">
-					{children}
-				</div>
+				<div className="relative z-0 w-full overflow-hidden p-4 pt-12 select-none">{children}</div>
 			</motion.div>
 		</DragDrawerPortal>
 	)

@@ -14,8 +14,7 @@ export const DropDownContext = createContext<DropDownContextType | null>(null)
 
 export const useDropDown = () => {
 	const context = useContext(DropDownContext)
-	if (!context)
-		throw new Error("useDropDown must be used within DropDownProvider")
+	if (!context) throw new Error("useDropDown must be used within DropDownProvider")
 	return context
 }
 
@@ -23,11 +22,7 @@ export const DropDown = ({ children }: { children: React.ReactNode }) => {
 	const [isOpen, setIsOpen] = useState(false)
 	const triggerRef = useRef<HTMLButtonElement>(null)
 
-	return (
-		<DropDownContext.Provider value={{ isOpen, setIsOpen, triggerRef }}>
-			{children}
-		</DropDownContext.Provider>
-	)
+	return <DropDownContext.Provider value={{ isOpen, setIsOpen, triggerRef }}>{children}</DropDownContext.Provider>
 }
 
 type DropDownTriggerProps = { className?: string }
@@ -56,11 +51,7 @@ const wrapperVariants = {
 	}
 }
 
-export const DropDownContainer = ({
-	children
-}: {
-	children: React.ReactNode
-}) => {
+export const DropDownContainer = ({ children }: { children: React.ReactNode }) => {
 	const { isOpen } = useDropDown()
 
 	return (
@@ -70,21 +61,12 @@ export const DropDownContainer = ({
 	)
 }
 
-export const DropDownContent = ({
-	children
-}: {
-	children: React.ReactNode
-}) => {
+export const DropDownContent = ({ children }: { children: React.ReactNode }) => {
 	const { isOpen, setIsOpen, triggerRef } = useDropDown()
 	const dropDownRef = useRef<HTMLUListElement>(null!)
 
 	useClickOutside(dropDownRef, () => {
-		if (
-			isOpen &&
-			triggerRef.current &&
-			!triggerRef.current.contains(event?.target as Node)
-		)
-			setIsOpen(false)
+		if (isOpen && triggerRef.current && !triggerRef.current.contains(event?.target as Node)) setIsOpen(false)
 	})
 
 	return (
@@ -127,7 +109,7 @@ export const DropDownOption = ({ text, Icon, onClick }: DropDownOption) => {
 			}}
 			className="text-primary hover:bg-muted flex w-full cursor-pointer items-center gap-2 rounded-md p-2 text-xs font-medium whitespace-nowrap">
 			<motion.span variants={actionIconVariants}>
-				<Icon className="size-4" />
+				<Icon className="stroke-icon-primary size-4" />
 			</motion.span>
 			<span>{text}</span>
 		</motion.button>
