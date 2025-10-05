@@ -13,9 +13,10 @@ export type FolderContextType = {
 	setFolderId: React.Dispatch<React.SetStateAction<string | null>>
 	getFolderId: (_id: string | null) => Promise<void>
 	createFolder: (_id: string | null, { name }: { name: string }) => Promise<void>
+	renameFolder: (_id: string, name: string) => Promise<void>
 	deleteFolder: (_id: string) => Promise<void>
 	createNote: ({ name, content }: { name: string; content: unknown }) => Promise<void>
-	updateNote: ({ _id, name, content }: { _id: string; name: string; content: unknown }) => Promise<void>
+	updateNote: ({ _id, content }: { _id: string; content: unknown }) => Promise<void>
 }
 
 export const FolderContext = createContext<FolderContextType | null>(null)
@@ -108,60 +109,35 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 				data: { user }
 			} = await supabase.auth.getUser()
 
-			const { data, error } = await supabase
+			const { data } = await supabase
 				.from("notes")
 				.insert({ name, content, id_folder: folderId, id_user: user?.id })
 				.select()
 			if (!data) throw new Error("Error al crear la nota.")
-			if (!error) toast.success({ text: `${name} creada correctamente.` })
-			if (data?.[0]?.id_folder === folderId) setNotes(p => (p ? [...p, data[0]] : [data[0]]))
-			allSetNotes(p => (p ? [...p, data[0]] : [data[0]]))
+			if (data[0]) {
+				const newNote = data[0]
+				toast.success({ text: `${name} creada correctamente.` })
+				allSetNotes(p => (p ? [...p, newNote] : [newNote]))
+				setNotes(p => (p ? [...p, newNote] : [newNote]))
+			}
 		} catch (error) {
-			toast.error({
-				text: error instanceof Error ? error.message : "A ocurrido un error"
-			})
+			toast.error({ text: error instanceof Error ? error.message : "A ocurrido un error" })
 		}
 	}
 
-	const updateNote = async ({ _id, name, content }: { _id: string; name: string; content: unknown }) => {
+	const updateNote = async ({ _id, content }: { _id: string; content: unknown }) => {
+		const currentNote = notes?.find(note => note._id === _id)
+		if (currentNote && JSON.stringify(currentNote.content) === JSON.stringify(content)) return
+		const update_at = new Date().toISOString()
+
 		try {
-			const currentNote = allNotes?.find(note => note._id === _id)
-			console.log(new Date(), currentNote?.created_at)
-			if (currentNote && currentNote.name === name && JSON.stringify(currentNote.content) === JSON.stringify(content))
-				return
-			const update_at = new Date().toISOString()
-			const { data, error } = await supabase.from("notes").update({ name, content, update_at }).eq("_id", _id).select()
+			const { data } = await supabase.from("notes").update({ content, update_at }).eq("_id", _id).select()
 			if (!data) throw new Error("Error al actualizar la nota.")
-			if (!error) toast.success({ text: `${name} guardada correctamente.` })
-			if (data?.[0]) {
-				const updatedNote = data[0]
-				setNotes(prev =>
-					prev
-						? prev.map(note =>
-								note._id === _id
-									? {
-											...note,
-											name: updatedNote.name,
-											content: updatedNote.content,
-											update_at
-										}
-									: note
-							)
-						: prev
-				)
-				allSetNotes(prev =>
-					prev
-						? prev.map(note =>
-								note._id === _id
-									? {
-											...note,
-											name: updatedNote.name,
-											content: updatedNote.content
-										}
-									: note
-							)
-						: prev
-				)
+			if (data[0]) {
+				const updateNote = data[0]
+				toast.success({ text: `${updateNote.name} guardada correctamente.` })
+				setNotes(prev => prev?.map(note => (note._id === _id ? { ...note, ...updateNote } : note)) ?? prev)
+				allSetNotes(prev => prev?.map(note => (note._id === _id ? { ...note, ...updateNote } : note)) ?? prev)
 			}
 		} catch (error) {
 			toast.error({ text: error instanceof Error ? error.message : "A ocurrido un error" })
@@ -169,17 +145,43 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 	}
 
 	const deleteFolder = async (id: string) => {
-		const currentState = folders
-		const updatedFolder = currentState?.filter(task => task._id != id)
-		setFolders(updatedFolder!)
-
 		try {
-			const { data, error } = await supabase.from("folders").update({ delete: true }).eq("_id", id).select()
-			if (!data) throw new Error("Error al eliminar una tarea.")
-			if (!error) toast.success({ text: "Carpeta eliminada correctamente." })
+			const { data } = await supabase.from("folders").update({ delete: true }).eq("_id", id).select()
+			if (!data) throw new Error("Error al eliminar la carpeta.")
+			if (data[0]) {
+				const deleteFolder = data[0].delete
+				toast.success({ text: `Carpeta ${deleteFolder.name} eliminada.` })
+				setFolders(
+					prev => prev?.map(folder => (folder._id === id ? { ...folder, delete: deleteFolder } : folder)) ?? prev
+				)
+				allSetFolders(
+					prev => prev?.map(folder => (folder._id === id ? { ...folder, delete: deleteFolder } : folder)) ?? prev
+				)
+			}
 		} catch (error) {
 			toast.error({ text: error instanceof Error ? error.message : "A ocurrido un error" })
-			setFolders(currentState)
+		}
+	}
+
+	const renameFolder = async (id: string, name: string) => {
+		const currentFolder = folders?.find(folder => folder._id === id)
+		if (currentFolder && name === currentFolder.name) return
+
+		try {
+			const { data } = await supabase.from("folders").update({ name }).eq("_id", id).select()
+			if (!data) throw new Error("Error al renombrar la carpeta.")
+			if (data[0]) {
+				const renameFolder = data[0].name
+				toast.success({ text: `Carpeta renombrada a ${name}.` })
+				setFolders(
+					prev => prev?.map(folder => (folder._id === id ? { ...folder, name: renameFolder } : folder)) ?? prev
+				)
+				allSetFolders(
+					prev => prev?.map(folder => (folder._id === id ? { ...folder, name: renameFolder } : folder)) ?? prev
+				)
+			}
+		} catch (error) {
+			toast.error({ text: error instanceof Error ? error.message : "A ocurrido un error" })
 		}
 	}
 
@@ -194,6 +196,7 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 				folderId,
 				setFolderId,
 				createFolder,
+				renameFolder,
 				deleteFolder,
 				createNote,
 				updateNote,

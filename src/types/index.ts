@@ -30,5 +30,5 @@ export type Folder = {
 	created_at: string
 	id_root: string | null
 	id_user: string
-	deleted?: boolean
+	delete: boolean
 }

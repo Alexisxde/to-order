@@ -1,17 +1,9 @@
 "use client"
 import { Modal, ModalAction, ModalClose, ModalContent, ModalHeader, ModalPortal } from "@/components/ui/modal"
-import { useFolder } from "@/hooks/useFolder"
+import { useFolderActions } from "@/hooks/useFolder"
 
-interface Props {
-	idFolderDelete: string | null
-	isOpen: boolean
-	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
-}
-
-export default function DeleteFolder({ idFolderDelete, isOpen, setIsOpen }: Props) {
-	if (!idFolderDelete) return
-	const { deleteFolder } = useFolder()
-	const handleDelete = async (id: string) => await deleteFolder(id)
+export default function DeleteFolder() {
+	const { handleDeleteFolder, isOpen, setIsOpen } = useFolderActions()
 
 	return (
 		<Modal isOpen={isOpen} setIsOpen={setIsOpen}>
@@ -27,7 +19,7 @@ export default function DeleteFolder({ idFolderDelete, isOpen, setIsOpen }: Prop
 							<ModalClose variant={"outline"} size="default" className="rounded-md">
 								Cancelar
 							</ModalClose>
-							<ModalAction onClick={() => idFolderDelete && handleDelete(idFolderDelete)}>Confirmar</ModalAction>
+							<ModalAction onClick={handleDeleteFolder}>Confirmar</ModalAction>
 						</div>
 					</div>
 				</ModalContent>

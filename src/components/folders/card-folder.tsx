@@ -5,21 +5,20 @@ import {
 	DropDownOption,
 	DropDownTrigger
 } from "@/components/ui/drop-down"
-import { useFolder } from "@/hooks/useFolder"
+import { useFolder, useFolderActions } from "@/hooks/useFolder"
 import { month } from "@/lib/utils"
 import type { Folder } from "@/types"
-import { Archive, EditIcon, FolderIcon, FolderSymlink, Trash2Icon } from "lucide-react"
+import { Archive, EditIcon, FolderIcon, FolderOpen, FolderSymlink, Trash2Icon } from "lucide-react"
 import { motion } from "motion/react"
 
 interface Props {
 	folder: Folder
-	setIsOpenDelete: React.Dispatch<React.SetStateAction<boolean>>
-	setDeleteFolderId: React.Dispatch<React.SetStateAction<string | null>>
 }
 
-export default function FolderCard({ folder, setIsOpenDelete, setDeleteFolderId }: Props) {
-	const { setFolderId } = useFolder()
+export default function FolderCard({ folder }: Props) {
 	const { _id, name, created_at } = folder
+	const { setFolderId } = useFolder()
+	const { handleSetActionType } = useFolderActions()
 
 	return (
 		<motion.div
@@ -42,17 +41,12 @@ export default function FolderCard({ folder, setIsOpenDelete, setDeleteFolderId 
 				<DropDownContainer>
 					<DropDownTrigger />
 					<DropDownContent>
-						<DropDownOption onClick={() => alert("Próximamente")} Icon={FolderSymlink} text="Mover" />
-						<DropDownOption onClick={() => alert("Próximamente")} Icon={Archive} text="Archivar" />
-						<DropDownOption onClick={() => alert("Próximamente")} Icon={EditIcon} text="Renombrar" />
-						<DropDownOption
-							onClick={() => {
-								setDeleteFolderId(_id)
-								setIsOpenDelete(true)
-							}}
-							Icon={Trash2Icon}
-							text="Eliminar"
-						/>
+						<DropDownOption onClick={() => setFolderId(_id)} Icon={FolderOpen} text="Abrir" />
+						<DropDownOption onClick={() => handleSetActionType("archive", folder)} Icon={Archive} text="Archivar" />
+						<DropDownOption onClick={() => handleSetActionType("move", folder)} Icon={FolderSymlink} text="Mover" />
+						<DropDownOption onClick={() => handleSetActionType("rename", folder)} Icon={EditIcon} text="Renombrar" />
+						<hr className="border-border border-t" />
+						<DropDownOption onClick={() => handleSetActionType("delete", folder)} Icon={Trash2Icon} text="Eliminar" />
 					</DropDownContent>
 				</DropDownContainer>
 			</DropDown>

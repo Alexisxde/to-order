@@ -29,7 +29,7 @@ export default function NoteCard({ note }: Props) {
 	const handleClick = async () => {
 		if (isSaving) return
 		setIsSaving(true)
-		await updateNote({ _id, name, content: editor?.getJSON() })
+		await updateNote({ _id, content: editor?.getJSON() })
 		setIsSaving(false)
 		setIsOpen(false)
 	}
