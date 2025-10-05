@@ -149,14 +149,10 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 			const { data } = await supabase.from("folders").update({ delete: true }).eq("_id", id).select()
 			if (!data) throw new Error("Error al eliminar la carpeta.")
 			if (data[0]) {
-				const deleteFolder = data[0].delete
+				const deleteFolder = data[0]
 				toast.success({ text: `Carpeta ${deleteFolder.name} eliminada.` })
-				setFolders(
-					prev => prev?.map(folder => (folder._id === id ? { ...folder, delete: deleteFolder } : folder)) ?? prev
-				)
-				allSetFolders(
-					prev => prev?.map(folder => (folder._id === id ? { ...folder, delete: deleteFolder } : folder)) ?? prev
-				)
+				setFolders(prev => prev?.filter(folder => folder._id !== id) ?? prev)
+				allSetFolders(prev => prev?.filter(folder => folder._id !== id) ?? prev)
 			}
 		} catch (error) {
 			toast.error({ text: error instanceof Error ? error.message : "A ocurrido un error" })
