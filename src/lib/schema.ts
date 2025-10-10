@@ -16,10 +16,9 @@ export const createTimeShema = z
 	.object({
 		subject: z.string().min(5, "No puede estar vacío."),
 		description: z.string().optional(),
-		day: z.enum(
-			["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
-			{ errorMap: () => ({ message: "Día invalido." }) }
-		),
+		day: z.enum(["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"], {
+			errorMap: () => ({ message: "Día invalido." })
+		}),
 		color: z.enum(["#FF5733", "#33FF57", "#3357FF", "#FF33A8", "#FFD133"], {
 			errorMap: () => ({ message: "Color invalido." })
 		}),
@@ -81,5 +80,9 @@ export const editTaskSchema = z.object({
 
 export const createFolderSchema = z.object({
 	name: z.string().min(4, "No puede estar vacío.")
-	// description: z.string().optional()
+})
+
+export const moveFolderSchema = z.object({
+	_id: z.string({ required_error: "Debe seleccionar una carpeta para mover." }).nullable(),
+	tree: z.string().optional()
 })

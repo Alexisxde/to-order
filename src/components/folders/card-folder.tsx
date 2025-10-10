@@ -42,7 +42,7 @@ export default function FolderCard({ folder }: Props) {
 					<DropDownTrigger />
 					<DropDownContent>
 						<DropDownOption onClick={() => setFolderId(_id)} Icon={FolderOpen} text="Abrir" />
-						<DropDownOption onClick={() => handleSetActionType("archive", folder)} Icon={Archive} text="Archivar" />
+						<DropDownOption onClick={() => {}} Icon={Archive} text="Archivar" />
 						<DropDownOption onClick={() => handleSetActionType("move", folder)} Icon={FolderSymlink} text="Mover" />
 						<DropDownOption onClick={() => handleSetActionType("rename", folder)} Icon={EditIcon} text="Renombrar" />
 						<hr className="border-border border-t" />

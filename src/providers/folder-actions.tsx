@@ -2,7 +2,7 @@ import { useFolder } from "@/hooks/useFolder"
 import { Folder } from "@/types"
 import { createContext, useState } from "react"
 
-export type ActionType = "delete" | "rename" | "move" | "archive" | null
+export type ActionType = "move" | "rename" | "archive" | "delete" | null
 
 export type FolderActionsContextType = {
 	folder: Folder | null
@@ -11,6 +11,7 @@ export type FolderActionsContextType = {
 	actionType: ActionType
 	handleSetActionType: (type: ActionType, folder: Folder) => void
 	handleRenameFolder: (name: string) => Promise<void>
+	handleMoveFolder: () => Promise<void>
 	handleDeleteFolder: () => Promise<void>
 }
 
@@ -29,6 +30,7 @@ export function FolderActionsProvider({ children }: { children: React.ReactNode 
 	}
 
 	const closeAction = () => {
+		setIsOpen(true)
 		setActionType(null)
 		setFolder(null)
 	}
@@ -42,13 +44,27 @@ export function FolderActionsProvider({ children }: { children: React.ReactNode 
 	const handleRenameFolder = async (name: string) => {
 		if (!folder?._id) return
 		await renameFolder(folder?._id, name)
-		setActionType(null)
-		setFolder(null)
+		closeAction()
+	}
+
+	const handleMoveFolder = async () => {
+		if (!folder?._id) return
+		// await renameFolder(folder?._id)
+		closeAction()
 	}
 
 	return (
 		<FolderActionsContext.Provider
-			value={{ folder, isOpen, setIsOpen, actionType, handleSetActionType, handleRenameFolder, handleDeleteFolder }}>
+			value={{
+				folder,
+				isOpen,
+				setIsOpen,
+				actionType,
+				handleSetActionType,
+				handleRenameFolder,
+				handleDeleteFolder,
+				handleMoveFolder
+			}}>
 			{children}
 		</FolderActionsContext.Provider>
 	)

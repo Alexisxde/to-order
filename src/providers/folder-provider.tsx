@@ -7,6 +7,8 @@ import { createContext, useEffect, useState } from "react"
 export type FolderContextType = {
 	loading: boolean
 	history: { _id: string; name: string; id_root: string | null }[]
+	allFolders: Folder[] | null
+	allNotes: Note[] | null
 	folders: Folder[] | null
 	notes: Note[] | null
 	folderId: string | null
@@ -15,6 +17,8 @@ export type FolderContextType = {
 	createFolder: (_id: string | null, { name }: { name: string }) => Promise<void>
 	renameFolder: (_id: string, name: string) => Promise<void>
 	deleteFolder: (_id: string) => Promise<void>
+	archive: { notes: Note[]; folders: Folder[] }
+	setArchive: React.Dispatch<React.SetStateAction<{ notes: Note[]; folders: Folder[] }>>
 	createNote: ({ name, content }: { name: string; content: unknown }) => Promise<void>
 	updateNote: ({ _id, content }: { _id: string; content: unknown }) => Promise<void>
 }
@@ -32,12 +36,15 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 	const [allNotes, allSetNotes] = useState<Note[] | null>(null)
 	const [folders, setFolders] = useState<Folder[] | null>(null)
 	const [notes, setNotes] = useState<Note[] | null>(null)
+	const [archive, setArchive] = useState<{ notes: Note[]; folders: Folder[] }>({
+		folders: [],
+		notes: []
+	})
 	const [folderId, setFolderId] = useState<string | null>(null)
-	const { toast } = useToast()
-
 	const [history, setHistory] = useState<{ _id: string | null; name: string; id_root: string | null }[]>([
 		{ _id: null, name: "Inicio", id_root: null }
 	])
+	const { toast } = useToast()
 
 	const getFolders = async () => {
 		setIsLoading(true)
@@ -197,6 +204,8 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 				createNote,
 				updateNote,
 				history,
+				allNotes,
+				allFolders,
 				folders,
 				notes,
 				getFolderId
