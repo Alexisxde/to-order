@@ -1,19 +1,18 @@
 "use client"
 import Button from "@/components/ui/button"
+import Error from "@/components/ui/error"
 import { Modal, ModalClose, ModalContent, ModalHeader, ModalPortal } from "@/components/ui/modal"
+import { useToast } from "@/components/ui/toast"
 import { useFolder, useFolderActions } from "@/hooks/useFolder"
+import { moveFolderSchema } from "@/lib/schema"
 import { cn } from "@/lib/utils"
 import type { Folder } from "@/types"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { FolderIcon, FolderOpenIcon } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
 import React, { useState, type HTMLAttributes, type ReactNode } from "react"
-// import { useFolderActions } from "@/hooks/useFolder"
-import { moveFolderSchema } from "@/lib/schema"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { z } from "zod"
-import Error from "../ui/error"
-import { useToast } from "../ui/toast"
 
 type FormData = z.infer<typeof moveFolderSchema>
 
@@ -23,22 +22,22 @@ type FolderTree = Folder & {
 
 export default function MoveFolder() {
 	const { allFolders } = useFolder()
-	const { isOpen, setIsOpen, folder } = useFolderActions()
+	const { isOpen, setIsOpen, folder, handleMoveFolder } = useFolderActions()
 	if (!allFolders || !Array.isArray(allFolders)) return
-	const folderTree = buildFolderTree(allFolders)
+	const folderTree = buildFolderTree(allFolders, folder?._id as string)
 	const { toast } = useToast()
 
 	const {
 		register,
 		handleSubmit,
 		reset,
-		watch,
 		formState: { isSubmitting, errors }
 	} = useForm<FormData>({ resolver: zodResolver(moveFolderSchema) })
 
 	const onSubmit: SubmitHandler<FormData> = async ({ _id }) => {
-		if (folder?._id === _id) toast.error({ text: `Error en hacer esa acción. ${_id}` })
-		// Aca mandar la petición para mover
+		console.log(_id)
+		if (folder?._id === _id) toast.error({ text: "Error en hacer esa acción." })
+		await handleMoveFolder(_id)
 		reset()
 		setIsOpen(false)
 	}
@@ -52,7 +51,17 @@ export default function MoveFolder() {
 						<ModalClose />
 					</ModalHeader>
 					<form className="text-primary/75 flex flex-col gap-2 text-sm" onSubmit={handleSubmit(onSubmit)}>
-						<div>{renderFolderTree(folderTree, register)}</div>
+						<div>
+							<Tree
+								contentTree="Inicio (sin carpeta)"
+								name={"Root"}
+								value={"null"}
+								defaultCollapsed={false}
+								disabledIcon={allFolders.length > 0}
+								register={register}
+							/>
+							{renderFolderTree(folderTree, register)}
+						</div>
 						{errors._id && <Error message={errors._id.message} />}
 						<div className="flex items-center gap-2">
 							<Button type="button" variant={"ghost"} size={"lg"} className="flex-1" onClick={() => setIsOpen(false)}>
@@ -69,12 +78,12 @@ export default function MoveFolder() {
 	)
 }
 
-function buildFolderTree(folders: Folder[], parentId: string | null = null): FolderTree[] {
+function buildFolderTree(folders: Folder[], folderSelect: string, parentId: string | null = null): FolderTree[] {
 	return folders
-		.filter(folder => folder.id_root === parentId)
+		.filter(folder => folder.id_root === parentId && folder._id !== folderSelect)
 		.map(folder => ({
 			...folder,
-			children: buildFolderTree(folders, folder._id)
+			children: buildFolderTree(folders, folderSelect, folder._id)
 		}))
 }
 
@@ -119,9 +128,7 @@ const Tree = ({
 	const [collapsed, setCollapsed] = useState(defaultCollapsed)
 	const hasChildren = React.Children.count(children) > 0
 	const toggleCollapse = () => {
-		if (hasChildren && disabledIcon) {
-			setCollapsed(!collapsed)
-		}
+		if (hasChildren && disabledIcon) setCollapsed(!collapsed)
 	}
 
 	return (

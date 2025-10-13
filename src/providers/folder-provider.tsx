@@ -15,6 +15,7 @@ export type FolderContextType = {
 	setFolderId: React.Dispatch<React.SetStateAction<string | null>>
 	getFolderId: (_id: string | null) => Promise<void>
 	createFolder: (_id: string | null, { name }: { name: string }) => Promise<void>
+	moveFolder: (_id: string, folder_id: string | null) => Promise<void>
 	renameFolder: (_id: string, name: string) => Promise<void>
 	deleteFolder: (_id: string) => Promise<void>
 	archive: { notes: Note[]; folders: Folder[] }
@@ -188,6 +189,26 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 		}
 	}
 
+	const moveFolder = async (_id: string, folder_id: string | null) => {
+		console.log({
+			_id,
+			folder_id
+		})
+		try {
+			const { data } = await supabase.from("folders").update({ id_root: folder_id }).eq("_id", _id).select()
+			if (!data) throw new Error("Error al mover la carpeta. Intentelo de nuevo.")
+			if (data[0]) {
+				toast.success({ text: `La carpeta se ha movido correctamente.` })
+				setFolders(prev => prev?.filter(folder => folder._id !== _id) ?? prev)
+				allSetFolders(
+					prev => prev?.map(folder => (folder._id === _id ? { ...folder, id_root: folder_id } : folder)) ?? prev
+				)
+			}
+		} catch (error) {
+			toast.error({ text: error instanceof Error ? error.message : "A ocurrido un error" })
+		}
+	}
+
 	useEffect(() => {
 		getFolders()
 	}, [])
@@ -199,6 +220,7 @@ export const FoldersProvider = ({ children }: FolderProviderProps) => {
 				folderId,
 				setFolderId,
 				createFolder,
+				moveFolder,
 				renameFolder,
 				deleteFolder,
 				createNote,
