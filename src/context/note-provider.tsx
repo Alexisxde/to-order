@@ -3,7 +3,7 @@ import { useFolders } from "@/app/app/folders/components/hooks/use-folders"
 import { useUser } from "@/hooks/use-user"
 import { NOTES } from "@/lib/query-keys"
 import NoteService from "@/module/notes/note.service"
-import type { CreateNoteDto, Note, UpdateNoteDto, DeleteNoteDto, MoveNoteDto } from "@/module/notes/note.type"
+import type { CreateNoteDto, DeleteNoteDto, MoveNoteDto, Note, UpdateNoteDto } from "@/module/notes/note.type"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createContext } from "react"
 import { toast } from "sonner"
@@ -80,7 +80,7 @@ export const NotesProvider = ({ children }: { children: React.ReactNode }) => {
 		}
 	})
 
-	const deleted = useMutation({
+	const onDeleted = useMutation({
 		mutationFn: ({ id, deleted }: DeleteNoteDto) => NoteService.deleted({ id, deleted }),
 		onMutate: ({ id, deleted }: DeleteNoteDto) => {
 			const previousNotes = queryClient.getQueryData<Note[]>([...NOTES, user?.id])
@@ -134,8 +134,8 @@ export const NotesProvider = ({ children }: { children: React.ReactNode }) => {
 				notes: data || [],
 				create: ({ name, folderId }) => create.mutate({ name, folderId }),
 				update: ({ id, name, content }) => update.mutate({ id, name, content }),
-				deleted: ({ id, deleted }) => update.mutate({ id, deleted }),
-				move: ({ id, folderId }) => update.mutate({ id, folderId })
+				deleted: ({ id, deleted }) => onDeleted.mutate({ id, deleted }),
+				move: ({ id, folderId }) => move.mutate({ id, folderId })
 			}}>
 			{children}
 		</NoteContext.Provider>
