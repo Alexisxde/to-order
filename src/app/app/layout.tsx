@@ -1,37 +1,34 @@
-import Header from "@/components/shared/header"
-import Sidebar from "@/components/shared/sidebar"
-import { Toast, ToastProvider } from "@/components/ui/toast"
-import { FoldersProvider } from "@/providers/folder-provider"
-import { SidebarProvider } from "@/providers/sidebar-provider"
-import { TasksProvider } from "@/providers/task-provider"
-import { TimeProvider } from "@/providers/time-provider"
+import { AppSidebar } from "@/components/sidebar"
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
+import { FoldersProvider } from "@/context/folder-provider"
+  import { TasksProvider } from "@/providers/task-provider"
+import { NotesProvider } from "@/context/note-provider"
 import { createClientForServer } from "@/supabase/server"
 import type { Metadata } from "next"
 import { redirect } from "next/navigation"
+import type { CSSProperties } from "react"
 
-export const metadata: Metadata = { title: "ToOrder" }
+export const metadata: Metadata = { title: "OrganZi" }
 
 export default async function AppLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-	const supabase = await createClientForServer()
-	const { data } = await supabase.auth.getUser()
+	const { auth } = await createClientForServer()
+	const { data } = await auth.getUser()
 	if (!data.user) return redirect("/")
 
 	return (
-		<ToastProvider>
-			<FoldersProvider>
-				<TasksProvider>
-					<TimeProvider>
-						<SidebarProvider>
-							<section className="flex h-dvh w-full flex-col">
-								<Header user={data.user} />
-								<main className="max-w-8xl mx-auto w-full flex-1">{children}</main>
-								<Sidebar user={data.user} />
-							</section>
-						</SidebarProvider>
-					</TimeProvider>
-				</TasksProvider>
-			</FoldersProvider>
-			<Toast />
-		</ToastProvider>
+		<FoldersProvider>
+          <TasksProvider>
+			<NotesProvider>
+				<SidebarProvider defaultOpen={false} style={{ "--sidebar-width": "19rem" } as CSSProperties}>
+					<AppSidebar />
+					<SidebarInset>
+						<section className="flex h-dvh w-full flex-col">
+							<main className="max-w-8xl mx-auto w-full flex-1">{children}</main>
+						</section>
+					</SidebarInset>
+				</SidebarProvider>
+			</NotesProvider>
+          </TasksProvider>
+		</FoldersProvider>
 	)
 }

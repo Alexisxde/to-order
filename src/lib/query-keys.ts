@@ -1,0 +1,5 @@
+export const FOLDERS = ["folders"]
+export const FOLDERS_DELETED = ["folders_deleted"]
+export const NOTES = ["notes"]
+export const TASKS = ["tasks"]
+export const USER = ["user"]

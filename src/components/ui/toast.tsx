@@ -28,9 +28,9 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
 	const createToast = (type: Variant) => {
 		return ({ text, description }: Toast) => {
 			const id = Math.random()
-			setList(prev => [...prev, { id, text, description, type }])
+			setList((prev) => [...prev, { id, text, description, type }])
 			setTimeout(() => {
-				setList(prev => prev.filter(item => item.id !== id))
+				setList((prev) => prev.filter((item) => item.id !== id))
 			}, 5000)
 		}
 	}
@@ -44,11 +44,7 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
 
 	const contextValue = useMemo(() => ({ list, toast }), [list])
 
-	return (
-		<ToastContext.Provider value={contextValue}>
-			{children}
-		</ToastContext.Provider>
-	)
+	return <ToastContext.Provider value={contextValue}>{children}</ToastContext.Provider>
 }
 
 export const useToast = () => {

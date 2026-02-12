@@ -6,20 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function month(date: Date) {
-	const month = [
-		"Ene",
-		"Feb",
-		"Mar",
-		"Abr",
-		"May",
-		"Jun",
-		"Jul",
-		"Ago",
-		"Sep",
-		"Oct",
-		"Nov",
-		"Dic"
-	]
+	const month = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
 	return ` ${month[date.getMonth()]} ${date.getDate().toString().padStart(2, "0")}, ${date.getFullYear()}`
 }
 
@@ -30,10 +17,8 @@ export function filterItems<T>(query: string, items: T[]): T[] {
 
 	const lowerQuery = query.toLowerCase()
 	return items.filter((item: any) => {
-		return Object.values(item).some(value => {
-			return (
-				typeof value === "string" && value.toLowerCase().includes(lowerQuery)
-			)
+		return Object.values(item).some((value) => {
+			return typeof value === "string" && value.toLowerCase().includes(lowerQuery)
 		})
 	})
 }

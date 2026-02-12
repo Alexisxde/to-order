@@ -22,9 +22,7 @@ export default function Text({ label }: Props) {
 							{letter}
 						</motion.span>
 					))}
-					{wordIndex < words.length - 1 && (
-						<span className="inline-block">&nbsp;</span>
-					)}
+					{wordIndex < words.length - 1 && <span className="inline-block">&nbsp;</span>}
 				</span>
 			))}
 		</h1>

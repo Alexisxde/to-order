@@ -1,11 +1,6 @@
 import type { SVGProps } from "react"
 
-export default function HomeIcon({
-	width = 24,
-	height = 24,
-	className,
-	...rest
-}: SVGProps<SVGSVGElement>) {
+export default function HomeIcon({ width = 24, height = 24, className, ...rest }: SVGProps<SVGSVGElement>) {
 	return (
 		<svg
 			viewBox="0 0 256 250"

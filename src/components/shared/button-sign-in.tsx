@@ -1,5 +1,5 @@
 "use client"
-import Button from "@/components/ui/button"
+import { Button } from "@/components/ui/button"
 import GitHubIcon from "@/icons/github"
 import GoogleIcon from "@/icons/google"
 import { createClient } from "@/supabase/client"
@@ -25,21 +25,15 @@ export default function SignInButton() {
 	}
 
 	return (
-		<>
-			<Button
-				variant="outline"
-				className="text-xs"
-				onClick={() => signInWith("github")}>
+		<div className="flex flex-wrap gap-2 pt-8">
+			<Button variant="ghost" className="text-xs" onClick={() => signInWith("github")}>
 				<GitHubIcon className="size-4" />
 				Sign in with GitHub
 			</Button>
-			<Button
-				variant="outline"
-				className="text-xs"
-				onClick={() => signInWith("google")}>
+			<Button variant="ghost" className="text-xs" onClick={() => signInWith("google")}>
 				<GoogleIcon className="size-4" />
 				Sign in with Google
 			</Button>
-		</>
+		</div>
 	)
 }

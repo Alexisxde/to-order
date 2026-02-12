@@ -2,22 +2,9 @@
 
 import useClickOutside from "@/hooks/useClickOutside"
 import { cn } from "@/lib/utils"
-import {
-	AnimatePresence,
-	motion,
-	MotionConfig,
-	Transition,
-	Variants
-} from "motion/react"
-import {
-	createContext,
-	isValidElement,
-	useContext,
-	useEffect,
-	useId,
-	useRef,
-	useState
-} from "react"
+import type { Transition, Variants } from "motion/react"
+import { AnimatePresence, motion, MotionConfig } from "motion/react"
+import { createContext, isValidElement, useContext, useEffect, useId, useRef, useState } from "react"
 
 const TRANSITION: Transition = { type: "spring", bounce: 0.1, duration: 0.4 }
 
@@ -29,8 +16,7 @@ type MorphingPopoverContextValue = {
 	variants?: Variants
 }
 
-const MorphingPopoverContext =
-	createContext<MorphingPopoverContextValue | null>(null)
+const MorphingPopoverContext = createContext<MorphingPopoverContextValue | null>(null)
 
 function usePopoverLogic({
 	defaultOpen = false,
@@ -65,8 +51,7 @@ function usePopoverLogic({
 
 export function usePopover() {
 	const context = useContext(MorphingPopoverContext)
-	if (!context)
-		throw new Error("usePopover must be used within a PopoverProvider")
+	if (!context) throw new Error("usePopover must be used within a PopoverProvider")
 	return context
 }
 
@@ -112,18 +97,11 @@ export type MorphingPopoverTriggerProps = {
 	className?: string
 } & React.ComponentProps<typeof motion.button>
 
-function MorphingPopoverTrigger({
-	children,
-	className,
-	asChild = false,
-	...props
-}: MorphingPopoverTriggerProps) {
+function MorphingPopoverTrigger({ children, className, asChild = false, ...props }: MorphingPopoverTriggerProps) {
 	const { open, uniqueId, isOpen } = usePopover()
 
 	if (asChild && isValidElement(children)) {
-		const MotionComponent = motion.create(
-			children.type as React.ForwardRefExoticComponent<any>
-		)
+		const MotionComponent = motion.create(children.type as React.ForwardRefExoticComponent<any>)
 		const childProps = children.props as Record<string, unknown>
 
 		return (
@@ -140,10 +118,7 @@ function MorphingPopoverTrigger({
 	}
 
 	return (
-		<motion.div
-			key={uniqueId}
-			layoutId={`popover-trigger-${uniqueId}`}
-			onClick={open}>
+		<motion.div key={uniqueId} layoutId={`popover-trigger-${uniqueId}`} onClick={open}>
 			<motion.button
 				{...props}
 				layoutId={`popover-label-${uniqueId}`}
@@ -162,11 +137,7 @@ export type MorphingPopoverContentProps = {
 	className?: string
 } & React.ComponentProps<typeof motion.div>
 
-function MorphingPopoverContent({
-	children,
-	className,
-	...props
-}: MorphingPopoverContentProps) {
+function MorphingPopoverContent({ children, className, ...props }: MorphingPopoverContentProps) {
 	const { isOpen, close, variants, uniqueId } = usePopover()
 	const ref = useRef<HTMLDivElement>(null!)
 

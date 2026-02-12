@@ -1,15 +1,9 @@
 export default function BackgroundGradient() {
 	return (
 		<div className="bg-background fixed inset-0">
-			<svg
-				className="absolute inset-0 size-full opacity-[0.15] dark:opacity-[0.07]"
-				xmlns="http://www.w3.org/2000/svg">
+			<svg className="absolute inset-0 size-full opacity-[0.15] dark:opacity-[0.07]" xmlns="http://www.w3.org/2000/svg">
 				<filter id="noise">
-					<feTurbulence
-						type="fractalNoise"
-						baseFrequency="0.65"
-						numOctaves="3"
-						stitchTiles="stitch"></feTurbulence>
+					<feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"></feTurbulence>
 					<feColorMatrix type="saturate" values="0"></feColorMatrix>
 				</filter>
 				<rect width="100%" height="100%" filter="url(#noise)"></rect>

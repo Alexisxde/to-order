@@ -30,7 +30,7 @@ export const createTimeShema = z
 			.string()
 			.regex(timeRegex, { message: "Hora de inicio inválida." })
 			.refine(
-				t => {
+				(t) => {
 					const mins = timeToMinutes(t)
 					return mins >= 360 && mins <= 1320
 				},
@@ -40,7 +40,7 @@ export const createTimeShema = z
 			.string()
 			.regex(timeRegex, { message: "Hora de fin inválida." })
 			.refine(
-				t => {
+				(t) => {
 					const mins = timeToMinutes(t)
 					return mins >= 360 && mins <= 1320
 				},
@@ -48,7 +48,7 @@ export const createTimeShema = z
 			)
 	})
 	.refine(
-		data => {
+		(data) => {
 			return timeToMinutes(data.time_start) < timeToMinutes(data.time_end)
 		},
 		{
