@@ -36,13 +36,16 @@ export const NotesProvider = ({ children }: { children: React.ReactNode }) => {
 		mutationFn: ({ name, folderId }: CreateNoteDto) => NoteService.create({ name, folderId }, user?.id),
 		onMutate: ({ name, folderId }) => {
 			const previousNotes = queryClient.getQueryData<Note[]>([...NOTES, user?.id])
-			const newNote: Note = {
+			const newNote = {
 				_id: Math.random().toString(36).substring(2, 9),
 				name,
 				folderId,
-				createdAt: new Date().toISOString()
+				createdAt: new Date().toISOString(),
+				fav: false,
+				deleted: false,
+				updateAt: new Date().toISOString()
 			}
-			if (previousNotes) queryClient.setQueryData<Note[]>([...NOTES, user?.id], [...previousNotes, newNote])
+			if (previousNotes) queryClient.setQueryData<Note[]>([...NOTES, user?.id], [...previousNotes, newNote as Note])
 			return { previousNotes }
 		},
 		onError: (_error, _variables, context) => {
@@ -86,7 +89,7 @@ export const NotesProvider = ({ children }: { children: React.ReactNode }) => {
 			const previousNotes = queryClient.getQueryData<Note[]>([...NOTES, user?.id])
 			if (previousNotes) {
 				const updatedNotes = previousNotes.map((note) => {
-					if (note._id === id) return { ...note, deleted: deleted ?? true }
+					if (note._id === id) return { ...note, deleted }
 					return note
 				})
 				queryClient.setQueryData<Note[]>([...NOTES, user?.id], updatedNotes)

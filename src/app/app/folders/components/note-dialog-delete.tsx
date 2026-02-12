@@ -20,7 +20,7 @@ export default function NoteDialogDelete({ noteId, noteName }: Props) {
 	const { deleted } = useNotes()
 
 	const handleDelete = async () => {
-		deleted({ id: noteId })
+		deleted({ id: noteId, deleted: true })
 		setIsOpen(false)
 	}
 
