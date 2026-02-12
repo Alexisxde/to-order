@@ -1,7 +1,6 @@
 import { AppSidebar } from "@/components/sidebar"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { FoldersProvider } from "@/context/folder-provider"
-  import { TasksProvider } from "@/providers/task-provider"
 import { NotesProvider } from "@/context/note-provider"
 import { createClientForServer } from "@/supabase/server"
 import type { Metadata } from "next"
@@ -17,7 +16,6 @@ export default async function AppLayout({ children }: Readonly<{ children: React
 
 	return (
 		<FoldersProvider>
-          <TasksProvider>
 			<NotesProvider>
 				<SidebarProvider defaultOpen={false} style={{ "--sidebar-width": "19rem" } as CSSProperties}>
 					<AppSidebar />
@@ -28,7 +26,6 @@ export default async function AppLayout({ children }: Readonly<{ children: React
 					</SidebarInset>
 				</SidebarProvider>
 			</NotesProvider>
-          </TasksProvider>
 		</FoldersProvider>
 	)
 }
