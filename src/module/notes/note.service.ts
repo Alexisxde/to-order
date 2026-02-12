@@ -1,4 +1,4 @@
-import type { CreateNoteDto, DeleteNoteDto, Note, UpdateNoteDto } from "@/module/notes/note.type"
+import type { CreateNoteDto, DeleteNoteDto, Note, UpdateNoteDto, MoveNoteDto } from "@/module/notes/note.type"
 import { createClient } from "@/supabase/client"
 
 const supabase = createClient()
@@ -39,4 +39,11 @@ export async function deleted(dto: DeleteNoteDto): Promise<Note> {
 	return data
 }
 
-export default { select, create, update, deleted }
+export async function move(dto: MoveNoteDto): Promise<Note> {
+	const { id, folderId } = dto
+	const { data, error } = await supabase.from("notes").update({ folderId }).eq("_id", id).select().single()
+	if (error) throw error
+	return data
+}
+
+export default { select, create, update, deleted, move }

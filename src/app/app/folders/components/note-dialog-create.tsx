@@ -16,13 +16,15 @@ import type { SubmitHandler } from "react-hook-form"
 import type { z } from "zod"
 import { FolderForm } from "./folder-form"
 import { useFolders } from "./hooks/use-folders"
+import { useNotes } from "./hooks/use-notes"
 
 export default function NoteDialogCreate() {
 	const [isOpen, setIsOpen] = useState(false)
-	const { folderId, create } = useFolders()
+	const { folderId } = useFolders()
+	const { create } = useNotes()
 
 	const onSubmit: SubmitHandler<z.infer<typeof createFolderSchema>> = async ({ name }) => {
-		create({ name, idRoot: folderId })
+		create({ name, folderId })
 		setIsOpen(false)
 	}
 

@@ -19,10 +19,11 @@ import { ChevronRight, Folder, FolderOpen, FolderSymlink, Home } from "lucide-re
 import { useCallback, useMemo, useState } from "react"
 import { toast } from "sonner"
 import { useFolders } from "./hooks/use-folders"
+import { useNotes } from "./hooks/use-notes"
 
 const ROOT_VALUE = "__root__"
 
-type Props = { folderId: string }
+type Props = { noteId: string, folderId: string }
 
 function buildFolderTree(folders: FolderType[], parentId: string | null = null): FolderTreeNode[] {
 	return folders
@@ -30,11 +31,12 @@ function buildFolderTree(folders: FolderType[], parentId: string | null = null):
 		.map((folder) => ({ ...folder, children: buildFolderTree(folders, folder._id) }))
 }
 
-export default function FolderDialogMove({ folderId }: Props) {
+export default function NoteDialogMove({ noteId, folderId }: Props) {
 	const [open, setOpen] = useState(false)
 	const [selectedId, setSelectedId] = useState<string | null>(null)
 	const [isSubmitting, setIsSubmitting] = useState(false)
-	const { folders, move } = useFolders()
+	const { folders } = useFolders()
+  const { notes, move } = useNotes()
 
 	const getChildFolderIds = useCallback(
 		(parentId: string): string[] => {
@@ -43,11 +45,6 @@ export default function FolderDialogMove({ folderId }: Props) {
 		},
 		[folders]
 	)
-
-	const disabledFolderIds = useMemo(() => {
-		const childIds = getChildFolderIds(folderId)
-		return new Set([folderId, ...childIds])
-	}, [folderId, getChildFolderIds])
 
 	const tree = useMemo(() => buildFolderTree(folders), [folders])
 
@@ -65,13 +62,13 @@ export default function FolderDialogMove({ folderId }: Props) {
 		const rootId = selectedId === ROOT_VALUE ? null : selectedId
 		if (folderId === rootId) return toast.error("La carpeta ya está en la ubicación seleccionada.")
 		setIsSubmitting(true)
-		move({ id: folderId, rootId })
+		move({ id: noteId, folderId: rootId })
 		setOpen(false)
 		setSelectedId(null)
 		setIsSubmitting(false)
 	}, [selectedId, move, folderId])
 
-	const currentFolder = folders.find((f) => f._id === folderId)
+	const currentFolder = notes.find((n) => n.folderId === folderId)
 	const isCurrentFolderInRoot = currentFolder?.rootId === null
 
 	return (
@@ -125,7 +122,6 @@ export default function FolderDialogMove({ folderId }: Props) {
 									node={node}
 									selectedId={selectedId}
 									onSelect={handleSelect}
-									disabledIds={disabledFolderIds}
 								/>
 							))}
 							{tree.length === 0 && (

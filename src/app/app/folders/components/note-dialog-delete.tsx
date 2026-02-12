@@ -11,16 +11,16 @@ import {
 } from "@/components/ui/dialog"
 import { Trash2, Trash2Icon } from "lucide-react"
 import { useState } from "react"
-import { useFolders } from "./hooks/use-folders"
+import { useNotes } from "./hooks/use-notes"
 
-type Props = { folderId: string; folderName: string }
+type Props = { noteId: string; noteName: string }
 
-export default function FolderDialogDelete({ folderId, folderName }: Props) {
+export default function NoteDialogDelete({ noteId, noteName }: Props) {
 	const [isOpen, setIsOpen] = useState(false)
-	const { deleted } = useFolders()
+	const { deleted } = useNotes()
 
 	const handleDelete = async () => {
-		deleted({ id: folderId })
+		deleted({ id: noteId })
 		setIsOpen(false)
 	}
 
@@ -37,10 +37,10 @@ export default function FolderDialogDelete({ folderId, folderName }: Props) {
 					<div className="mx-auto flex size-12 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
 						<Trash2 className="size-6 text-red-600 dark:text-red-400" />
 					</div>
-					<DialogTitle className="text-xl font-semibold">Eliminar carpeta</DialogTitle>
+					<DialogTitle className="text-xl font-semibold">Eliminar nota</DialogTitle>
 					<DialogDescription className="text-sm text-muted-foreground mt-2">
-						¿Estas seguro de que deseas eliminar la carpeta {folderName}?
-						<p className="text-sm text-center text-muted-foreground">Esta carpeta se moverá a la papelera.</p>
+						¿Estas seguro de que deseas eliminar la nota {noteName}?
+						<p className="text-sm text-center text-muted-foreground">Esta nota se moverá a la papelera.</p>
 					</DialogDescription>
 				</DialogHeader>
 				<DialogFooter className="gap-2 sm:gap-2">
@@ -48,7 +48,7 @@ export default function FolderDialogDelete({ folderId, folderName }: Props) {
 						Cancelar
 					</Button>
 					<Button variant="destructive" onClick={() => handleDelete()} className="flex-1">
-						Eliminar {folderName}
+						Eliminar {noteName}
 					</Button>
 				</DialogFooter>
 			</DialogContent>

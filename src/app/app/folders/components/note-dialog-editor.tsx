@@ -283,7 +283,7 @@ export default function NoteDialogEditor({ note, children }: Props) {
 			</Dialog>
 
 			<AlertDialog open={showAlert} onOpenChange={setShowAlert}>
-				<AlertDialogContent>
+				<AlertDialogContent className="w-full">
 					<AlertDialogHeader>
 						<AlertDialogTitle>¿Deseas guardar los cambios?</AlertDialogTitle>
 						<AlertDialogDescription>

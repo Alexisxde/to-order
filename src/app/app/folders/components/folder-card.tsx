@@ -11,7 +11,7 @@ import {
 import { month } from "@/lib/utils"
 import type { Folder } from "@/module/folders/folder.type"
 import { FolderIcon, FolderOpen, Heart, InfoIcon, MoreVertical } from "lucide-react"
-import { FolderDialogDelete } from "./folder-dialog-delete"
+import FolderDialogDelete from "./folder-dialog-delete"
 import FolderDialogMove from "./folder-dialog-move"
 import FolderDialogUpdate from "./folder-dialog-update"
 import { useFolders } from "./hooks/use-folders"

@@ -3,6 +3,7 @@ export type Folder = {
 	name: string
 	createdAt: string
 	rootId: string | null
+	fav: boolean
 	delete: boolean
 }
 
