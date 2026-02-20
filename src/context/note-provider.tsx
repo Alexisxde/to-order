@@ -1,5 +1,4 @@
 "use client"
-import { useFolders } from "@/app/app/folders/components/hooks/use-folders"
 import { useUser } from "@/hooks/use-user"
 import { NOTES } from "@/lib/query-keys"
 import NoteService from "@/module/notes/note.service"
@@ -13,7 +12,7 @@ export type NotesContextType = {
 	isError: boolean
 	notes: Note[] | []
 	create: ({ name, folderId }: CreateNoteDto) => void
-	update: ({ id, name, content }: UpdateNoteDto) => void
+	update: ({ id, content }: UpdateNoteDto) => void
 	deleted: ({ id, deleted }: DeleteNoteDto) => void
 	move: ({ id, folderId }: MoveNoteDto) => void
 }
@@ -23,13 +22,11 @@ export const NoteContext = createContext<NotesContextType | null>(null)
 export const NotesProvider = ({ children }: { children: React.ReactNode }) => {
 	const queryClient = useQueryClient()
 	const { data: user } = useUser()
-	const { folderId } = useFolders()
 
 	const { data, isLoading, isError } = useQuery({
 		queryKey: [...NOTES, user?.id],
 		queryFn: () => NoteService.select(user?.id),
-		enabled: !!user,
-		select: (data) => data.filter((note) => note.folderId === folderId && note.deleted === false)
+		enabled: !!user
 	})
 
 	const create = useMutation({
@@ -49,7 +46,6 @@ export const NotesProvider = ({ children }: { children: React.ReactNode }) => {
 			return { previousNotes }
 		},
 		onError: (_error, _variables, context) => {
-			console.log(_error)
 			if (context?.previousNotes) queryClient.setQueryData<Note[]>([...NOTES, user?.id], context.previousNotes)
 			toast.error("Error al crear la nota.")
 		},
@@ -60,13 +56,13 @@ export const NotesProvider = ({ children }: { children: React.ReactNode }) => {
 	})
 
 	const update = useMutation({
-		mutationFn: ({ id, name, content }: UpdateNoteDto) =>
-			NoteService.update({ id, name, content, updateAt: new Date().toISOString() }),
-		onMutate: ({ id, name }: UpdateNoteDto) => {
+		mutationFn: ({ id, content }: UpdateNoteDto) =>
+			NoteService.update({ id, content, updateAt: new Date().toISOString() }),
+		onMutate: ({ id }: UpdateNoteDto) => {
 			const previousNotes = queryClient.getQueryData<Note[]>([...NOTES, user?.id])
 			if (previousNotes) {
 				const updatedNotes = previousNotes.map((note) => {
-					if (note._id === id) return { ...note, name, updateAt: new Date().toISOString() }
+					if (note._id === id) return { ...note, updateAt: new Date().toISOString() }
 					return note
 				})
 				queryClient.setQueryData<Note[]>([...NOTES, user?.id], updatedNotes)
@@ -136,7 +132,7 @@ export const NotesProvider = ({ children }: { children: React.ReactNode }) => {
 				isError,
 				notes: data || [],
 				create: ({ name, folderId }) => create.mutate({ name, folderId }),
-				update: ({ id, name, content }) => update.mutate({ id, name, content }),
+				update: ({ id, content }) => update.mutate({ id, content }),
 				deleted: ({ id, deleted }) => onDeleted.mutate({ id, deleted }),
 				move: ({ id, folderId }) => move.mutate({ id, folderId })
 			}}>

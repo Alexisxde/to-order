@@ -9,6 +9,7 @@ export type Folder = {
 
 export type CreateFolderDto = { name: string; rootId: string | null }
 export type UpdateFolderDto = { id: string; name: string }
+export type FavoriteFolderDto = { id: string; fav: boolean }
 export type MoveFolderDto = { id: string; rootId: string | null }
 export type DeleteFolderDto = { id: string; deleted?: boolean }
 export type FolderTreeNode = Folder & {

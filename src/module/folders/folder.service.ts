@@ -1,6 +1,7 @@
 import type {
 	CreateFolderDto,
 	DeleteFolderDto,
+	FavoriteFolderDto,
 	Folder,
 	MoveFolderDto,
 	UpdateFolderDto
@@ -25,8 +26,8 @@ export async function create({ name, rootId }: CreateFolderDto, userId?: string)
 	return data[0] as Folder
 }
 
-export async function update({ id, name }: UpdateFolderDto): Promise<Folder> {
-	const { data, error } = await supabase.from("folders").update({ name }).eq("_id", id).select()
+export async function update({ id, name, fav }: UpdateFolderDto): Promise<Folder> {
+	const { data, error } = await supabase.from("folders").update({ name, fav }).eq("_id", id).select()
 	if (error || !data) throw error ?? new Error("Error al renombrar carpeta")
 	return data[0] as Folder
 }
@@ -47,4 +48,10 @@ export async function move({ id, rootId }: MoveFolderDto): Promise<Folder> {
 	return data[0] as Folder
 }
 
-export default { select, create, update, deleted, move }
+export async function favorite({ id, fav }: FavoriteFolderDto): Promise<Folder> {
+	const { data, error } = await supabase.from("folders").update({ fav }).eq("_id", id).select()
+	if (error || !data) throw error ?? new Error("Error al actualizar la carpeta")
+	return data[0] as Folder
+}
+
+export default { select, create, update, deleted, move, favorite }

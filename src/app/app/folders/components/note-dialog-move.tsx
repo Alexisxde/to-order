@@ -23,7 +23,7 @@ import { useNotes } from "./hooks/use-notes"
 
 const ROOT_VALUE = "__root__"
 
-type Props = { noteId: string, folderId: string }
+type Props = { noteId: string; folderId: string | null }
 
 function buildFolderTree(folders: FolderType[], parentId: string | null = null): FolderTreeNode[] {
 	return folders
@@ -36,7 +36,7 @@ export default function NoteDialogMove({ noteId, folderId }: Props) {
 	const [selectedId, setSelectedId] = useState<string | null>(null)
 	const [isSubmitting, setIsSubmitting] = useState(false)
 	const { folders } = useFolders()
-  const { notes, move } = useNotes()
+	const { notes, move } = useNotes()
 
 	const getChildFolderIds = useCallback(
 		(parentId: string): string[] => {
@@ -66,10 +66,10 @@ export default function NoteDialogMove({ noteId, folderId }: Props) {
 		setOpen(false)
 		setSelectedId(null)
 		setIsSubmitting(false)
-	}, [selectedId, move, folderId])
+	}, [selectedId, move, folderId, noteId])
 
 	const currentFolder = notes.find((n) => n.folderId === folderId)
-	const isCurrentFolderInRoot = currentFolder?.rootId === null
+	const isCurrentFolderInRoot = currentFolder?.folderId === null
 
 	return (
 		<Dialog open={open} onOpenChange={handleOpenChange}>
@@ -117,12 +117,7 @@ export default function NoteDialogMove({ noteId, folderId }: Props) {
 								/>
 							</div>
 							{tree.map((node) => (
-								<FolderTreeNodeItem
-									key={node._id}
-									node={node}
-									selectedId={selectedId}
-									onSelect={handleSelect}
-								/>
+								<FolderTreeNodeItem key={node._id} node={node} selectedId={selectedId} onSelect={handleSelect} />
 							))}
 							{tree.length === 0 && (
 								<p className="py-6 text-center text-sm text-muted-foreground">No hay otras carpetas disponibles.</p>

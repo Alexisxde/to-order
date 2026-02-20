@@ -11,16 +11,12 @@ import {
 	useSidebar
 } from "@/components/ui/sidebar"
 import { useUser } from "@/hooks/use-user"
+import { createClient } from "@/supabase/client"
 import {
 	AppWindow,
-	BadgeCheck,
 	Bell,
-	BoxIcon,
-	Calendar1Icon,
 	ChevronsUpDown,
-	CreditCard,
 	FolderIcon,
-	GalleryVerticalEndIcon,
 	LayoutDashboardIcon,
 	LogOut,
 	MonitorDot,
@@ -34,10 +30,10 @@ import {
 	Sun
 } from "lucide-react"
 import { useTheme } from "next-themes"
+import Image from "next/image"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
-import { Button } from "./ui/button"
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -53,16 +49,26 @@ import {
 
 const nav = [
 	{ title: "Dashboard", href: "/app", icon: <LayoutDashboardIcon className="size-5 lg:size-full" /> },
-	{ title: "Carpetas", href: "/app/folders", icon: <FolderIcon className="size-5 lg:size-full" /> },
-	{ title: "Tareas", href: "/app/tasks", icon: <BoxIcon className="size-5 lg:size-full" /> },
-	{ title: "Horarios", href: "/app/times", icon: <Calendar1Icon className="size-5 lg:size-full" /> }
+	{ title: "Carpetas", href: "/app/folders", icon: <FolderIcon className="size-5 lg:size-full" /> }
+	// { title: "Tareas", href: "/app/tasks", icon: <BoxIcon className="size-5 lg:size-full" /> },
+	// { title: "Horarios", href: "/app/times", icon: <Calendar1Icon className="size-5 lg:size-full" /> }
 ]
 
 export function AppSidebar() {
 	const { isMobile } = useSidebar()
+	const router = useRouter()
 	const pathname = usePathname()
 	const { theme, setTheme } = useTheme()
 	const { data: user } = useUser()
+	const supabase = createClient()
+
+	const signOut = async () => {
+		try {
+			const { error } = await supabase.auth.signOut()
+			if (error) throw new Error("Failed to sign out.")
+			router.push("/")
+		} catch (_) {}
+	}
 
 	return (
 		<Sidebar variant="floating" collapsible="icon">
@@ -71,11 +77,11 @@ export function AppSidebar() {
 					<SidebarMenuItem>
 						<SidebarMenuButton size="lg" asChild>
 							<Link href="/">
-								<div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-									<GalleryVerticalEndIcon className="size-4" />
+								<div className="bg-muted text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+									<Image src="/organzi.svg" alt="Organzi Logo" width="20" height="20" />
 								</div>
 								<div className="flex flex-col gap-0.5 leading-none">
-									<span className="font-medium">Duenio</span>
+									<span className="font-medium">Organzi</span>
 									<span className="">v1.0.0</span>
 								</div>
 							</Link>
@@ -100,67 +106,6 @@ export function AppSidebar() {
 				</SidebarGroup>
 			</SidebarContent>
 			<SidebarFooter>
-				<SidebarMenu>
-					<SidebarMenuItem>
-						<DropdownMenu>
-							<DropdownMenuTrigger asChild>
-								<SidebarMenuButton tooltip={"Settings"} size="lg" asChild>
-									<Button variant="ghost" className="size-10 rounded-lg p-0">
-										<Settings />
-									</Button>
-								</SidebarMenuButton>
-							</DropdownMenuTrigger>
-							<DropdownMenuContent
-								className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-								side={isMobile ? "bottom" : "right"}
-								align="end"
-								sideOffset={4}>
-								<DropdownMenuSub>
-									<DropdownMenuSubTrigger>
-										<Palette className="size-4" />
-										<span>Theme</span>
-									</DropdownMenuSubTrigger>
-									<DropdownMenuSubContent>
-										<DropdownMenuItem onClick={() => setTheme("dark")} className={theme === "dark" ? "bg-muted" : ""}>
-											<Moon className="size-4" />
-											<span>Dark</span>
-										</DropdownMenuItem>
-										<DropdownMenuItem onClick={() => setTheme("light")} className={theme === "light" ? "bg-muted" : ""}>
-											<Sun className="size-4" />
-											<span>Light</span>
-										</DropdownMenuItem>
-										<DropdownMenuItem
-											onClick={() => setTheme("system")}
-											className={theme === "system" ? "bg-muted" : ""}>
-											<MonitorDot className="size-4" />
-											<span>System</span>
-										</DropdownMenuItem>
-									</DropdownMenuSubContent>
-								</DropdownMenuSub>
-								<DropdownMenuSub>
-									<DropdownMenuSubTrigger>
-										<AppWindow className="size-4" />
-										<span>Navegación</span>
-									</DropdownMenuSubTrigger>
-									<DropdownMenuSubContent>
-										<DropdownMenuItem className="bg-muted">
-											<PanelLeftDashed className="size-4" />
-											<span>SideBar</span>
-										</DropdownMenuItem>
-										<DropdownMenuItem disabled>
-											<PanelBottom className="size-4" />
-											<span>Dock Floating</span>
-										</DropdownMenuItem>
-										<DropdownMenuItem disabled>
-											<PanelTop className="size-4" />
-											<span>NavBar</span>
-										</DropdownMenuItem>
-									</DropdownMenuSubContent>
-								</DropdownMenuSub>
-							</DropdownMenuContent>
-						</DropdownMenu>
-					</SidebarMenuItem>
-				</SidebarMenu>
 				<SidebarMenu>
 					<SidebarMenuItem>
 						<DropdownMenu>
@@ -206,22 +151,68 @@ export function AppSidebar() {
 								<DropdownMenuSeparator />
 								<DropdownMenuGroup>
 									<DropdownMenuItem>
-										<BadgeCheck />
-										Account
-									</DropdownMenuItem>
-									<DropdownMenuItem>
-										<CreditCard />
-										Billing
-									</DropdownMenuItem>
-									<DropdownMenuItem>
 										<Bell />
-										Notifications
+										Notificaciones
 									</DropdownMenuItem>
+									<DropdownMenuSub>
+										<DropdownMenuSubTrigger>
+											<Settings />
+											Opciones
+										</DropdownMenuSubTrigger>
+										<DropdownMenuSubContent>
+											<DropdownMenuSub>
+												<DropdownMenuSubTrigger>
+													<Palette className="size-4" />
+													<span>Theme</span>
+												</DropdownMenuSubTrigger>
+												<DropdownMenuSubContent>
+													<DropdownMenuItem
+														onClick={() => setTheme("dark")}
+														className={theme === "dark" ? "bg-muted" : ""}>
+														<Moon className="size-4" />
+														<span>Dark</span>
+													</DropdownMenuItem>
+													<DropdownMenuItem
+														onClick={() => setTheme("light")}
+														className={theme === "light" ? "bg-muted" : ""}>
+														<Sun className="size-4" />
+														<span>Light</span>
+													</DropdownMenuItem>
+													<DropdownMenuItem
+														onClick={() => setTheme("system")}
+														className={theme === "system" ? "bg-muted" : ""}>
+														<MonitorDot className="size-4" />
+														<span>System</span>
+													</DropdownMenuItem>
+												</DropdownMenuSubContent>
+											</DropdownMenuSub>
+											<DropdownMenuSub>
+												<DropdownMenuSubTrigger>
+													<AppWindow className="size-4" />
+													<span>Navegación</span>
+												</DropdownMenuSubTrigger>
+												<DropdownMenuSubContent>
+													<DropdownMenuItem className="bg-muted">
+														<PanelLeftDashed className="size-4" />
+														<span>SideBar</span>
+													</DropdownMenuItem>
+													<DropdownMenuItem disabled>
+														<PanelBottom className="size-4" />
+														<span>Dock Floating</span>
+													</DropdownMenuItem>
+													<DropdownMenuItem disabled>
+														<PanelTop className="size-4" />
+														<span>NavBar</span>
+													</DropdownMenuItem>
+												</DropdownMenuSubContent>
+											</DropdownMenuSub>
+										</DropdownMenuSubContent>
+									</DropdownMenuSub>
 								</DropdownMenuGroup>
 								<DropdownMenuSeparator />
-								<DropdownMenuItem>
+								<DropdownMenuItem onClick={signOut}>
 									<LogOut />
-									Log out
+									Cerrar sesión
 								</DropdownMenuItem>
 							</DropdownMenuContent>
 						</DropdownMenu>

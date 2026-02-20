@@ -27,7 +27,8 @@ export default async function Hero() {
 						background: "radial-gradient(50% 50% at 50% 50%, transparent 20%, var(--card) 100%)"
 					}}
 				/>
-				<Text label="OrganZi" />
+				<Text label="Organzi" />
+				<div className="mt-8" />
 				{user ? (
 					<Button asChild className="hover:scale-105">
 						<Link href="/app" className="flex items-center gap-2">

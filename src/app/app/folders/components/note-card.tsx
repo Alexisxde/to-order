@@ -10,9 +10,9 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { month } from "@/lib/utils"
 import type { Note } from "@/module/notes/note.type"
-import { EditIcon, FileText, FolderSymlink, Heart, InfoIcon, MoreVertical, Trash2Icon } from "lucide-react"
-import NoteDialogEditor from "./note-dialog-editor"
+import { EditIcon, FileText, MoreVertical } from "lucide-react"
 import NoteDialogDelete from "./note-dialog-delete"
+import NoteDialogEditor from "./note-dialog-editor"
 import NoteDialogMove from "./note-dialog-move"
 
 type Props = { note: Note }
@@ -42,10 +42,14 @@ export default function NoteCard({ note }: Props) {
 					</DropdownMenuTrigger>
 					<DropdownMenuContent>
 						<DropdownMenuItem asChild>
-							<Button variant="ghost" className="cursor-pointer w-full justify-start">
-								<Heart className="size-4" />
-								<span>Favorito</span>
-							</Button>
+							<DropdownMenuItem asChild>
+								<NoteDialogEditor note={note}>
+									<Button variant="ghost" className="cursor-pointer w-full justify-start">
+										<FileText className="size-4" />
+										Abrir
+									</Button>
+								</NoteDialogEditor>
+							</DropdownMenuItem>
 						</DropdownMenuItem>
 						<DropdownMenuItem asChild>
 							<DropdownMenuItem asChild>
@@ -56,12 +60,6 @@ export default function NoteCard({ note }: Props) {
 							<Button variant="ghost" className="cursor-pointer w-full justify-start">
 								<EditIcon className="size-4" />
 								<span>Cambiar nombre</span>
-							</Button>
-						</DropdownMenuItem>
-						<DropdownMenuItem asChild>
-							<Button variant="ghost" className="cursor-pointer w-full justify-start">
-								<InfoIcon className="size-4" />
-								<span>Información</span>
 							</Button>
 						</DropdownMenuItem>
 						<DropdownMenuSeparator className="mx-1" />

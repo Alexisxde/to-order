@@ -1,9 +1,9 @@
-import { useNotes } from "./hooks/use-notes"
+import type { Note } from "@/module/notes/note.type"
 import NoteCard from "./note-card"
 
-export default function NoteList() {
-	const { notes } = useNotes()
+type Props = { notes: Note[] }
 
+export default function NoteList({ notes }: Props) {
 	return (
 		<>
 			{notes.map((note) => (

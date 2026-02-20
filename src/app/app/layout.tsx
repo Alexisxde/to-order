@@ -7,7 +7,7 @@ import type { Metadata } from "next"
 import { redirect } from "next/navigation"
 import type { CSSProperties } from "react"
 
-export const metadata: Metadata = { title: "OrganZi" }
+export const metadata: Metadata = { title: "Organzi" }
 
 export default async function AppLayout({ children }: Readonly<{ children: React.ReactNode }>) {
 	const { auth } = await createClientForServer()
@@ -17,7 +17,7 @@ export default async function AppLayout({ children }: Readonly<{ children: React
 	return (
 		<FoldersProvider>
 			<NotesProvider>
-				<SidebarProvider defaultOpen={false} style={{ "--sidebar-width": "19rem" } as CSSProperties}>
+				<SidebarProvider defaultOpen={false} style={{ "--sidebar-width": "15rem" } as CSSProperties}>
 					<AppSidebar />
 					<SidebarInset>
 						<section className="flex h-dvh w-full flex-col">

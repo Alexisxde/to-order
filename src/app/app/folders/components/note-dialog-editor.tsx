@@ -43,7 +43,6 @@ export default function NoteDialogEditor({ note, children }: Props) {
 	const [open, setOpen] = useState(false)
 	const [showAlert, setShowAlert] = useState(false)
 	const [hasChanges, setHasChanges] = useState(false)
-	const [name, setName] = useState(note.name)
 	const { update } = useNotes()
 
 	const editor = useEditor({
@@ -93,17 +92,13 @@ export default function NoteDialogEditor({ note, children }: Props) {
 	useEffect(() => {
 		if (open && editor) {
 			editor.commands.setContent(note.content || "")
-			setName(note.name)
 			setHasChanges(false)
 		}
 	}, [open, note, editor])
 
 	const handleOpenChange = (newOpen: boolean) => {
-		if (!newOpen && hasChanges) {
-			setShowAlert(true)
-		} else {
-			setOpen(newOpen)
-		}
+		if (!newOpen && hasChanges) setShowAlert(true)
+		else setOpen(newOpen)
 	}
 
 	const handleDiscardChanges = () => {
@@ -113,7 +108,7 @@ export default function NoteDialogEditor({ note, children }: Props) {
 	}
 
 	const handleSaveAndClose = () => {
-		update({ id: note._id, name, content: editor?.getJSON() })
+		update({ id: note._id, content: editor?.getJSON() })
 		setHasChanges(false)
 		setShowAlert(false)
 		setOpen(false)
@@ -127,25 +122,7 @@ export default function NoteDialogEditor({ note, children }: Props) {
 				<DialogTrigger asChild>{children}</DialogTrigger>
 				<DialogContent className="sm:max-w-[95vw] h-[95vh] flex flex-col">
 					<DialogHeader>
-						<DialogTitle>
-							<div className="flex flex-1 items-center justify-center">
-								<input
-									className="bg-transparent text-center focus:outline-none"
-									value={name}
-									onChange={(e) => {
-										setName(e.target.value)
-										if (e.target.value !== note.name) {
-											setHasChanges(true)
-										}
-									}}
-									style={{
-										width: `${Math.max(name.length, 1)}ch`,
-										minWidth: "4ch",
-										maxWidth: "100%"
-									}}
-								/>
-							</div>
-						</DialogTitle>
+						<DialogTitle>{note.name}</DialogTitle>
 					</DialogHeader>
 					<div className="flex flex-wrap gap-1 border-b pb-1">
 						<Button

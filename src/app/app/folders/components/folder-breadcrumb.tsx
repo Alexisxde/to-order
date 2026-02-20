@@ -18,9 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { ArrowLeft, Folder, FolderOpen } from "lucide-react"
-import FolderDialogCreate from "./folder-dialog-create"
 import { useFolders } from "./hooks/use-folders"
-import NoteDialogCreate from "./note-dialog-create"
 
 export default function FolderHeader() {
 	const isMobile = useIsMobile()
@@ -28,18 +26,18 @@ export default function FolderHeader() {
 	const displayFolders = history.length > 3 ? history.slice(-1) : history.slice(1)
 
 	return (
-		<header className="flex items-center justify-between py-2 px-4">
-			<nav className="flex items-center gap-1">
-				{isMobile && history.length > 1 && (
-					<Button variant="ghost" size="icon" onClick={backFolder}>
-						<ArrowLeft className="size-4" />
-					</Button>
-				)}
-				<Breadcrumb>
-					<BreadcrumbList>
-						{history[0]._id === folderId ? (
-							<span className="text-primary text-xl">{history[0].name}</span>
-						) : (
+		<nav className="flex items-center gap-4">
+			{isMobile && history.length > 1 && (
+				<Button variant="ghost" size="icon" onClick={backFolder}>
+					<ArrowLeft className="size-4" />
+				</Button>
+			)}
+			<Breadcrumb>
+				<BreadcrumbList>
+					{history[0]._id === folderId ? (
+						<span className="text-primary">{history[0].name}</span>
+					) : (
+						<>
 							<BreadcrumbItem>
 								<BreadcrumbLink asChild>
 									<button type="button" className="flex items-center gap-1" onClick={() => changeFolder(history[0])}>
@@ -47,10 +45,12 @@ export default function FolderHeader() {
 										{history[0].name}
 									</button>
 								</BreadcrumbLink>
-								<BreadcrumbSeparator />
 							</BreadcrumbItem>
-						)}
-						{history.length > 3 && (
+							<BreadcrumbSeparator />
+						</>
+					)}
+					{history.length > 3 && (
+						<>
 							<BreadcrumbItem>
 								<DropdownMenu>
 									<DropdownMenuTrigger asChild>
@@ -72,19 +72,21 @@ export default function FolderHeader() {
 										</DropdownMenuGroup>
 									</DropdownMenuContent>
 								</DropdownMenu>
-								<BreadcrumbSeparator />
 							</BreadcrumbItem>
-						)}
-						{displayFolders.map((folder, index) => (
-							<div key={folder._id}>
-								{index === displayFolders.length - 1 ? (
-									<BreadcrumbItem>
-										<BreadcrumbPage className="flex items-center gap-1">
-											<FolderOpen className="size-4" />
-											{folder.name}
-										</BreadcrumbPage>
-									</BreadcrumbItem>
-								) : (
+							<BreadcrumbSeparator />
+						</>
+					)}
+					{displayFolders.map((folder, index) => (
+						<div key={folder._id}>
+							{index === displayFolders.length - 1 ? (
+								<BreadcrumbItem>
+									<BreadcrumbPage className="flex items-center gap-1">
+										<FolderOpen className="size-4" />
+										{folder.name}
+									</BreadcrumbPage>
+								</BreadcrumbItem>
+							) : (
+								<>
 									<BreadcrumbItem>
 										<BreadcrumbLink asChild>
 											<button type="button" className="flex items-center gap-1" onClick={() => changeFolder(folder)}>
@@ -92,18 +94,14 @@ export default function FolderHeader() {
 												{folder.name}
 											</button>
 										</BreadcrumbLink>
-										<BreadcrumbSeparator />
 									</BreadcrumbItem>
-								)}
-							</div>
-						))}
-					</BreadcrumbList>
-				</Breadcrumb>
-			</nav>
-			<div className="flex items-center gap-1">
-				<FolderDialogCreate />
-				<NoteDialogCreate />
-			</div>
-		</header>
+									<BreadcrumbSeparator />
+								</>
+							)}
+						</div>
+					))}
+				</BreadcrumbList>
+			</Breadcrumb>
+		</nav>
 	)
 }

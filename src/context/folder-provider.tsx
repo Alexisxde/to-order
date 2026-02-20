@@ -5,6 +5,7 @@ import FolderService from "@/module/folders/folder.service"
 import type {
 	CreateFolderDto,
 	DeleteFolderDto,
+	FavoriteFolderDto,
 	Folder,
 	MoveFolderDto,
 	UpdateFolderDto
@@ -25,6 +26,7 @@ export type FolderContextType = {
 	update: ({ id, name }: UpdateFolderDto) => void
 	deleted: ({ id, deleted }: DeleteFolderDto) => void
 	move: ({ id, rootId }: MoveFolderDto) => void
+	favorite: ({ id, fav }: FavoriteFolderDto) => void
 }
 
 type History = { _id: string | null; name: string; rootId: string | null }
@@ -153,6 +155,29 @@ export function FoldersProvider({ children }: { children: React.ReactNode }) {
 		}
 	})
 
+	const favorite = useMutation({
+		mutationFn: ({ id, fav }: FavoriteFolderDto) => FolderService.favorite({ id, fav }),
+		onMutate: ({ id, fav }: FavoriteFolderDto) => {
+			const previousFolders = queryClient.getQueryData<Folder[]>([...FOLDERS, user?.id])
+			if (previousFolders) {
+				const updatedFolders = previousFolders.map((folder) => {
+					if (folder._id === id) return { ...folder, fav }
+					return folder
+				})
+				queryClient.setQueryData<Folder[]>([...FOLDERS, user?.id], updatedFolders)
+			}
+			return { previousFolders }
+		},
+		onError: (_error, _variables, context) => {
+			if (context?.previousFolders) queryClient.setQueryData<Folder[]>([...FOLDERS, user?.id], context.previousFolders)
+			toast.error("Error al actualizar la carpeta.")
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: [...FOLDERS, user?.id] })
+			toast.success("Carpeta guardada correctamente.")
+		}
+	})
+
 	return (
 		<FolderContext.Provider
 			value={{
@@ -166,7 +191,8 @@ export function FoldersProvider({ children }: { children: React.ReactNode }) {
 				create: ({ name, rootId }) => create.mutate({ name, rootId }),
 				update: ({ id, name }) => update.mutate({ id, name }),
 				deleted: ({ id, deleted: d }) => deleted.mutate({ id, deleted: d }),
-				move: ({ id, rootId }) => move.mutate({ id, rootId })
+				move: ({ id, rootId }) => move.mutate({ id, rootId }),
+				favorite: ({ id, fav }) => favorite.mutate({ id, fav })
 			}}>
 			{children}
 		</FolderContext.Provider>
