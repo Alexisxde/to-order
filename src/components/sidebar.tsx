@@ -15,7 +15,9 @@ import { createClient } from "@/supabase/client"
 import {
 	AppWindow,
 	Bell,
+	Calendar1,
 	ChevronsUpDown,
+	ClipboardList,
 	FolderIcon,
 	LayoutDashboardIcon,
 	LogOut,
@@ -27,7 +29,8 @@ import {
 	PanelTop,
 	Settings,
 	Sparkles,
-	Sun
+	Sun,
+	Timer
 } from "lucide-react"
 import { useTheme } from "next-themes"
 import Image from "next/image"
@@ -49,9 +52,10 @@ import {
 
 const nav = [
 	{ title: "Dashboard", href: "/app", icon: <LayoutDashboardIcon className="size-5 lg:size-full" /> },
-	{ title: "Carpetas", href: "/app/folders", icon: <FolderIcon className="size-5 lg:size-full" /> }
-	// { title: "Tareas", href: "/app/tasks", icon: <BoxIcon className="size-5 lg:size-full" /> },
-	// { title: "Horarios", href: "/app/times", icon: <Calendar1Icon className="size-5 lg:size-full" /> }
+	{ title: "Carpetas", href: "/app/folders", icon: <FolderIcon className="size-5 lg:size-full" /> },
+	{ title: "Tareas", href: "/app/tasks", icon: <ClipboardList className="size-5 lg:size-full" /> },
+	{ title: "Horarios", href: "/app/times", icon: <Timer className="size-5 lg:size-full" /> },
+	{ title: "Calendario", href: "/app/calendar", icon: <Calendar1 className="size-5 lg:size-full" /> }
 ]
 
 export function AppSidebar() {

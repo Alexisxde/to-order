@@ -18,7 +18,7 @@ export default function DashboardFolders() {
 	}
 
 	return (
-		<Card className="space-y-4 gap-0 p-6 row-span-3 col-start-5 row-start-3">
+		<Card className="space-y-4 gap-0 p-6 lg:row-span-3 lg:col-start-5 lg:row-start-3">
 			<CardHeader className="p-0 mb-2">
 				<CardTitle className="flex gap-4">
 					<Pin className="size-4" />

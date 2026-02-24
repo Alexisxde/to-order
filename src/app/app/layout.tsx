@@ -1,3 +1,4 @@
+import { AppBreadcrumb } from "./components/app-breadcrumb"
 import { AppSidebar } from "@/components/sidebar"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { FoldersProvider } from "@/context/folder-provider"
@@ -21,7 +22,8 @@ export default async function AppLayout({ children }: Readonly<{ children: React
 					<AppSidebar />
 					<SidebarInset>
 						<section className="flex h-dvh w-full flex-col">
-							<main className="max-w-8xl mx-auto w-full flex-1">{children}</main>
+							<AppBreadcrumb />
+							<main className="max-w-8xl mx-auto w-full flex-1 p-4">{children}</main>
 						</section>
 					</SidebarInset>
 				</SidebarProvider>

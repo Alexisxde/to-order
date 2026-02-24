@@ -26,7 +26,7 @@ export default function FolderHeader() {
 	const displayFolders = history.length > 3 ? history.slice(-1) : history.slice(1)
 
 	return (
-		<nav className="flex items-center gap-4">
+		<nav className="flex items-center gap-2">
 			{isMobile && history.length > 1 && (
 				<Button variant="ghost" size="icon" onClick={backFolder}>
 					<ArrowLeft className="size-4" />

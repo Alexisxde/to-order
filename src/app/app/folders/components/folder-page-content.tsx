@@ -20,11 +20,8 @@ export default function FoldersPageContent() {
 
 	return (
 		<section className="flex h-full w-full flex-1 flex-col">
-			<header className="flex items-center justify-between py-2 px-4">
-				<div className="flex items-center gap-4">
-					{isMobile && <SidebarTrigger />}
-					<FolderBreadcrumb />
-				</div>
+			<header className="flex items-center justify-between pb-2 px-2">
+				<FolderBreadcrumb />
 				<div className="flex items-center gap-1">
 					<FolderDialogCreate />
 					<NoteDialogCreate />
@@ -51,7 +48,7 @@ export default function FoldersPageContent() {
 						<p className="text-muted-foreground mb-2 text-xs">Crea tus carpetas para organizar tus notas.</p>
 					</div>
 				)}
-			<div className="flex flex-1 flex-col gap-3 p-4 pt-0">
+			<div className="flex flex-1 flex-col gap-3">
 				<section className="space-y-4">
 					<div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 						<FolderList folders={allFolders} />
