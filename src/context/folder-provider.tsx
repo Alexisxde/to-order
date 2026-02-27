@@ -70,6 +70,7 @@ export function FoldersProvider({ children }: { children: React.ReactNode }) {
 				_id: Math.random().toString(36).substring(2, 9),
 				name,
 				rootId,
+				fav: false,
 				createdAt: new Date().toISOString(),
 				delete: false
 			}
