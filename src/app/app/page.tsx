@@ -1,5 +1,15 @@
+import type { Metadata } from "next"
 import DashboardFolders from "./components/dashboard-folders"
 import DashboardTasks from "./components/dashboard-tasks"
+
+export const metadata: Metadata = {
+	title: "Dashboard",
+	description: "Tu panel central de control en Organzi. Revisa tus carpetas y tareas recientes.",
+	robots: {
+		index: false,
+		follow: false
+	}
+}
 
 export default function AppPage() {
 	return (
