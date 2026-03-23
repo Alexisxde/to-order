@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
-import type { Task, TaskPriority, TaskStatus } from "@/module/tasks/task.type"
-import { Calendar, MoreHorizontal } from "lucide-react"
+import { Calendar, MoreHorizontal, Pencil, Trash } from "lucide-react"
+import useUpdateTask from "../hooks/use-update-task"
+import type { Task, TaskPriority, TaskStatus } from "../task.type"
 
 const priorityColors: Record<TaskPriority, string> = {
 	low: "bg-info/20 text-info border-info/30",
@@ -29,21 +30,26 @@ const statusColors: Record<TaskStatus, string> = {
 
 interface TaskListProps {
 	tasks: Task[]
-	onToggleComplete?: (taskId: string) => void
 	onEditTask?: (task: Task) => void
 	onDeleteTask?: (taskId: string) => void
 }
 
-export function TaskList({ tasks, onToggleComplete, onEditTask, onDeleteTask }: TaskListProps) {
+export function TaskList({ tasks, onEditTask, onDeleteTask }: TaskListProps) {
+	const { mutate: updateTask } = useUpdateTask()
+
+	const handleToggleComplete = (task: Task) => {
+		const newStatus: TaskStatus = task.column === "done" ? "todo" : "done"
+		updateTask({ taskId: task._id, task: { column: newStatus } })
+	}
+
 	return (
 		<div className="bg-card border border-border rounded-xl overflow-hidden">
-			<div className="grid grid-cols-[auto_1fr_auto_auto_auto_auto_auto] gap-4 px-4 py-3 bg-secondary/50 border-b border-border text-xs font-medium text-muted-foreground">
+			<div className="grid grid-cols-[auto_1fr_auto_auto_auto_auto] gap-4 px-4 py-3 bg-secondary/50 border-b border-border text-xs font-medium text-muted-foreground">
 				<div className="w-5" />
 				<div>Tarea</div>
 				<div className="w-24 text-center">Estado</div>
 				<div className="w-20 text-center">Prioridad</div>
 				<div className="w-28 text-center">Fecha</div>
-				<div className="w-10 text-center">Asignado</div>
 				<div className="w-8" />
 			</div>
 
@@ -51,10 +57,10 @@ export function TaskList({ tasks, onToggleComplete, onEditTask, onDeleteTask }: 
 				{tasks.map((task) => (
 					<div
 						key={task._id}
-						className="group grid grid-cols-[auto_1fr_auto_auto_auto_auto_auto] gap-4 px-4 py-3 items-center hover:bg-secondary/30 transition-colors">
+						className="group grid grid-cols-[auto_1fr_auto_auto_auto_auto] gap-4 px-4 py-3 items-center hover:bg-secondary/30 transition-colors">
 						<Checkbox
 							checked={task.column === "done"}
-							onCheckedChange={() => onToggleComplete?.(task._id)}
+							onCheckedChange={() => handleToggleComplete(task)}
 							className="border-muted-foreground data-[state=checked]:bg-success data-[state=checked]:border-success"
 						/>
 
@@ -67,15 +73,6 @@ export function TaskList({ tasks, onToggleComplete, onEditTask, onDeleteTask }: 
 								{task.title}
 							</p>
 							{task.description && <p className="text-xs text-muted-foreground truncate">{task.description}</p>}
-							{task.tags && task.tags.length > 0 && (
-								<div className="flex gap-1 mt-1">
-									{task.tags.map((tag) => (
-										<Badge key={tag.tag} variant="secondary" className="text-[10px] px-1.5 py-0">
-											{tag.tag}
-										</Badge>
-									))}
-								</div>
-							)}
 						</div>
 
 						<div className="w-24 text-center">
@@ -92,7 +89,7 @@ export function TaskList({ tasks, onToggleComplete, onEditTask, onDeleteTask }: 
 							{task.createdAt && (
 								<>
 									<Calendar className="h-3 w-3" />
-									<span>{task.createdAt}</span>
+									<span>{new Date(task.createdAt).toLocaleDateString()}</span>
 								</>
 							)}
 						</div>
@@ -107,8 +104,12 @@ export function TaskList({ tasks, onToggleComplete, onEditTask, onDeleteTask }: 
 									</Button>
 								</DropdownMenuTrigger>
 								<DropdownMenuContent align="end">
-									<DropdownMenuItem onClick={() => onEditTask?.(task)}>Editar</DropdownMenuItem>
+									<DropdownMenuItem onClick={() => onEditTask?.(task)}>
+										<Pencil className="mr-2 h-4 w-4" />
+										Editar
+									</DropdownMenuItem>
 									<DropdownMenuItem onClick={() => onDeleteTask?.(task._id)} className="text-destructive">
+										<Trash className="mr-2 h-4 w-4" />
 										Eliminar
 									</DropdownMenuItem>
 								</DropdownMenuContent>
