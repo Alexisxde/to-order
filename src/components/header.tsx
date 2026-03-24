@@ -7,7 +7,8 @@ import { Fragment } from "react"
 const routes = [
 	{ path: "/app", title: ["Dashboard"] },
 	{ path: "/app/folders", title: ["Carpetas"] },
-	{ path: "/app/tasks", title: ["Tareas"] }
+	{ path: "/app/tasks", title: ["Tareas"] },
+	{ path: "/app/times", title: ["Horarios"] }
 ]
 
 export default function Header() {

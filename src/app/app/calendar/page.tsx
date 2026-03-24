@@ -3,8 +3,8 @@ import { CalendarIcon } from "lucide-react"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-	title: "Calendario",
-	description: "Visualiza tus tareas y eventos en el calendario de Organzi.",
+	title: "Organzi - Calendario",
+	description: "Visualiza eventos en el calendario de Organzi.",
 	robots: {
 		index: false,
 		follow: false

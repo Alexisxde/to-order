@@ -1,10 +1,9 @@
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
-import { Timer } from "lucide-react"
+import TimePage from "@/features/time/components/time-page"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
 	title: "Organzi - Horarios",
-	description: "Controla el tus hoarios para tus materias con Organzi.",
+	description: "Controla tus horarios de tus materias con Organzi.",
 	robots: {
 		index: false,
 		follow: false
@@ -12,19 +11,17 @@ export const metadata: Metadata = {
 }
 
 export default function Page() {
-  return (
-    <div className="flex items-center justify-center">
-      <Empty>
-        <EmptyHeader>
-          <EmptyMedia variant="icon">
-            <Timer />
-          </EmptyMedia>
-          <EmptyTitle>Próximamente</EmptyTitle>
-          <EmptyDescription>
-            La sección de los horarios estará disponible pronto.
-          </EmptyDescription>
-        </EmptyHeader>
-      </Empty>
-    </div>
-  )
+	return (
+		<>
+			<header className="flex flex-col gap-2 mb-4">
+				<h1 className="text-2xl font-medium text-foreground">
+					Horarios Universitarios
+				</h1>
+				<p className="text-sm font-medium text-muted-foreground">
+					Gestiona tus clases y actividades semanales
+				</p>
+			</header>
+			<TimePage />
+		</>
+	)
 }
