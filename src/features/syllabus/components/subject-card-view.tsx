@@ -19,7 +19,7 @@ import {
 	DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
-import { ArrowRight, BookOpen, Check, Edit2, ExternalLink, MoreVertical, Trash2 } from "lucide-react"
+import { BookOpen, Check, Edit2, ExternalLink, MoreVertical, Trash2 } from "lucide-react"
 import { useState } from "react"
 import type { Subject } from "../syllabus.type"
 
@@ -45,7 +45,7 @@ export function SubjectCardView({ subject, onClick, onUpdate, onDelete }: Subjec
 	return (
 		<>
 			<Card className="cursor-pointer" onClick={() => !isEditing && onClick()}>
-				<CardHeader className="flex flex-row items-center justify-between p-2!">
+				<CardHeader className="flex flex-row items-center justify-between py-2 px-2">
 					<div className="flex items-center gap-3 flex-1 min-w-0">
 						<div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
 							<BookOpen className="size-5" />
@@ -95,7 +95,6 @@ export function SubjectCardView({ subject, onClick, onUpdate, onDelete }: Subjec
 									</DropdownMenuItem>
 								</DropdownMenuContent>
 							</DropdownMenu>
-							<ArrowRight className="size-5 text-muted-foreground hidden lg:block lg:opacity-0 lg:group-hover:opacity-100 lg:group-hover:translate-x-1 transition-all mr-2" />
 						</div>
 					)}
 				</CardHeader>
