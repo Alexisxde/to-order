@@ -7,16 +7,16 @@ import taskService from "../services/task.service"
 import { CreateTaskDto } from "../task.type"
 
 export default function useCreateTask() {
-  const queryClient = useQueryClient()
-  const { data: user } = useUser()
-  return useMutation({
-    mutationFn: (data: CreateTaskDto) => taskService.insert(data, user?.id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [...TASKS, user?.id] })
-      toast.success("Tarea creada correctamente.")
-    },
-    onError: () => {
-      toast.error("Error al crear la Tarea.")
-    }
-  })
+	const queryClient = useQueryClient()
+	const { data: user } = useUser()
+	return useMutation({
+		mutationFn: (data: CreateTaskDto) => taskService.insert(data, user?.id),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: [...TASKS, user?.id] })
+			toast.success("Tarea creada correctamente.")
+		},
+		onError: () => {
+			toast.error("Error al crear la Tarea.")
+		}
+	})
 }

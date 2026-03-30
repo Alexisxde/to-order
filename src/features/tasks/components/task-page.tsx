@@ -24,25 +24,26 @@ import { TaskList } from "./task-list"
 export default function TaskPage() {
 	const { data: tasks } = useTask()
 	const { mutate: updateTask } = useUpdateTask()
-	
+
 	const [searchQuery, setSearchQuery] = useState("")
 	const [filterPriority, setFilterPriority] = useState<string[]>([])
 	const [selectedStatus, setSelectedStatus] = useState<TaskStatus>("todo")
-	
+
 	const [isCreateOpen, setIsCreateOpen] = useState(false)
 	const [isUpdateOpen, setIsUpdateOpen] = useState(false)
 	const [isDeleteOpen, setIsDeleteOpen] = useState(false)
-	
+
 	const [editingTask, setEditingTask] = useState<Task | null>(null)
 	const [deletingTaskId, setDeletingTaskId] = useState<string | null>(null)
 
-	const filteredTasks = tasks?.filter((task) => {
-		const matchesSearch =
-			task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-			(task.description?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false)
-		const matchesPriority = filterPriority.length === 0 || filterPriority.includes(task.priority)
-		return matchesSearch && matchesPriority
-	}) ?? []
+	const filteredTasks =
+		tasks?.filter((task) => {
+			const matchesSearch =
+				task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+				(task.description?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false)
+			const matchesPriority = filterPriority.length === 0 || filterPriority.includes(task.priority)
+			return matchesSearch && matchesPriority
+		}) ?? []
 
 	const handleColumnChange = (taskId: string, column: TaskStatus) => {
 		updateTask({ taskId, task: { column } })
@@ -129,39 +130,23 @@ export default function TaskPage() {
 					</div>
 				</header>
 				<TabsContent value="board" className="mt-0">
-					<KanbanBoard 
-						tasks={filteredTasks} 
-						onColumnChange={handleColumnChange} 
+					<KanbanBoard
+						tasks={filteredTasks}
+						onColumnChange={handleColumnChange}
 						onEditTask={handleEditTask}
 						onDeleteTask={handleDeleteTask}
 					/>
 				</TabsContent>
 				<TabsContent value="list" className="mt-0">
-					<TaskList 
-						tasks={filteredTasks} 
-						onEditTask={handleEditTask}
-						onDeleteTask={handleDeleteTask}
-					/>
+					<TaskList tasks={filteredTasks} onEditTask={handleEditTask} onDeleteTask={handleDeleteTask} />
 				</TabsContent>
 			</Tabs>
-			
-			<TaskDialogCreate 
-				defaultStatus={selectedStatus} 
-				open={isCreateOpen} 
-				onOpenChange={setIsCreateOpen} 
-			/>
-			
-			<TaskDialogUpdate 
-				task={editingTask} 
-				open={isUpdateOpen} 
-				onOpenChange={setIsUpdateOpen} 
-			/>
-			
-			<TaskDialogDelete 
-				taskId={deletingTaskId} 
-				open={isDeleteOpen} 
-				onOpenChange={setIsDeleteOpen} 
-			/>
+
+			<TaskDialogCreate defaultStatus={selectedStatus} open={isCreateOpen} onOpenChange={setIsCreateOpen} />
+
+			<TaskDialogUpdate task={editingTask} open={isUpdateOpen} onOpenChange={setIsUpdateOpen} />
+
+			<TaskDialogDelete taskId={deletingTaskId} open={isDeleteOpen} onOpenChange={setIsDeleteOpen} />
 		</section>
 	)
 }

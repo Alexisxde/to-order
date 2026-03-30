@@ -26,12 +26,7 @@ export async function insert(time: CreateTimeDto, userId?: string): Promise<Time
 }
 
 export async function update(timeId: string, time: UpdateTimeDto): Promise<Time> {
-	const { data, error } = await supabase
-		.from("times")
-		.update(time)
-		.eq("_id", timeId)
-		.select()
-		.single()
+	const { data, error } = await supabase.from("times").update(time).eq("_id", timeId).select().single()
 	if (error) throw error
 	return data
 }

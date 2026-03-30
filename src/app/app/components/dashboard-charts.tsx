@@ -18,22 +18,22 @@ export default function DashboardCharts() {
 			review: "Revisión",
 			done: "Hecho"
 		}
-		
-		return statuses.map(status => ({
+
+		return statuses.map((status) => ({
 			status: labels[status],
-			count: tasks.filter(t => t.column === status).length,
+			count: tasks.filter((t) => t.column === status).length,
 			fill: status === "done" ? "hsl(var(--success))" : "hsl(var(--primary))"
 		}))
 	}, [tasks])
 
 	const weeklyData = useMemo(() => {
 		const days = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
-		return days.map(day => ({
+		return days.map((day) => ({
 			day: day.substring(0, 3),
-			clases: schedule.filter(s => s.day === day).length,
-			tareas: tasks.filter(t => {
+			clases: schedule.filter((s) => s.day === day).length,
+			tareas: tasks.filter((t) => {
 				const date = new Date(t.createdAt)
-				const dayName = date.toLocaleDateString('es-ES', { weekday: 'long' })
+				const dayName = date.toLocaleDateString("es-ES", { weekday: "long" })
 				return dayName.toLowerCase() === day.toLowerCase()
 			}).length
 		}))
@@ -49,23 +49,14 @@ export default function DashboardCharts() {
 						</CardTitle>
 					</CardHeader>
 					<CardContent className="h-[250px] pt-4">
-						<ChartContainer config={{
-							count: { label: "Tareas", color: "hsl(var(--primary))" }
-						}}>
+						<ChartContainer
+							config={{
+								count: { label: "Tareas", color: "hsl(var(--primary))" }
+							}}>
 							<BarChart data={taskData}>
 								<CartesianGrid vertical={false} strokeDasharray="3 3" opacity={0.1} />
-								<XAxis 
-									dataKey="status" 
-									tickLine={false} 
-									axisLine={false} 
-									tick={{fontSize: 10, fontWeight: 600}} 
-								/>
-								<Bar 
-									dataKey="count" 
-									radius={[4, 4, 0, 0]} 
-									barSize={40} 
-									className="fill-primary/80"
-								/>
+								<XAxis dataKey="status" tickLine={false} axisLine={false} tick={{ fontSize: 10, fontWeight: 600 }} />
+								<Bar dataKey="count" radius={[4, 4, 0, 0]} barSize={40} className="fill-primary/80" />
 								<ChartTooltip content={<ChartTooltipContent />} />
 							</BarChart>
 						</ChartContainer>
@@ -81,30 +72,26 @@ export default function DashboardCharts() {
 						</CardTitle>
 					</CardHeader>
 					<CardContent className="h-[250px] pt-4">
-						<ChartContainer config={{
-							clases: { label: "Clases", color: "hsl(var(--primary))" },
-							tareas: { label: "Tareas", color: "hsl(var(--secondary))" }
-						}}>
+						<ChartContainer
+							config={{
+								clases: { label: "Clases", color: "hsl(var(--primary))" },
+								tareas: { label: "Tareas", color: "hsl(var(--secondary))" }
+							}}>
 							<AreaChart data={weeklyData}>
 								<defs>
 									<linearGradient id="fillClases" x1="0" y1="0" x2="0" y2="1">
-										<stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
-										<stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+										<stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+										<stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
 									</linearGradient>
 								</defs>
 								<CartesianGrid vertical={false} strokeDasharray="3 3" opacity={0.1} />
-								<XAxis 
-									dataKey="day" 
-									tickLine={false} 
-									axisLine={false} 
-									tick={{fontSize: 10, fontWeight: 600}} 
-								/>
-								<Area 
-									type="monotone" 
-									dataKey="clases" 
-									stroke="hsl(var(--primary))" 
-									fillOpacity={1} 
-									fill="url(#fillClases)" 
+								<XAxis dataKey="day" tickLine={false} axisLine={false} tick={{ fontSize: 10, fontWeight: 600 }} />
+								<Area
+									type="monotone"
+									dataKey="clases"
+									stroke="hsl(var(--primary))"
+									fillOpacity={1}
+									fill="url(#fillClases)"
 									strokeWidth={2}
 								/>
 								<ChartTooltip content={<ChartTooltipContent />} />

@@ -16,9 +16,9 @@ export type Task = {
 }
 
 export interface ColumnDef {
-  id: TaskStatus
-  title: string
-  color: string
+	id: TaskStatus
+	title: string
+	color: string
 }
 
 export type CreateTaskDto = Pick<Task, "title" | "description" | "priority" | "column">

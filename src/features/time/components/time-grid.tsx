@@ -17,16 +17,12 @@ export function TimeGrid({ times, onEdit, onAdd }: TimeGridProps) {
 	return (
 		<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-6 pb-6 h-full">
 			{DAYS.map((day) => {
-				const dayTimes = times
-					.filter((t) => t.day === day)
-					.sort((a, b) => a.time_start.localeCompare(b.time_start))
+				const dayTimes = times.filter((t) => t.day === day).sort((a, b) => a.time_start.localeCompare(b.time_start))
 
 				return (
 					<div key={day} className="flex flex-col gap-3 h-full">
 						<div className="flex items-center justify-between px-2 py-1 bg-secondary/30 rounded-lg">
-							<h3 className="text-xs font-semibold tracking-widest text-foreground">
-								{day}
-							</h3>
+							<h3 className="text-xs font-semibold tracking-widest text-foreground">{day}</h3>
 							<Button
 								variant="ghost"
 								size="icon"
@@ -42,9 +38,7 @@ export function TimeGrid({ times, onEdit, onAdd }: TimeGridProps) {
 								))}
 								{dayTimes.length === 0 && (
 									<div className="flex flex-1 flex-col items-center justify-center opacity-40 min-h-[180px]">
-										<p className="text-[10px] font-medium tracking-widest text-center">
-											Sin materias
-										</p>
+										<p className="text-[10px] font-medium tracking-widest text-center">Sin materias</p>
 									</div>
 								)}
 							</div>

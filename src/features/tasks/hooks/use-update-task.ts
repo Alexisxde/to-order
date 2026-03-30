@@ -1,16 +1,15 @@
-import { useUser } from "@/hooks/use-user";
-import { TASKS } from "@/lib/query-keys";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import taskService from "../services/task.service";
-import { Task } from "../task.type";
-
+import { useUser } from "@/hooks/use-user"
+import { TASKS } from "@/lib/query-keys"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { toast } from "sonner"
+import taskService from "../services/task.service"
+import { Task } from "../task.type"
 
 export default function useUpdateTask() {
-  const queryClient = useQueryClient()
-  const { data: user } = useUser()
+	const queryClient = useQueryClient()
+	const { data: user } = useUser()
 
-  return useMutation({
+	return useMutation({
 		mutationFn: ({ taskId, task }: { taskId: string; task: Partial<Task> }) => taskService.update(taskId, task),
 		onMutate: async ({ taskId, task }) => {
 			await queryClient.cancelQueries({ queryKey: [...TASKS, user?.id] })

@@ -17,10 +17,13 @@ export default function useCreateTime() {
 			const previousTimes = queryClient.getQueryData<Time[]>([...TIME, user?.id])
 
 			if (previousTimes) {
-				queryClient.setQueryData<Time[]>([...TIME, user?.id], [
-					...previousTimes,
-					{ ...newTime, _id: "temp-id", created_at: new Date().toISOString(), user_id: user?.id ?? "" } as Time
-				])
+				queryClient.setQueryData<Time[]>(
+					[...TIME, user?.id],
+					[
+						...previousTimes,
+						{ ...newTime, _id: "temp-id", created_at: new Date().toISOString(), user_id: user?.id ?? "" } as Time
+					]
+				)
 			}
 			return { previousTimes }
 		},

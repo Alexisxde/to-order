@@ -14,12 +14,8 @@ export default function Page() {
 	return (
 		<>
 			<header className="flex flex-col gap-2 mb-4">
-				<h1 className="text-2xl font-medium text-foreground">
-					Horarios Universitarios
-				</h1>
-				<p className="text-sm font-medium text-muted-foreground">
-					Gestiona tus clases y actividades semanales
-				</p>
+				<h1 className="text-2xl font-medium text-foreground">Horarios Universitarios</h1>
+				<p className="text-sm font-medium text-muted-foreground">Gestiona tus clases y actividades semanales</p>
 			</header>
 			<TimePage />
 		</>

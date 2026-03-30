@@ -15,6 +15,7 @@ import { createClient } from "@/supabase/client"
 import {
 	AppWindow,
 	Bell,
+	BookMarked,
 	Calendar1,
 	ChevronsUpDown,
 	ClipboardList,
@@ -55,7 +56,8 @@ const nav = [
 	{ title: "Carpetas", href: "/app/folders", icon: <FolderIcon className="size-5 lg:size-full" /> },
 	{ title: "Tareas", href: "/app/tasks", icon: <ClipboardList className="size-5 lg:size-full" /> },
 	{ title: "Horarios", href: "/app/times", icon: <Timer className="size-5 lg:size-full" /> },
-	{ title: "Calendario", href: "/app/calendar", icon: <Calendar1 className="size-5 lg:size-full" /> }
+	{ title: "Calendario", href: "/app/calendar", icon: <Calendar1 className="size-5 lg:size-full" /> },
+	{ title: "Temarios", href: "/app/syllabus", icon: <BookMarked className="size-5 lg:size-full" /> }
 ]
 
 export function AppSidebar() {

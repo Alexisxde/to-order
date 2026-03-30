@@ -37,7 +37,14 @@ interface TaskCardProps {
 }
 
 export function TaskCard({ task, isDragging = false, onEdit, onDelete }: TaskCardProps) {
-	const { attributes, listeners, setNodeRef, transform, transition, isDragging: isSortableDragging } = useSortable({
+	const {
+		attributes,
+		listeners,
+		setNodeRef,
+		transform,
+		transition,
+		isDragging: isSortableDragging
+	} = useSortable({
 		id: task._id
 	})
 
@@ -65,17 +72,16 @@ export function TaskCard({ task, isDragging = false, onEdit, onDelete }: TaskCar
 				)}>
 				<CardContent className="px-4 space-y-2.5">
 					<div className="flex items-center justify-between">
-						<h3	{...attributes} {...listeners}
+						<h3
+							{...attributes}
+							{...listeners}
 							className="text-sm font-semibold text-foreground leading-snug flex-1 text-pretty">
 							{task.title}
 						</h3>
 						<div className="flex items-center gap-1">
 							<DropdownMenu>
 								<DropdownMenuTrigger asChild>
-									<Button
-										variant="ghost"
-										size="icon"
-										className="size-7">
+									<Button variant="ghost" size="icon" className="size-7">
 										<MoreVertical className="h-3.5 w-3.5" />
 									</Button>
 								</DropdownMenuTrigger>
@@ -94,10 +100,7 @@ export function TaskCard({ task, isDragging = false, onEdit, onDelete }: TaskCar
 					</div>
 
 					{task.description && (
-						<p
-							{...attributes}
-							{...listeners}
-							className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
+						<p {...attributes} {...listeners} className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
 							{task.description}
 						</p>
 					)}

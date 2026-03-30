@@ -8,7 +8,8 @@ const routes = [
 	{ path: "/app", title: ["Dashboard"] },
 	{ path: "/app/folders", title: ["Carpetas"] },
 	{ path: "/app/tasks", title: ["Tareas"] },
-	{ path: "/app/times", title: ["Horarios"] }
+	{ path: "/app/times", title: ["Horarios"] },
+	{ path: "/app/syllabus", title: ["Temarios"] }
 ]
 
 export default function Header() {

@@ -65,7 +65,12 @@ export function TimeForm({ defaultValues, onSubmit, onCancel, onDelete, submitTe
 			</Field>
 
 			<Field>
-				<FieldLabel>Descripción <Badge variant="outline" className="text-[10px]">Opcional</Badge></FieldLabel>
+				<FieldLabel>
+					Descripción{" "}
+					<Badge variant="outline" className="text-[10px]">
+						Opcional
+					</Badge>
+				</FieldLabel>
 				<Textarea placeholder="Ej: Aula 6, Edificio de Ingenieria" {...register("description")} />
 				{errors.description && <FieldError>{errors.description.message}</FieldError>}
 			</Field>
@@ -123,7 +128,7 @@ export function TimeForm({ defaultValues, onSubmit, onCancel, onDelete, submitTe
 					<FieldLabel>Color</FieldLabel>
 					<Select value={color} onValueChange={(v: any) => setValue("color", v)}>
 						<SelectTrigger>
-						<SelectValue />
+							<SelectValue />
 						</SelectTrigger>
 						<SelectContent>
 							{COLORS.map((c) => (
@@ -139,7 +144,12 @@ export function TimeForm({ defaultValues, onSubmit, onCancel, onDelete, submitTe
 				</Field>
 
 				<Field>
-					<FieldLabel>URL <Badge variant="outline" className="text-[10px]">Opcional</Badge></FieldLabel>
+					<FieldLabel>
+						URL{" "}
+						<Badge variant="outline" className="text-[10px]">
+							Opcional
+						</Badge>
+					</FieldLabel>
 					<Input placeholder="Enlace de la clase" {...register("url")} />
 					{errors.url && <FieldError>{errors.url.message}</FieldError>}
 				</Field>
@@ -147,7 +157,12 @@ export function TimeForm({ defaultValues, onSubmit, onCancel, onDelete, submitTe
 
 			<div className="flex items-center justify-between pt-4 border-t border-border">
 				{onDelete ? (
-					<Button type="button" variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive transition-colors" onClick={onDelete}>
+					<Button
+						type="button"
+						variant="ghost"
+						size="icon"
+						className="text-muted-foreground hover:text-destructive transition-colors"
+						onClick={onDelete}>
 						<Trash className="size-4" />
 					</Button>
 				) : (

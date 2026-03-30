@@ -48,9 +48,7 @@ export function AppBreadcrumb() {
 											<BreadcrumbPage>{displayName}</BreadcrumbPage>
 										) : (
 											<BreadcrumbLink asChild>
-												<Link href={href}>
-													{displayName}
-												</Link>
+												<Link href={href}>{displayName}</Link>
 											</BreadcrumbLink>
 										)}
 									</BreadcrumbItem>

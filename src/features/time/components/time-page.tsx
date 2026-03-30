@@ -26,16 +26,8 @@ export default function TimePage() {
 	return (
 		<section className="flex flex-col gap-6 size-full">
 			<TimeGrid times={times} onEdit={handleEdit} onAdd={handleAdd} />
-			<TimeSheetCreate
-				open={isCreateOpen}
-				onOpenChange={setIsCreateOpen}
-				defaultDay={selectedDay}
-			/>
-			<TimeSheetUpdate
-				time={selectedTime}
-				open={isUpdateOpen}
-				onOpenChange={setIsUpdateOpen}
-			/>
+			<TimeSheetCreate open={isCreateOpen} onOpenChange={setIsCreateOpen} defaultDay={selectedDay} />
+			<TimeSheetUpdate time={selectedTime} open={isUpdateOpen} onOpenChange={setIsUpdateOpen} />
 		</section>
 	)
 }

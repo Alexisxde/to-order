@@ -22,9 +22,7 @@ export default async function AppLayout({ children }: Readonly<{ children: React
 					<AppSidebar />
 					<SidebarInset>
 						<Header />
-						<main className="flex h-dvh w-full flex-col max-w-8xl mx-auto flex-1 p-4">
-							{children}
-						</main>
+						<main className="flex h-dvh w-full flex-col max-w-8xl mx-auto flex-1 p-4">{children}</main>
 					</SidebarInset>
 				</SidebarProvider>
 			</NotesProvider>

@@ -16,7 +16,8 @@ export const metadata: Metadata = {
 		default: "Organzi - Tu vida en orden",
 		template: "%s | Organzi"
 	},
-	description: "Organzi es tu plataforma integral para gestionar tareas, notas, calendario y tiempos. Todo lo que necesitas para mantener tu vida en orden en un solo lugar.",
+	description:
+		"Organzi es tu plataforma integral para gestionar tareas, notas, calendario y tiempos. Todo lo que necesitas para mantener tu vida en orden en un solo lugar.",
 	keywords: ["tareas", "notas", "calendario", "productividad", "gestión del tiempo", "organización"],
 	authors: [{ name: "Organzi Team" }],
 	creator: "Organzi",
@@ -32,7 +33,8 @@ export const metadata: Metadata = {
 		url: "https://organzi.vercel.app",
 		siteName: "Organzi",
 		title: "Organzi - Gestiona tu vida con facilidad",
-		description: "La herramienta definitiva para organizar tus tareas, notas y calendario. Maximiza tu productividad hoy.",
+		description:
+			"La herramienta definitiva para organizar tus tareas, notas y calendario. Maximiza tu productividad hoy.",
 		images: [
 			{
 				url: "/og-image.png",

@@ -14,18 +14,18 @@ export default function DashboardNextClass() {
 		const days = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
 		const now = new Date()
 		const currentDay = days[now.getDay()]
-		const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`
+		const currentTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`
 
 		// Filter classes for today that haven't ended yet
 		const todayClasses = schedule
-			.filter(s => s.day === currentDay && s.time_end > currentTime)
+			.filter((s) => s.day === currentDay && s.time_end > currentTime)
 			.sort((a, b) => a.time_start.localeCompare(b.time_start))
 
 		if (todayClasses.length > 0) return todayClasses[0]
 
 		// If no more classes today, find first class of tomorrow (or next available day)
 		const sortedSchedule = [...schedule].sort((a, b) => {
-			const dayOrder: Record<string, number> = { "Lunes": 1, "Martes": 2, "Miércoles": 3, "Jueves": 4, "Viernes": 5, "Sábado": 6 }
+			const dayOrder: Record<string, number> = { Lunes: 1, Martes: 2, Miércoles: 3, Jueves: 4, Viernes: 5, Sábado: 6 }
 			if (dayOrder[a.day] !== dayOrder[b.day]) return dayOrder[a.day] - dayOrder[b.day]
 			return a.time_start.localeCompare(b.time_start)
 		})
@@ -42,15 +42,11 @@ export default function DashboardNextClass() {
 					<GraduationCap className="size-32" />
 				</div>
 				<CardHeader className="pb-2">
-					<CardTitle className="text-xs font-black uppercase tracking-[0.2em] opacity-80">
-						Siguiente Clase
-					</CardTitle>
+					<CardTitle className="text-xs font-black uppercase tracking-[0.2em] opacity-80">Siguiente Clase</CardTitle>
 				</CardHeader>
 				<CardContent className="flex flex-col justify-between h-[calc(100%-60px)] relative z-10">
 					<div>
-						<h3 className="text-2xl font-bold leading-tight mb-2">
-							{nextClass.subject}
-						</h3>
+						<h3 className="text-2xl font-bold leading-tight mb-2">{nextClass.subject}</h3>
 						<Badge variant="secondary" className="bg-white/20 text-white border-none font-semibold">
 							{nextClass.type}
 						</Badge>
@@ -63,7 +59,9 @@ export default function DashboardNextClass() {
 							</div>
 							<div>
 								<p className="text-[10px] uppercase font-bold opacity-70">Horario</p>
-								<p className="text-sm font-semibold">{nextClass.day}, {nextClass.time_start} - {nextClass.time_end}</p>
+								<p className="text-sm font-semibold">
+									{nextClass.day}, {nextClass.time_start} - {nextClass.time_end}
+								</p>
 							</div>
 						</div>
 

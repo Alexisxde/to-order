@@ -68,20 +68,16 @@ export default function DashboardStats() {
 								)}
 							</div>
 							<div className="mt-4">
-								<h3 className="text-sm font-medium text-muted-foreground">
-									{stat.title}
-								</h3>
+								<h3 className="text-sm font-medium text-muted-foreground">{stat.title}</h3>
 								<div className="flex items-baseline gap-2">
-									<span className="text-3xl font-semibold tracking-tight">
-										{stat.value}
-									</span>
+									<span className="text-3xl font-semibold tracking-tight">{stat.value}</span>
 									<span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
 										{stat.description}
 									</span>
 								</div>
 							</div>
 						</CardContent>
-						<div className={`h-1 w-full ${stat.bg.replace('/10', '/30')}`} />
+						<div className={`h-1 w-full ${stat.bg.replace("/10", "/30")}`} />
 					</Card>
 				</div>
 			))}
